@@ -1,0 +1,6 @@
+server:
+  port: 8090
+
+netty:
+  //netty监听链接地址
+  port: 5000,5001
