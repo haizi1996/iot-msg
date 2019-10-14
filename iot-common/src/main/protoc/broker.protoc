@@ -1,0 +1,12 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.common.protoc;
+option java_outer_classname="BrokerBuf";
+
+message Broker {
+	//ip地址
+	string host = 1;
+	//端口
+	uint32 port = 2;
+}
