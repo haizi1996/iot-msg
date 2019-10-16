@@ -20,18 +20,18 @@ public class RedisServiceTest {
     @Test
     public void getAllBroker() {
 
-        List<Broker> brokers = redisService.getAllBroker();
-        for (Broker broker :
-                brokers) {
-            System.out.printf(broker.toString());
-        }
+//        List<Broker> brokers = redisService.getAllBroker();
+//        for (Broker broker :
+//                brokers) {
+//            System.out.printf(broker.toString());
+//        }
     }
 
 
     @Test
     public void setBrokerInfoToRedis() {
-        Broker broker = Broker.builder().host("localhost").port(3030).build();
-        redisService.setBrokerInfoToRedis(broker);
-        getAllBroker();
+//        Broker broker = Broker.builder().host("localhost").port(3030).build();
+//        redisService.setBrokerInfoToRedis(broker);
+//        getAllBroker();
     }
 }
