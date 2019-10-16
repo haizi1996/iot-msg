@@ -1,6 +1,5 @@
-package com.hailin.iot.broker.remoting;
+package com.hailin.iot.common.remoting;
 
-import com.hailin.iot.common.remoting.AbstractLifeCycle;
 import com.hailin.iot.common.remoting.config.BoltOption;
 import com.hailin.iot.common.remoting.config.BoltOptions;
 import com.hailin.iot.common.remoting.config.Configurable;
