@@ -1,7 +1,7 @@
 package com.hailin.iot.common.remoting;
 
-import com.hailin.iot.common.remoting.config.BoltOption;
-import com.hailin.iot.common.remoting.config.BoltOptions;
+import com.hailin.iot.common.remoting.config.IotOption;
+import com.hailin.iot.common.remoting.config.IotOptions;
 import com.hailin.iot.common.remoting.config.Configurable;
 import com.hailin.iot.common.exception.LifeCycleException;
 import com.hailin.iot.common.remoting.config.ConfigManager;
@@ -27,7 +27,7 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     private String                ip;
     private int                   port;
 
-    private final BoltOptions options;
+    private final IotOptions options;
     private final ConfigType configType;
     private final GlobalSwitch globalSwitch;
     private final ConfigContainer configContainer;
@@ -40,7 +40,7 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
         this.ip = ip;
         this.port = port;
 
-        this.options = new BoltOptions();
+        this.options = new IotOptions();
         this.configType = ConfigType.SERVER_SIDE;
         this.globalSwitch = new GlobalSwitch();
         this.configContainer = new DefaultConfigContainer();
@@ -97,12 +97,12 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     protected abstract boolean doStop();
 
     @Override
-    public <T> T option(BoltOption<T> option) {
+    public <T> T option(IotOption<T> option) {
         return options.option(option);
     }
 
     @Override
-    public <T> Configurable option(BoltOption<T> option, T value) {
+    public <T> Configurable option(IotOption<T> option, T value) {
         options.option(option, value);
         return this;
     }

@@ -6,13 +6,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * Options的容器
  * @author hailin
  */
-public class BoltOptions {
+public class IotOptions {
 
-    private ConcurrentHashMap<BoltOption<?>, Object> options = new ConcurrentHashMap<BoltOption<?>, Object>();
+    private ConcurrentHashMap<IotOption<?>, Object> options = new ConcurrentHashMap<IotOption<?>, Object>();
 
 
     @SuppressWarnings("unchecked")
-    public <T> T option(BoltOption<T> option) {
+    public <T> T option(IotOption<T> option) {
         Object value = options.get(option);
         if (value == null) {
             value = option.getDefaultValue();
@@ -22,7 +22,7 @@ public class BoltOptions {
     }
 
 
-    public <T> BoltOptions option(BoltOption<T> option, T value) {
+    public <T> IotOptions option(IotOption<T> option, T value) {
         if (value == null) {
             options.remove(option);
             return this;

@@ -10,12 +10,12 @@ public interface Configurable {
      * Get the option value.
      *
      * @param option target option
-     * @return BoltOption
+     * @return IotOption
      */
-    <T> T option(BoltOption<T> option);
+    <T> T option(IotOption<T> option);
 
     /**
      * 设置option这个参数的value
      */
-    <T> Configurable option(BoltOption<T> option, T value);
+    <T> Configurable option(IotOption<T> option, T value);
 }

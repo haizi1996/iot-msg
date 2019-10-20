@@ -29,10 +29,12 @@ public class Url {
     private String uniqueKey;
 
     //连接超时时间
-    private int connentTimeout ;
+    @Getter
+    private int connectTimeout ;
 
     // url 参数 协议
-    private byte protol;
+    @Getter
+    private byte protocol;
 
     //url 参数 版本
     private byte version;
@@ -45,6 +47,28 @@ public class Url {
 
     // url所有的参数
     private Properties properties;
+
+    protected Url(String originUrl) {
+        this.originUrl = originUrl;
+    }
+    public Url(String ip, int port) {
+        this(ip + RemotingAddressParser.COLON + port);
+        this.ip = ip;
+        this.port = port;
+        this.uniqueKey = this.originUrl;
+    }
+
+    public Url(String originUrl, String ip, int port) {
+        this(originUrl);
+        this.ip = ip;
+        this.port = port;
+        this.uniqueKey = ip + RemotingAddressParser.COLON + port;
+    }
+
+    public Url(String originUrl, String ip, int port, Properties properties) {
+        this(originUrl, ip, port);
+        this.properties = properties;
+    }
 
     @Override
     public final boolean equals(Object obj) {
@@ -108,5 +132,9 @@ public class Url {
             logger.error("Exception occurred when do finalize for Url [{}].", this.getOriginUrl(),
                     e);
         }
+    }
+
+    public boolean isConnWarmup() {
+        return this.connwarmup;
     }
 }

@@ -9,22 +9,22 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class BoltOption<T> {
+public class IotOption<T> {
 
     private final String name;
     private T            defaultValue;
 
-    protected BoltOption(String name, T defaultValue) {
+    protected IotOption(String name, T defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    public static <T> BoltOption<T> valueOf(String name) {
-        return new BoltOption<T>(name, null);
+    public static <T> IotOption<T> valueOf(String name) {
+        return new IotOption<T>(name, null);
     }
 
-    public static <T> BoltOption<T> valueOf(String name, T defaultValue) {
-        return new BoltOption<T>(name, defaultValue);
+    public static <T> IotOption<T> valueOf(String name, T defaultValue) {
+        return new IotOption<T>(name, defaultValue);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BoltOption<T> {
             return false;
         }
 
-        BoltOption<?> that = (BoltOption<?>) o;
+        IotOption<?> that = (IotOption<?>) o;
 
         return name != null ? name.equals(that.name) : that.name == null;
     }

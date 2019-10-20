@@ -2,6 +2,7 @@ package com.hailin.iot.common.remoting;
 
 
 import com.hailin.iot.common.exception.RemotingException;
+import com.hailin.iot.common.remoting.connection.Connection;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,11 @@ public interface ConnectionManager  extends Scannable, LifeCycle {
 
     void check(Connection connection) throws RemotingException;
 
+    Connection create(Url url) throws RemotingException;
+
+    Connection getAndCreateIfAbsent(Url url) throws InterruptedException, RemotingException;
+
+    void createConnectionAndHealIfNeed(Url url) throws InterruptedException, RemotingException;
     /**
      * 统计特定池里的连接
      * @param poolKey 池的key
