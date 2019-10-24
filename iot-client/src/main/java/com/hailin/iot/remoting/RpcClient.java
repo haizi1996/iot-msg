@@ -40,7 +40,7 @@ public class RpcClient extends AbstractIotClient {
 
     private final ConnectionEventListener connectionEventListener;
 
-    private DefaultConnectionManager connectionManager;
+    private DefaultClientConnectionManager connectionManager;
 
     private Reconnector reconnectManager;
 

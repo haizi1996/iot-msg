@@ -1,12 +1,18 @@
 package com.hailin.iot.common.remoting;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.mqtt.MqttMessage;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
+@Setter
 public class RemotingContext {
 
-    private ChannelHandlerContext channelHandlerContext;
+    private ChannelHandlerContext channelContext;
 
     private boolean serverSide = false;
 
@@ -27,5 +33,9 @@ public class RemotingContext {
     public RemotingContext setTimeoutDiscard(boolean failFastEnabled) {
         this.timeoutDiscard = failFastEnabled;
         return this;
+    }
+
+    public ChannelFuture writeAndFlush(MqttMessage msg) {
+        return this.channelContext.writeAndFlush(msg);
     }
 }

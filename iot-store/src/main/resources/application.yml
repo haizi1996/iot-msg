@@ -1,0 +1,7 @@
+## HBase 配置
+spring:
+  data:
+    hbase:
+      quorum: xxx
+      rootDir: xxx
+      nodeParent: xxx

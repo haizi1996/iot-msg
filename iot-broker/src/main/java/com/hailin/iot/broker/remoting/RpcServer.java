@@ -21,6 +21,7 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +30,14 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+
 public class RpcServer extends AbstractRemotingServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
     private ServerBootstrap bootstrap ;
 
+    @Getter
     private ChannelFuture channelFuture ;
 
     private ConnectionEventHandler connectionEventHandler;

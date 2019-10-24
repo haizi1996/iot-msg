@@ -13,6 +13,7 @@
         <module>iot-route</module>
         <module>iot-broker</module>
         <module>iot-client</module>
+        <module>iot-store</module>
     </modules>
     <properties>
         <junit.version>4.12</junit.version>
@@ -27,6 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <hbase-spring-boot>1.0.0.RELEASE</hbase-spring-boot>
     </properties>
 
     <parent>
@@ -82,6 +84,12 @@
             </dependency>
 
 
+            <!-- Spring Boot HBase 依赖 -->
+            <dependency>
+                <groupId>com.spring4all</groupId>
+                <artifactId>spring-boot-starter-hbase</artifactId>
+                <version>${hbase-spring-boot}</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.springfox</groupId>

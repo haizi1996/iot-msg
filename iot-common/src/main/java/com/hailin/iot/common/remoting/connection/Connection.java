@@ -1,7 +1,7 @@
 package com.hailin.iot.common.remoting.connection;
 
 import com.google.common.collect.Sets;
-import com.hailin.iot.common.remoting.InvokeFuture;
+import com.hailin.iot.common.remoting.future.InvokeFuture;
 import com.hailin.iot.common.remoting.Url;
 import com.hailin.iot.common.remoting.protocol.ProtocolCode;
 import com.hailin.iot.common.util.ConcurrentHashSet;
@@ -45,6 +45,11 @@ public class Connection {
     public static final AttributeKey<ProtocolCode> PROTOCOL = AttributeKey.valueOf("protocol");
 
     private ProtocolCode protocolCode;
+
+    //心跳的futurn
+    @Setter
+    @Getter
+    private InvokeFuture heartbeatFuture;
 
     @Getter
     private Url url;
