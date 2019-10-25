@@ -2,9 +2,7 @@ package com.hailin.iot.common.remoting.command;
 
 import com.hailin.iot.common.exception.DeserializationException;
 import com.hailin.iot.common.exception.SerializationException;
-import com.hailin.iot.common.remoting.CommandCode;
 import com.hailin.iot.common.remoting.InvokeContext;
-import com.hailin.iot.common.remoting.protocol.ProtocolCode;
 
 import java.io.Serializable;
 
@@ -14,9 +12,6 @@ import java.io.Serializable;
  */
 public interface RemotingCommand extends Serializable {
 
-    ProtocolCode getProtocolCode();
-
-    CommandCode getCmdCode();
 
     int getId();
 

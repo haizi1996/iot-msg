@@ -1,9 +1,10 @@
 package com.hailin.iot.common.remoting.connection;
 
 import com.google.common.collect.Sets;
+import com.hailin.iot.common.remoting.HeartbeatTrigger;
+import com.hailin.iot.common.remoting.MqttHeartbeatTrigger;
 import com.hailin.iot.common.remoting.future.InvokeFuture;
 import com.hailin.iot.common.remoting.Url;
-import com.hailin.iot.common.remoting.protocol.ProtocolCode;
 import com.hailin.iot.common.util.ConcurrentHashSet;
 import com.hailin.iot.common.util.RemotingUtil;
 import io.netty.channel.Channel;
@@ -42,9 +43,8 @@ public class Connection {
 
     public static final AttributeKey<Boolean>  HEARTBEAT_SWITCH = AttributeKey.valueOf("heartbeatSwitch");
 
-    public static final AttributeKey<ProtocolCode> PROTOCOL = AttributeKey.valueOf("protocol");
+    public static final AttributeKey<HeartbeatTrigger>  HEARTBEAT_TRIGGER = AttributeKey.valueOf("heartbeatTrigger");
 
-    private ProtocolCode protocolCode;
 
     //心跳的futurn
     @Setter
@@ -78,15 +78,12 @@ public class Connection {
         this.poolKeys.add(url.getUniqueKey());
     }
 
-    public Connection(Channel channel, ProtocolCode fromBytes, Url url) {
-        this(channel , url);
-        this.protocolCode = protocolCode;
-    }
 
     private void init() {
         this.channel.attr(HEARTBEAT_COUNT).set(0);
 //        this.channel.attr(PROTOCOL).set(this.protocolCode);
         this.channel.attr(HEARTBEAT_SWITCH).set(true);
+        this.channel.attr(HEARTBEAT_TRIGGER).set(new MqttHeartbeatTrigger());
     }
 
     /**
@@ -180,6 +177,15 @@ public class Connection {
     public void removePoolKey(String poolKey) {
         poolKeys.remove(poolKey);
     }
+
+    public void setAttribute(String key, Object value) {
+        attributes.put(key, value);
+    }
+
+    public boolean isInvokeFutureMapFinish() {
+        return invokeFutureMap.isEmpty();
+    }
+
 
     public void onClose() {
         Iterator<Map.Entry<Integer, InvokeFuture>> iter = invokeFutureMap.entrySet().iterator();

@@ -1,6 +1,5 @@
 package com.hailin.iot.common.remoting;
 
-import com.hailin.iot.common.remoting.LifeCycle;
 import com.hailin.iot.common.remoting.config.Configurable;
 
 import java.util.concurrent.ExecutorService;

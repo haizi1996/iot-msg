@@ -456,5 +456,9 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         }
         return conn;
     }
+
+    public ConcurrentHashMap<String, RunStateRecordedFutureTask<ConnectionPool>> getConnPools() {
+        return this.connTasks;
+    }
 }
 

@@ -1,6 +1,5 @@
 package com.hailin.iot.common.remoting.command;
 
-import com.hailin.iot.common.remoting.CommandCode;
 import com.hailin.iot.common.remoting.mqtt.MqttCommandType;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,15 +21,4 @@ public class MqttRequestCommand extends MqttCommand {
         super(MqttCommandType.REQUEST);
     }
 
-    public MqttRequestCommand(CommandCode code) {
-        super(code , MqttCommandType.REQUEST);
-    }
-
-    public MqttRequestCommand(byte type, CommandCode code) {
-        super( code , type);
-    }
-
-    public MqttRequestCommand(byte version, byte type, CommandCode code) {
-        super(code , version, type);
-    }
 }

@@ -9,8 +9,6 @@ import com.hailin.iot.common.remoting.config.ConfigManager;
 import com.hailin.iot.common.remoting.config.configs.ConfigurableInstance;
 import com.hailin.iot.common.remoting.connection.Connection;
 import com.hailin.iot.common.remoting.factory.ConnectionFactory;
-import com.hailin.iot.common.remoting.protocol.MQTTProtocol;
-import com.hailin.iot.common.remoting.protocol.ProtocolCode;
 import com.hailin.iot.common.util.NettyEventLoopUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -118,7 +116,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
     @Override
     public Connection createConnection(Url url) throws Exception {
         Channel channel = doCreateConnection(url.getIp(), url.getPort(), url.getConnectTimeout());
-        Connection conn = new Connection(channel, ProtocolCode.fromBytes(url.getProtocol()),url);
+        Connection conn = new Connection(channel , url);
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECTION);
         return conn;
     }
@@ -126,9 +124,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
     @Override
     public Connection createConnection(String targetIp, int targetPort, int connectTimeOut) throws Exception {
         Channel channel = doCreateConnection(targetIp, targetPort, connectTimeOut);
-        Connection conn = new Connection(channel,
-                ProtocolCode.fromBytes(MQTTProtocol.PROTOCOL_CODE),
-                new Url(targetIp, targetPort));
+        Connection conn = new Connection(channel,   new Url(targetIp, targetPort));
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECTION);
         return conn;
     }

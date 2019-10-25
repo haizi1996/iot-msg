@@ -1,5 +1,7 @@
 package com.hailin.iot.common.remoting.config;
 
+import com.hailin.iot.common.remoting.config.configs.RpcConfigs;
+
 /**
  * 配置管理
  * @author hailin
@@ -148,5 +150,10 @@ public class ConfigManager {
 
     public static long getLong(String key, String defaultValue) {
         return Long.parseLong(System.getProperty(key, defaultValue));
+    }
+
+    public static boolean dispatch_msg_list_in_default_executor() {
+        return ConfigManager.getBool(RpcConfigs.DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR,
+                RpcConfigs.DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR_DEFAULT);
     }
 }

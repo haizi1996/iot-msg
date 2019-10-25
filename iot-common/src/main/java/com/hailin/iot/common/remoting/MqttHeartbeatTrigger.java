@@ -36,11 +36,9 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
 
     private static final long heartbeatTimeoutMillis = 1000;
 
-    private CommandFactory commandFactory;
 
 
-    public MqttHeartbeatTrigger(CommandFactory commandFactory) {
-        this.commandFactory = commandFactory;
+    public MqttHeartbeatTrigger() {
     }
 
     @Override
@@ -122,8 +120,7 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
                 public void run(Timeout timeout) throws Exception {
                     InvokeFuture future = conn.getHeartbeatFuture();
                     if (future != null) {
-                        future.putResponse(commandFactory.createTimeoutResponse(conn
-                                .getRemoteAddress()));
+                        future.putResponse(null);
                         future.tryAsyncExecuteInvokeCallbackAbnormally();
                     }
                 }
