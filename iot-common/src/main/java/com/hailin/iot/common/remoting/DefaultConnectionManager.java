@@ -242,7 +242,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     @Override
     public List<Connection> getAll(String poolKey) {
         ConnectionPool pool = this.getConnectionPool(this.connTasks.get(poolKey));
-        return null == pool ? new ArrayList<Connection>() : pool.getAll();
+        return null == pool ? new ArrayList<>() : pool.getAll();
     }
 
     @Override

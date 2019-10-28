@@ -25,6 +25,9 @@ public class RedisServiceTest {
 //                brokers) {
 //            System.out.printf(broker.toString());
 //        }
+
+        int i= 'n' - 'a' ;
+        System.out.println(i);
     }
 
 

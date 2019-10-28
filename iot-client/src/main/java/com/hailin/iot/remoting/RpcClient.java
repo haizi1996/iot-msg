@@ -18,6 +18,9 @@ import com.hailin.iot.common.remoting.connection.ReconnectManager;
 import com.hailin.iot.common.remoting.connection.Reconnector;
 import com.hailin.iot.common.remoting.factory.RpcCommandFactory;
 import com.hailin.iot.common.remoting.factory.impl.MqttConnectionFactory;
+import com.hailin.iot.common.remoting.monitor.ConnectionMonitorStrategy;
+import com.hailin.iot.common.remoting.monitor.DefaultConnectionMonitor;
+import com.hailin.iot.common.remoting.monitor.ScheduledDisconnectStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,9 @@ public class RpcClient extends AbstractIotClient {
     private Reconnector reconnectManager;
 
     private RemotingAddressParser addressParser;
+    private DefaultConnectionMonitor connectionMonitor;
+    private ConnectionMonitorStrategy monitorStrategy;
+
 
     protected RpcRemoting rpcRemoting;
 
@@ -88,17 +94,17 @@ public class RpcClient extends AbstractIotClient {
         this.rpcRemoting = new RpcClientRemoting(new RpcCommandFactory() , this.addressParser , this.connectionManager );
         this.taskScanner.add(this.connectionManager);
         this.taskScanner.startup();
-//        if (switches().isOn(GlobalSwitch.CONN_MONITOR_SWITCH)) {
-//            if (monitorStrategy == null) {
-//                connectionMonitor = new DefaultConnectionMonitor(new ScheduledDisconnectStrategy(),
-//                        this.connectionManager);
-//            } else {
-//                connectionMonitor = new DefaultConnectionMonitor(monitorStrategy,
-//                        this.connectionManager);
-//            }
-//            connectionMonitor.startup();
-//            logger.warn("Switch on connection monitor");
-//        }
+        if (switches().isOn(GlobalSwitch.CONN_MONITOR_SWITCH)) {
+            if (monitorStrategy == null) {
+                connectionMonitor = new DefaultConnectionMonitor(new ScheduledDisconnectStrategy(),
+                        this.connectionManager);
+            } else {
+                connectionMonitor = new DefaultConnectionMonitor(monitorStrategy,
+                        this.connectionManager);
+            }
+            connectionMonitor.startup();
+            LOGGER.warn("Switch on connection monitor");
+        }
         if (switches().isOn(GlobalSwitch.CONN_RECONNECT_SWITCH)) {
             reconnectManager = new ReconnectManager(connectionManager);
             reconnectManager.startup();
