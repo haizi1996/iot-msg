@@ -39,6 +39,9 @@ public class Connection {
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
 
+    //mqtt  连接确认
+    public static final AttributeKey<Boolean> CONNECTION_ACK = AttributeKey.valueOf("mqtt_connection");
+
     public static final AttributeKey<Integer>  HEARTBEAT_COUNT  = AttributeKey.valueOf("heartbeatCount");
 
     public static final AttributeKey<Boolean>  HEARTBEAT_SWITCH = AttributeKey.valueOf("heartbeatSwitch");
