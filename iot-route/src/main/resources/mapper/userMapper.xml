@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hailin.iot.route.dao.UserMapper">
+    <select id="findByUserName" parameterType="String" resultType="com.hailin.iot.route.model.User">
+        select * from `user` where username = #{userName}
+    </select>
+
+    <insert id="saveUser" parameterType="com.hailin.iot.route.model.User"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into user (username,password , create_time , update_Time) values (#{userName},#{password} , now() , now())
+    </insert>
+</mapper>

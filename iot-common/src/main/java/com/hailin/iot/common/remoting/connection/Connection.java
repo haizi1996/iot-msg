@@ -48,6 +48,9 @@ public class Connection {
 
     public static final AttributeKey<HeartbeatTrigger>  HEARTBEAT_TRIGGER = AttributeKey.valueOf("heartbeatTrigger");
 
+    //客户端标识
+    public static final AttributeKey<String> CLIENT_IDENTIFIER = AttributeKey.valueOf("clientIdentifier");
+
 
     //心跳的futurn
     @Setter

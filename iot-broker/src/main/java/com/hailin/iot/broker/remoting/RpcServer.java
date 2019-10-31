@@ -30,6 +30,9 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.hailin.iot.common.contanst.Contants.IDLE_HANDLER;
+import static com.hailin.iot.common.contanst.Contants.IDLE_STATE_HANDLER;
+
 
 public class RpcServer extends AbstractRemotingServer {
 
@@ -148,8 +151,8 @@ public class RpcServer extends AbstractRemotingServer {
                 pipeline.addLast("decoder" , codec.newDecoder());
                 pipeline.addLast("encoder" , codec.newEncoder());
                 if (idleSwitch){
-                    pipeline.addLast("idleStateHandler" , new IdleStateHandler(0 , 0 , idleTime , TimeUnit.SECONDS));
-                    pipeline.addLast("serverIdleHandler" , serverIdleHandler);
+                    pipeline.addLast(IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , idleTime , TimeUnit.SECONDS));
+                    pipeline.addLast(IDLE_HANDLER, serverIdleHandler);
                 }
                 pipeline.addLast("connectionEventHandler" , connectionEventHandler);
                 pipeline.addLast("handler" , rpcHandler);
