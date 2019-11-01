@@ -1,4 +1,4 @@
-package com.hailin.iot.common;
+package com.hailin.iot.common.model;
 
 import lombok.Builder;
 import lombok.Getter;

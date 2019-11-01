@@ -20,10 +20,10 @@ public class InvokeContext {
     public final static String SERVER_REMOTE_IP = "iot.server.remote.ip";
     public final static String SERVER_REMOTE_PORT = "iot.server.remote.port";
 
-    public final static String iot_INVOKE_REQUEST_ID = "iot.invoke.request.id";
-    public final static String iot_PROCESS_WAIT_TIME = "iot.invoke.wait.time";
-    public final static String iot_CUSTOM_SERIALIZER = "iot.invoke.custom.serializer";
-    public final static String iot_CRC_SWITCH = "iot.invoke.crc.switch";
+    public final static String IOT_INVOKE_REQUEST_ID = "iot.invoke.request.id";
+    public final static String IOT_PROCESS_WAIT_TIME = "iot.invoke.wait.time";
+    public final static String IOT_CUSTOM_SERIALIZER = "iot.invoke.custom.serializer";
+    public final static String IOT_CRC_SWITCH = "iot.invoke.crc.switch";
     public final static int INITIAL_SIZE = 8;
 
     private ConcurrentHashMap<String , Object> context;

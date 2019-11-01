@@ -18,7 +18,4 @@ public interface Contants {
 
     String IDLE_HANDLER = "IdleHandler";
 
-    String PROTOCOL_NAME = "MQTT";
-
-    List<Integer> SUPPORT_PROTOCOL_VERSION = Lists.newArrayList(3);
 }

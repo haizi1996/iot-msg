@@ -3,8 +3,10 @@ package com.hailin.iot.common.remoting;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,10 +27,9 @@ public class RemotingContext {
     //请求超时时间
     private int timeout;
 
-    //rpc命令类型
-    private int rpcCommandType;
+    private InvokeContext invokeContext;
 
-    private ConcurrentHashMap<Scannable , UserProcessor<?>> userProcessors;
+    private ConcurrentHashMap<MqttMessageType , UserProcessor<?>> userProcessors;
 
     public RemotingContext setTimeoutDiscard(boolean failFastEnabled) {
         this.timeoutDiscard = failFastEnabled;
@@ -37,5 +38,15 @@ public class RemotingContext {
 
     public ChannelFuture writeAndFlush(MqttMessage msg) {
         return this.channelContext.writeAndFlush(msg);
+    }
+
+    /**
+     * Get user processor for messageType.
+     *
+     * @param messageType 消息类型
+     * @return
+     */
+    public UserProcessor<?> getUserProcessor(MqttMessageType messageType) {
+        return messageType == null ? null : this.userProcessors.get(messageType);
     }
 }

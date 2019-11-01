@@ -1,0 +1,19 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.common.protoc;
+option java_outer_classname="MessageBuf";
+
+message Message {
+	//发送方
+	string sendUser = 1;
+
+	//接收方
+	string acceptUser = 2;
+
+    //消息类型 群聊,私聊,朋友圈
+	int32 messageBit = 3;
+
+    //消息内容
+	string content = 4;
+}

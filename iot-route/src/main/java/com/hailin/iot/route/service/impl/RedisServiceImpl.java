@@ -1,11 +1,10 @@
 package com.hailin.iot.route.service.impl;
 
-import com.hailin.iot.common.Broker;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.common.util.BrokerUtil;
 import com.hailin.iot.route.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

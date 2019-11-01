@@ -1,7 +1,7 @@
 package com.hailin.iot.common.util;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.hailin.iot.common.Broker;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.protoc.BrokerBuf;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

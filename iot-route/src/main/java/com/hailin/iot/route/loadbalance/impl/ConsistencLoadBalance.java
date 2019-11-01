@@ -1,6 +1,6 @@
 package com.hailin.iot.route.loadbalance.impl;
 
-import com.hailin.iot.common.Broker;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.route.loadbalance.BrokerLoadBalance;
 
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.hailin.iot.common.remoting.processor;
 
 import com.hailin.iot.common.remoting.RemotingContext;
+import com.hailin.iot.common.remoting.connection.Connection;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
@@ -15,13 +16,11 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.hailin.iot.common.contanst.Contants.IDLE_HANDLER;
 import static com.hailin.iot.common.contanst.Contants.IDLE_STATE_HANDLER;
-import static com.hailin.iot.common.contanst.Contants.PROTOCOL_NAME;
-import static com.hailin.iot.common.contanst.Contants.SUPPORT_PROTOCOL_VERSION;
 import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION;
 import static io.netty.handler.codec.mqtt.MqttVersion.MQTT_3_1_1;
 
@@ -51,11 +50,13 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         if (MQTT_3_1_1.equals(mqttVersion)){
             connectReturnCode = CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION;
         }
+        // 清除session
+        if (connectVariableHeader.isCleanSession()){
+            ctx.getChannelContext().channel().attr(Connection.MESSAGE_ID).set(new AtomicInteger(0));
+        }
 
         String userName = payload.userName();
         String password = new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
-
-
 
 
         //获取keepalive时间 单位是秒
@@ -68,7 +69,7 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         ctx.getChannelContext().channel().pipeline().addBefore(IDLE_HANDLER , IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , keepAlive , TimeUnit.SECONDS));
         //发送ConnectAck 报文
         MqttConnAckVariableHeader ackVariableHeader = new MqttConnAckVariableHeader(connectReturnCode , true);
-        MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 2) , ackVariableHeader);
+        MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 0) , ackVariableHeader);
         ctx.writeAndFlush(ackMessage);
 
     }

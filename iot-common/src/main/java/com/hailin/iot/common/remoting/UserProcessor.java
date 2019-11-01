@@ -1,5 +1,7 @@
 package com.hailin.iot.common.remoting;
 
+import io.netty.handler.codec.mqtt.MqttMessageType;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -27,6 +29,6 @@ public interface UserProcessor<T> {
     ExecutorSelector getExecutorSelector();
 
     interface ExecutorSelector {
-        Executor select(String requestClass, Object requestHeader);
+        Executor select(MqttMessageType messageType, Object requestHeader);
     }
 }

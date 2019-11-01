@@ -1,6 +1,6 @@
 package com.hailin.iot.route.service;
 
-import com.hailin.iot.common.Broker;
+import com.hailin.iot.common.model.Broker;
 
 import java.util.List;
 
