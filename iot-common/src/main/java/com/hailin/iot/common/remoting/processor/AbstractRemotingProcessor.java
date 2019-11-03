@@ -3,6 +3,7 @@ package com.hailin.iot.common.remoting.processor;
 import com.hailin.iot.common.remoting.RemotingContext;
 import com.hailin.iot.common.util.RemotingUtil;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +21,6 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
 
     }
 
-//    /**
-//     * Constructor.
-//     */
-//    public AbstractRemotingProcessor(CommandFactory commandFactory) {
-//        this.commandFactory = commandFactory;
-//    }
-
     /**
      * Constructor.
      * @param executor ExecutorService
@@ -34,8 +28,6 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
     public AbstractRemotingProcessor(ExecutorService executor) {
         this.executor = executor;
     }
-
-
 
 
     public abstract void doProcess(RemotingContext ctx, T msg) throws Exception;
@@ -63,6 +55,9 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
         this.executor = executor;
     }
 
+    public void sendResponseIfNecessary(RemotingContext ctx, MqttMessageType messageType, MqttMessage message) {
+        throw new RuntimeException();
+    }
 
 
     class ProcessTask implements Runnable {

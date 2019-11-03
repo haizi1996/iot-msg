@@ -1,5 +1,6 @@
 package com.hailin.iot.common.remoting;
 
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 
 import java.util.concurrent.Executor;
@@ -14,7 +15,7 @@ public interface UserProcessor<T> {
 
     void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
 
-    Object handleRequest(BizContext bizContext , T request) throws Exception;
+    Object handleRequest(BizContext bizContext , MqttMessage request) throws Exception;
 
     String interst();
 
@@ -24,7 +25,7 @@ public interface UserProcessor<T> {
 
     boolean timeoutDiscard();
 
-    void SetExecutorSelector( ExecutorSelector executorSelector);
+    void setExecutorSelector( ExecutorSelector executorSelector);
 
     ExecutorSelector getExecutorSelector();
 

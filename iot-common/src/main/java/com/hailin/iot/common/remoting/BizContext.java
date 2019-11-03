@@ -12,7 +12,7 @@ public interface BizContext {
 
     String getRemoteHost();
 
-    String getRemotePort();
+    Integer getRemotePort();
 
     Connection getConnection();
 

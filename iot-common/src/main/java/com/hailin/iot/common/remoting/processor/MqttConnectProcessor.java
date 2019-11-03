@@ -71,6 +71,5 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         MqttConnAckVariableHeader ackVariableHeader = new MqttConnAckVariableHeader(connectReturnCode , true);
         MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 0) , ackVariableHeader);
         ctx.writeAndFlush(ackMessage);
-
     }
 }

@@ -196,6 +196,18 @@ public class Connection {
         return invokeFutureMap.isEmpty();
     }
 
+    public InvokeFuture getInvokeFuture(int id) {
+        return this.invokeFutureMap.get(id);
+    }
+
+    public InvokeFuture addInvokeFuture(InvokeFuture future) {
+        return this.invokeFutureMap.putIfAbsent(future.invokeId(), future);
+    }
+
+    public InvokeFuture removeInvokeFuture(int id) {
+        return this.invokeFutureMap.remove(id);
+    }
+
 
     public void onClose() {
         Iterator<Map.Entry<Integer, InvokeFuture>> iter = invokeFutureMap.entrySet().iterator();
@@ -209,6 +221,14 @@ public class Connection {
                 future.tryAsyncExecuteInvokeCallbackAbnormally();
             }
         }
+    }
+
+    public void addIdPoolKeyMapping(Integer id, String poolKey) {
+        this.id2PoolKey.put(id, poolKey);
+    }
+
+    public String removeIdPoolKeyMapping(Integer id) {
+        return this.id2PoolKey.remove(id);
     }
 
 }

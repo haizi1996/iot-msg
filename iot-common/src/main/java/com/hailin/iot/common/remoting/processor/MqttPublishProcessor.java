@@ -3,15 +3,24 @@ package com.hailin.iot.common.remoting.processor;
 import com.hailin.iot.common.model.Message;
 import com.hailin.iot.common.remoting.InvokeContext;
 import com.hailin.iot.common.remoting.RemotingContext;
+import com.hailin.iot.common.remoting.RpcAsyncContext;
 import com.hailin.iot.common.remoting.UserProcessor;
 import com.hailin.iot.common.util.MessageUtil;
-import io.netty.buffer.ByteBuf;
+import com.hailin.iot.common.util.RemotingUtil;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageBuilders;
+import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -33,12 +42,9 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
 
         preProcessRemotingContext(ctx, message, currentTimestamp);
         if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
-            timeoutLog(cmd, currentTimestamp, ctx);// do some log
             return;// then, discard this request
         }
-        debugLog(ctx,  currentTimestamp);
         // decode request all
-
         dispatchToUserProcessor(ctx, msg);
 
     }
@@ -98,44 +104,71 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
      * @param msg rpc request command
      */
     private void dispatchToUserProcessor(RemotingContext ctx, MqttPublishMessage msg) {
-        final int id = msg.getId();
-        final byte type = msg.getType();
+        MqttPublishVariableHeader variableHeader = msg.variableHeader();
+        MqttFixedHeader fixedHeader = msg.fixedHeader();
+        final int packetId = variableHeader.packetId();
+        final MqttMessageType messageType = fixedHeader.messageType();
         // processor here must not be null, for it have been checked before
-        UserProcessor processor = ctx.getUserProcessor(msg.getRequestClass());
+        UserProcessor processor = ctx.getUserProcessor(messageType);
         if (processor instanceof AsyncUserProcessor) {
             try {
-                processor.handleRequest(processor.preHandleRequest(ctx, msg.getRequestObject()),
-                        new RpcAsyncContext(ctx, msg, this), msg.getRequestObject());
+                processor.handleRequest(processor.preHandleRequest(ctx, msg), new RpcAsyncContext(ctx, msg, this), msg);
+                sendResponseIfNecessary(ctx,  msg);
             } catch (RejectedExecutionException e) {
-                logger
-                        .warn("RejectedExecutionException occurred when do ASYNC process in RpcRequestProcessor");
-                sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                        .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
+                LOGGER.warn("RejectedExecutionException occurred when do ASYNC process in RpcRequestProcessor");
             } catch (Throwable t) {
-                String errMsg = "AYSNC process rpc request failed in RpcRequestProcessor, id=" + id;
-                logger.error(errMsg, t);
-                sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                        .createExceptionResponse(id, t, errMsg));
+                String errMsg = "AYSNC process rpc request failed in RpcRequestProcessor, id=" + packetId;
+                LOGGER.error(errMsg, t);
             }
         } else {
             try {
-                Object responseObject = processor
-                        .handleRequest(processor.preHandleRequest(ctx, msg.getRequestObject()),
-                                msg.getRequestObject());
-
-                sendResponseIfNecessary(ctx, type,
-                        this.getCommandFactory().createResponse(responseObject, msg));
+               processor.handleRequest(processor.preHandleRequest(ctx, msg), msg);
+                sendResponseIfNecessary(ctx,  msg);
             } catch (RejectedExecutionException e) {
-                logger
-                        .warn("RejectedExecutionException occurred when do SYNC process in RpcRequestProcessor");
-                sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                        .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
+                LOGGER.warn("RejectedExecutionException occurred when do SYNC process in RpcRequestProcessor");
             } catch (Throwable t) {
-                String errMsg = "SYNC process rpc request failed in RpcRequestProcessor, id=" + id;
-                logger.error(errMsg, t);
-                sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                        .createExceptionResponse(id, t, errMsg));
+                String errMsg = "SYNC process rpc request failed in RpcRequestProcessor, id=" + packetId;
+                LOGGER.error(errMsg, t);
             }
+        }
+    }
+
+    /**
+     * 根据请求消息发送响应的消息
+     * @param ctx
+     * @param message  请求的消息
+     */
+    public void sendResponseIfNecessary(RemotingContext ctx, MqttMessage message) {
+        if(!(message instanceof  MqttPublishMessage)){
+            return;
+        }
+        MqttFixedHeader fixedHeader = message.fixedHeader();
+        MqttPublishVariableHeader header = ((MqttPublishMessage) message).variableHeader();
+        MqttMessage response = null;
+        final int id = header.packetId();
+        if (MqttQoS.EXACTLY_ONCE == fixedHeader.qosLevel()) {
+            response = new MqttMessage(new MqttFixedHeader(MqttMessageType.PUBREC , false ,MqttQoS.EXACTLY_ONCE , false , 0),
+                    MqttMessageIdVariableHeader.from(id));
+        } else if(MqttQoS.AT_LEAST_ONCE == fixedHeader.qosLevel()){
+            response = new MqttMessage(new MqttFixedHeader(MqttMessageType.PUBACK , false ,MqttQoS.EXACTLY_ONCE , false , 0),
+                    MqttMessageIdVariableHeader.from(id));
+        }else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Oneway rpc request received, do not send response, id=" + id+ ", the address is "+ RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+            }
+        }
+        if (Objects.nonNull(response)){
+            ctx.writeAndFlush(response).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Rpc response sent! requestId="+ id + ". The address is " + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                    }
+                    if (!future.isSuccess()) {
+                        LOGGER.error("Rpc response send failed! id="+ id + ". The address is "+ RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()), future.cause());
+                    }
+                }
+            });
         }
     }
 }
