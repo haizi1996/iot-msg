@@ -1,6 +1,5 @@
 package com.hailin.iot.common.remoting;
 
-import com.hailin.iot.common.remoting.command.CommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +11,8 @@ public abstract class RpcRemoting extends BaseRemoting {
 
     protected ConnectionManager connectionManager;
 
-    public RpcRemoting(CommandFactory commandFactory) {
-        super(commandFactory);
-    }
 
-    public RpcRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser, ConnectionManager connectionManager) {
-        super(commandFactory);
+    public RpcRemoting( RemotingAddressParser addressParser, ConnectionManager connectionManager) {
         this.addressParser = addressParser;
         this.connectionManager = connectionManager;
     }

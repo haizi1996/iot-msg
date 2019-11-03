@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 连接的时间监听器
+ * 连接的事件监听器
  * @author hailin
  */
 public class ConnectionEventListener {
+
+
 
     private ConcurrentHashMap<ConnectionEventType , List<ConnectionEventProcessor>> processors = new ConcurrentHashMap<>(3);
 

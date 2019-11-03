@@ -18,6 +18,7 @@ public class RpcConnectionEventHandler extends ConnectionEventHandler {
         super(globalSwitch);
     }
 
+
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Connection connection = ctx.channel().attr(Connection.CONNECTION).get();

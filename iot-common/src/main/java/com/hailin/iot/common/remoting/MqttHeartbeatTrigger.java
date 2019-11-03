@@ -1,7 +1,5 @@
 package com.hailin.iot.common.remoting;
 
-import com.hailin.iot.common.remoting.command.CommandFactory;
-import com.hailin.iot.common.remoting.command.ResponseCommand;
 import com.hailin.iot.common.remoting.config.ConfigManager;
 import com.hailin.iot.common.remoting.connection.Connection;
 import com.hailin.iot.common.remoting.future.DefaultInvokeFuture;
@@ -63,36 +61,9 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
             final InvokeFuture future = new DefaultInvokeFuture(0, new InvokeCallbackListener() {
                 @Override
                 public void onResponse(InvokeFuture future) {
-                    ResponseCommand response;
-                    try {
-                        response = future.waitResponse(0);
-                    } catch (InterruptedException e) {
-                        logger.error("Heartbeat ack process error!  from remoteAddr={}",
-                                RemotingUtil.parseRemoteAddress(ctx.channel()),
-                                e);
-                        return;
-                    }
-                    if (response != null
-                            && response.getResponseStatus() == ResponseStatus.SUCCESS) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Heartbeat ack received!  from remoteAddr={}",
-                                    RemotingUtil.parseRemoteAddress(ctx.channel()));
-                        }
-                        ctx.channel().attr(Connection.HEARTBEAT_COUNT).set(0);
-                    } else {
-                        if (response != null
-                                && response.getResponseStatus() == ResponseStatus.TIMEOUT) {
-                            logger.error("Heartbeat timeout! The address is {}",
-                                    RemotingUtil.parseRemoteAddress(ctx.channel()));
-                        } else {
-                            logger.error(
-                                    "Heartbeat exception caught! Error code={}, The address is {}",
-                                    response == null ? null : response.getResponseStatus(),
-                                    RemotingUtil.parseRemoteAddress(ctx.channel()));
-                        }
+
                         Integer times = ctx.channel().attr(Connection.HEARTBEAT_COUNT).get();
                         ctx.channel().attr(Connection.HEARTBEAT_COUNT).set(times + 1);
-                    }
                 }
 
                 @Override
@@ -120,7 +91,6 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
                 public void run(Timeout timeout) throws Exception {
                     InvokeFuture future = conn.getHeartbeatFuture();
                     if (future != null) {
-                        future.putResponse(null);
                         future.tryAsyncExecuteInvokeCallbackAbnormally();
                     }
                 }

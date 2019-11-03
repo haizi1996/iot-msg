@@ -3,8 +3,8 @@ package com.hailin.iot.remoting;
 import com.hailin.iot.common.exception.LifeCycleException;
 import com.hailin.iot.common.remoting.ConnectionEventHandler;
 import com.hailin.iot.common.remoting.ConnectionEventListener;
+import com.hailin.iot.common.remoting.ConnectionEventType;
 import com.hailin.iot.common.remoting.ConnectionSelectStrategy;
-import com.hailin.iot.common.remoting.DefaultConnectionManager;
 import com.hailin.iot.common.remoting.RandomSelectStrategy;
 import com.hailin.iot.common.remoting.RemotingAddressParser;
 import com.hailin.iot.common.remoting.RpcAddressParser;
@@ -16,11 +16,11 @@ import com.hailin.iot.common.remoting.config.IotGenericOption;
 import com.hailin.iot.common.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.common.remoting.connection.ReconnectManager;
 import com.hailin.iot.common.remoting.connection.Reconnector;
-import com.hailin.iot.common.remoting.factory.RpcCommandFactory;
 import com.hailin.iot.common.remoting.factory.impl.MqttConnectionFactory;
 import com.hailin.iot.common.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.common.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.common.remoting.monitor.ScheduledDisconnectStrategy;
+import com.hailin.iot.remoting.processor.ConnectEventProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,6 @@ public class RpcClient extends AbstractIotClient {
     private DefaultClientConnectionManager connectionManager;
 
     private Reconnector reconnectManager;
-
     private RemotingAddressParser addressParser;
     private DefaultConnectionMonitor connectionMonitor;
     private ConnectionMonitorStrategy monitorStrategy;
@@ -59,6 +58,7 @@ public class RpcClient extends AbstractIotClient {
         this.userProcessors = new ConcurrentHashMap<>();
         this.connectionEventHandler = new RpcConnectionEventHandler();
         this.connectionEventListener = new ConnectionEventListener();
+        connectionEventListener.addConnectionEventProcessor(ConnectionEventType.CONNECT , new ConnectEventProcessor());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class RpcClient extends AbstractIotClient {
         this.connectionManager.setAddressParser(addressParser);
         this.connectionManager.startup();
 
-        this.rpcRemoting = new RpcClientRemoting(new RpcCommandFactory() , this.addressParser , this.connectionManager );
+        this.rpcRemoting = new RpcClientRemoting( this.addressParser , this.connectionManager );
         this.taskScanner.add(this.connectionManager);
         this.taskScanner.startup();
         if (switches().isOn(GlobalSwitch.CONN_MONITOR_SWITCH)) {

@@ -6,5 +6,5 @@ package com.hailin.iot.common.remoting;
  */
 public enum ConnectionEventType {
 
-    CONNECTION , CLOSE , EXCEPTION;
+    CONNECT , CLOSE , EXCEPTION;
 }

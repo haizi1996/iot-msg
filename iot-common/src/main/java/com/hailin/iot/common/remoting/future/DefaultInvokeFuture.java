@@ -2,9 +2,6 @@ package com.hailin.iot.common.remoting.future;
 
 import com.hailin.iot.common.remoting.InvokeCallback;
 import com.hailin.iot.common.remoting.InvokeContext;
-import com.hailin.iot.common.remoting.command.CommandFactory;
-import com.hailin.iot.common.remoting.command.RemotingCommand;
-import com.hailin.iot.common.remoting.command.ResponseCommand;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.util.Timeout;
 import lombok.Getter;
@@ -59,25 +56,9 @@ public class DefaultInvokeFuture implements InvokeFuture {
     }
 
 
-    @Override
-    public ResponseCommand waitResponse(long timeoutMillis) throws InterruptedException {
-        return null;
-    }
 
-    @Override
-    public RemotingCommand waitResponse() throws InterruptedException {
-        return null;
-    }
 
-    @Override
-    public RemotingCommand createConnectionClosedResponse(InetSocketAddress address) {
-        return null;
-    }
 
-    @Override
-    public RemotingCommand putResponse(RemotingCommand response) {
-        return null;
-    }
 
     @Override
     public int invokeId() {
