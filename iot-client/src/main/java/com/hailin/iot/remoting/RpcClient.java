@@ -24,6 +24,7 @@ import com.hailin.iot.common.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.common.remoting.monitor.ScheduledDisconnectStrategy;
 import com.hailin.iot.remoting.processor.ConnectEventProcessor;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ public class RpcClient extends AbstractIotClient {
     private Reconnector reconnectManager;
     private RemotingAddressParser addressParser;
     private DefaultConnectionMonitor connectionMonitor;
+    @Setter
     private ConnectionMonitorStrategy monitorStrategy;
 
 

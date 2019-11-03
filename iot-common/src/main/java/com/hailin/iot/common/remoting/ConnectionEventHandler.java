@@ -9,6 +9,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.util.Attribute;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
     @Getter
     protected ConnectionEventListener eventListener;
 
-    private ConnectionEventExecutor eventExecutor;
+    protected ConnectionEventExecutor eventExecutor;
     @Getter
     @Setter
     private Reconnector reconnectManager;
@@ -142,4 +143,77 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
             }
         }
     }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.debug("Connection channel registered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        super.channelRegistered(ctx);
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.debug("Connection channel unregistered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        super.channelUnregistered(ctx);
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.debug("Connection channel active: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        String remoteAddress = RemotingUtil.parseRemoteAddress(ctx.channel());
+        log.debug("Connection channel inactive: {}", remoteAddress);
+        super.channelInactive(ctx);
+        Attribute attr = ctx.channel().attr(Connection.CONNECTION);
+        if (null != attr) {
+            // add reconnect task
+            if (this.globalSwitch != null
+                    && this.globalSwitch.isOn(GlobalSwitch.CONN_RECONNECT_SWITCH)) {
+                Connection conn = (Connection) attr.get();
+                if (reconnectManager != null) {
+                    reconnectManager.reconnect(conn.getUrl());
+                }
+            }
+            // trigger close connection event
+            onEvent((Connection) attr.get(), remoteAddress, ConnectionEventType.CLOSE);
+        }
+    }
+
+
+
+    /**
+     * Getter method for property <tt>listener</tt>.
+     *
+     * @return property value of listener
+     */
+    public ConnectionEventListener getConnectionEventListener() {
+        return eventListener;
+    }
+
+
+    /**
+     * Getter method for property <tt>connectionManager</tt>.
+     *
+     * @return property value of connectionManager
+     */
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+
+    public void setConnectionManager(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
+
+
+    public void setReconnector(Reconnector reconnector) {
+        this.reconnectManager = reconnector;
+    }
+
+
+
 }

@@ -1,6 +1,20 @@
 package com.hailin.iot.broker.remoting;
 
-import com.hailin.iot.common.remoting.*;
+import com.hailin.iot.common.remoting.AbstractRemotingServer;
+import com.hailin.iot.common.remoting.ConnectionEventHandler;
+import com.hailin.iot.common.remoting.ConnectionEventListener;
+import com.hailin.iot.common.remoting.ConnectionEventProcessor;
+import com.hailin.iot.common.remoting.ConnectionEventType;
+import com.hailin.iot.common.remoting.ConnectionSelectStrategy;
+import com.hailin.iot.common.remoting.NamedThreadFactory;
+import com.hailin.iot.common.remoting.RandomSelectStrategy;
+import com.hailin.iot.common.remoting.RemotingAddressParser;
+import com.hailin.iot.common.remoting.RpcAddressParser;
+import com.hailin.iot.common.remoting.RpcConnectionEventHandler;
+import com.hailin.iot.common.remoting.RpcHandler;
+import com.hailin.iot.common.remoting.RpcRemoting;
+import com.hailin.iot.common.remoting.Url;
+import com.hailin.iot.common.remoting.UserProcessor;
 import com.hailin.iot.common.remoting.codec.Codec;
 import com.hailin.iot.common.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.common.remoting.config.ConfigManager;
@@ -21,6 +35,7 @@ import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -48,7 +63,7 @@ public class RpcServer extends AbstractRemotingServer {
 
     private ConnectionEventListener connectionEventListener = new ConnectionEventListener();
 
-    private ConcurrentHashMap<String , UserProcessor<?>> userProcessors = new ConcurrentHashMap<>(4);
+    private ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors = new ConcurrentHashMap<>(4);
 
     private final EventLoopGroup bossGroup = NettyEventLoopUtil.newEventLoopGroup(1, new NamedThreadFactory(
                             "Rpc-netty-server-boss", false));
@@ -144,7 +159,7 @@ public class RpcServer extends AbstractRemotingServer {
         final boolean idleSwitch = ConfigManager.tcp_idle_switch();
         final int idleTime = ConfigManager.tcp_server_idle();
         final ChannelHandler serverIdleHandler = new ServerIdleHandler();
-        final RpcHandler rpcHandler = new RpcHandler();
+        final RpcHandler rpcHandler = new RpcHandler(true , userProcessors);
         this.bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
