@@ -40,7 +40,14 @@ public class RemotingContext {
         this.timeoutDiscard = failFastEnabled;
         return this;
     }
-
+    public RemotingContext(ChannelHandlerContext ctx, InvokeContext invokeContext,
+                           boolean serverSide,
+                           ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors) {
+        this.channelContext = ctx;
+        this.serverSide = serverSide;
+        this.userProcessors = userProcessors;
+        this.invokeContext = invokeContext;
+    }
     public ChannelFuture writeAndFlush(MqttMessage msg) {
         return this.channelContext.writeAndFlush(msg);
     }

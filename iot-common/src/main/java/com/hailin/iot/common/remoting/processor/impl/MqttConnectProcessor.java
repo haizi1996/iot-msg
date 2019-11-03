@@ -1,7 +1,8 @@
-package com.hailin.iot.common.remoting.processor;
+package com.hailin.iot.common.remoting.processor.impl;
 
 import com.hailin.iot.common.remoting.RemotingContext;
 import com.hailin.iot.common.remoting.connection.Connection;
+import com.hailin.iot.common.remoting.processor.AbstractRemotingProcessor;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
@@ -66,7 +67,11 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         if (idle == null){
             return;
         }
-        ctx.getChannelContext().channel().pipeline().addBefore(IDLE_HANDLER , IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , keepAlive , TimeUnit.SECONDS));
+
+        if(connectReturnCode == MqttConnectReturnCode.CONNECTION_ACCEPTED ){
+            ctx.getChannelContext().channel().pipeline().addBefore(IDLE_HANDLER , IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , keepAlive , TimeUnit.SECONDS));
+            ctx.getConnection().getChannel().attr(Connection.CONNECTION_ACK).set(Boolean.TRUE);
+        }
         //发送ConnectAck 报文
         MqttConnAckVariableHeader ackVariableHeader = new MqttConnAckVariableHeader(connectReturnCode , true);
         MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 0) , ackVariableHeader);

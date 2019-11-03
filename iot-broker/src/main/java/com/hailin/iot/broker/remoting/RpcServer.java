@@ -2,6 +2,7 @@ package com.hailin.iot.broker.remoting;
 
 import com.hailin.iot.common.remoting.*;
 import com.hailin.iot.common.remoting.codec.Codec;
+import com.hailin.iot.common.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.common.remoting.config.ConfigManager;
 import com.hailin.iot.common.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.common.remoting.connection.Connection;
@@ -63,7 +64,7 @@ public class RpcServer extends AbstractRemotingServer {
 
     protected RpcRemoting rpcRemoting;
 
-    private Codec codec;
+    private Codec codec = new MqttCoder() ;
 
     static {
         if (workerGroup instanceof NioEventLoopGroup){
@@ -170,7 +171,7 @@ public class RpcServer extends AbstractRemotingServer {
                 }else {
                     new Connection(socketChannel , url);
                 }
-                socketChannel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECTION);
+                socketChannel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
             }
         });
 
@@ -195,7 +196,7 @@ public class RpcServer extends AbstractRemotingServer {
     }
 
     public void initRpcRemoting() {
-        this.rpcRemoting = new RpcServerRemoting(null , this.addressParser , this.connectionManager);
+        this.rpcRemoting = new RpcServerRemoting( this.addressParser , this.connectionManager);
     }
 
     @Override

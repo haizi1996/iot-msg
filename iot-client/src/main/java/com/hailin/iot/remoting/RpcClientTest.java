@@ -1,9 +1,14 @@
 package com.hailin.iot.remoting;
 
 
-public class RpcClientTest {
-    public static void main(String[] args) {
-        RpcClient client = new RpcClient();
+import com.hailin.iot.common.remoting.connection.Connection;
 
+public class RpcClientTest {
+    public static void main(String[] args) throws InterruptedException {
+        RpcClient client = new RpcClient();
+        client.startup();
+        Connection connection = client.createStandaloneConnection("localhost:8081" , 88);
+
+        connection.getChannel().closeFuture().sync();
     }
 }

@@ -1,6 +1,7 @@
 package com.hailin.iot.remoting;
 
 import com.hailin.iot.common.exception.LifeCycleException;
+import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.common.remoting.ConnectionEventHandler;
 import com.hailin.iot.common.remoting.ConnectionEventListener;
 import com.hailin.iot.common.remoting.ConnectionEventType;
@@ -14,6 +15,7 @@ import com.hailin.iot.common.remoting.RpcTaskScanner;
 import com.hailin.iot.common.remoting.UserProcessor;
 import com.hailin.iot.common.remoting.config.IotGenericOption;
 import com.hailin.iot.common.remoting.config.switches.GlobalSwitch;
+import com.hailin.iot.common.remoting.connection.Connection;
 import com.hailin.iot.common.remoting.connection.ReconnectManager;
 import com.hailin.iot.common.remoting.connection.Reconnector;
 import com.hailin.iot.common.remoting.factory.impl.MqttConnectionFactory;
@@ -21,6 +23,7 @@ import com.hailin.iot.common.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.common.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.common.remoting.monitor.ScheduledDisconnectStrategy;
 import com.hailin.iot.remoting.processor.ConnectEventProcessor;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,7 @@ public class RpcClient extends AbstractIotClient {
 
     private final RpcTaskScanner taskScanner;
 
-    private final ConcurrentHashMap<String , UserProcessor<?>> userProcessors;
+    private final ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors;
 
     private final ConnectionEventHandler connectionEventHandler;
 
@@ -113,5 +116,9 @@ public class RpcClient extends AbstractIotClient {
             LOGGER.warn("Switch on reconnect manager");
         }
     }
-
+    @Override
+    public Connection createStandaloneConnection(String address, int connectTimeout)
+            throws RemotingException {
+        return this.connectionManager.create(address, connectTimeout);
+    }
 }

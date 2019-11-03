@@ -1,7 +1,8 @@
-package com.hailin.iot.common.remoting.processor;
+package com.hailin.iot.common.remoting.processor.impl;
 
 import com.hailin.iot.common.remoting.RemotingContext;
 import com.hailin.iot.common.remoting.connection.Connection;
+import com.hailin.iot.common.remoting.processor.AbstractRemotingProcessor;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import org.slf4j.Logger;

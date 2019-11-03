@@ -60,7 +60,7 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
     }
 
 
-    class ProcessTask implements Runnable {
+    public class ProcessTask implements Runnable {
 
         RemotingContext ctx;
         T               msg;

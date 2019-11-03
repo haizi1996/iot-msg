@@ -1,9 +1,15 @@
 package com.hailin.iot.common.remoting.handler;
 
 import com.hailin.iot.common.remoting.RemotingContext;
-import com.hailin.iot.common.remoting.ResponseStatus;
 import com.hailin.iot.common.remoting.config.ConfigManager;
 import com.hailin.iot.common.remoting.processor.AbstractRemotingProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttConnAckProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttConnectProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttDisconnectProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttPingReqProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttPingRespProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttPubAckProcessor;
+import com.hailin.iot.common.remoting.processor.impl.MqttPublishProcessor;
 import com.hailin.iot.common.remoting.processor.ProcessorManager;
 import com.hailin.iot.common.remoting.processor.RemotingProcessor;
 import io.netty.channel.ChannelFuture;
@@ -22,23 +28,31 @@ import java.util.concurrent.RejectedExecutionException;
  * mqtt协议的处理器
  * @author zhanghailin
  */
+
 public class MqttMessageHandler implements MessageHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttMessageHandler.class);
 
     private ProcessorManager processorManager;
 
-    public MqttMessageHandler() {
+    private static MqttMessageHandler handler = new  MqttMessageHandler();
+
+    public static MqttMessageHandler getHandler() {
+        return handler;
+    }
+
+    private MqttMessageHandler() {
         this.processorManager = new ProcessorManager();
-        //process request
-//        this.processorManager.registerProcessor(RpcCommandCode.RPC_REQUEST,
-//                new RpcRequestProcessor(this.commandFactory));
+        //MqttConnect request
+        this.processorManager.registerProcessor(MqttMessageType.CONNECT, new MqttConnectProcessor());
 //        process response
-//        this.processorManager.registerProcessor(RpcCommandCode.RPC_RESPONSE,
-//                new RpcResponseProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.CONNACK, new MqttConnAckProcessor());
 //
-//        this.processorManager.registerProcessor(CommonCommandCode.HEARTBEAT,
-//                new RpcHeartBeatProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.PUBLISH, new MqttPublishProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.PINGREQ, new MqttPingReqProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.PINGRESP, new MqttPingRespProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.PUBACK, new MqttPubAckProcessor());
+        this.processorManager.registerProcessor(MqttMessageType.DISCONNECT, new MqttDisconnectProcessor());
 
         this.processorManager
                 .registerDefaultProcessor(new AbstractRemotingProcessor<MqttMessage>() {
@@ -51,7 +65,7 @@ public class MqttMessageHandler implements MessageHandler {
     }
 
     @Override
-    public void handleMessage(RemotingContext ctx, Object msg) throws Exception {
+    public void handleMessage(RemotingContext ctx, MqttMessage msg) throws Exception {
         try {
             if (msg instanceof List) {
                 final Runnable handleTask = new Runnable() {

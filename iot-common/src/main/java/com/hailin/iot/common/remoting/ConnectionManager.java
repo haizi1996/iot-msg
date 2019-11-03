@@ -50,6 +50,8 @@ public interface ConnectionManager  extends Scannable, LifeCycle {
 
     Connection getAndCreateIfAbsent(Url url) throws InterruptedException, RemotingException;
 
+    Connection create(String address, int connectTimeout) throws RemotingException;
+
     void createConnectionAndHealIfNeed(Url url) throws InterruptedException, RemotingException;
     /**
      * 统计特定池里的连接

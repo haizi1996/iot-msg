@@ -2,6 +2,7 @@ package com.hailin.iot.common.remoting.handler;
 
 import com.hailin.iot.common.remoting.RemotingContext;
 import com.hailin.iot.common.remoting.processor.RemotingProcessor;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 
 import java.util.concurrent.ExecutorService;
@@ -11,7 +12,7 @@ import java.util.concurrent.ExecutorService;
  */
 public interface MessageHandler {
 
-    void handleMessage(RemotingContext ctx , Object msg ) throws Exception;
+    void handleMessage(RemotingContext ctx , MqttMessage msg ) throws Exception;
 
     void registerProcessor(MqttMessageType mqttMessageType, RemotingProcessor<?> processor);
 

@@ -446,6 +446,13 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     }
 
     @Override
+    public Connection create(String address, int connectTimeout) throws RemotingException {
+        Url url = this.addressParser.parse(address);
+        url.setConnectTimeout(connectTimeout);
+        return create(url);
+    }
+
+    @Override
     public Connection create(Url url) throws RemotingException {
         Connection conn;
         try {

@@ -1,11 +1,12 @@
-package com.hailin.iot.common.remoting.processor;
+package com.hailin.iot.common.remoting.processor.impl;
 
 import com.hailin.iot.common.remoting.DefaultBizContext;
 import com.hailin.iot.common.remoting.RemotingContext;
+import com.hailin.iot.common.remoting.processor.AbstractRemotingProcessor;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 
-public class MqttPubAckMessageProcessor extends AbstractRemotingProcessor<MqttMessage> {
+public class MqttPubAckProcessor extends AbstractRemotingProcessor<MqttMessage> {
 
     @Override
     public void doProcess(RemotingContext ctx, MqttMessage msg) throws Exception {

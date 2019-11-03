@@ -36,7 +36,6 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
     @Setter
     private ConnectionManager connectionManager;
     @Getter
-    @Setter
     protected ConnectionEventListener eventListener;
 
     private ConnectionEventExecutor eventExecutor;
@@ -116,7 +115,14 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
             });
         }
     }
-
+    public void setConnectionEventListener(ConnectionEventListener listener) {
+        if (listener != null) {
+            this.eventListener = listener;
+            if (this.eventExecutor == null) {
+                this.eventExecutor = new ConnectionEventExecutor();
+            }
+        }
+    }
     public class ConnectionEventExecutor {
         private  Logger logger = LoggerFactory.getLogger(ConnectionEventExecutor.class);
         ExecutorService executor = new ThreadPoolExecutor(1, 1, 60L, TimeUnit.SECONDS,

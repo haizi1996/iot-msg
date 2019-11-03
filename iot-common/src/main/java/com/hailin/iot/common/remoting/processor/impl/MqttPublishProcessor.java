@@ -1,17 +1,18 @@
-package com.hailin.iot.common.remoting.processor;
+package com.hailin.iot.common.remoting.processor.impl;
 
 import com.hailin.iot.common.model.Message;
 import com.hailin.iot.common.remoting.InvokeContext;
 import com.hailin.iot.common.remoting.RemotingContext;
 import com.hailin.iot.common.remoting.RpcAsyncContext;
 import com.hailin.iot.common.remoting.UserProcessor;
+import com.hailin.iot.common.remoting.processor.AbstractRemotingProcessor;
+import com.hailin.iot.common.remoting.processor.AsyncUserProcessor;
 import com.hailin.iot.common.util.MessageUtil;
 import com.hailin.iot.common.util.RemotingUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
@@ -158,15 +159,12 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
             }
         }
         if (Objects.nonNull(response)){
-            ctx.writeAndFlush(response).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Rpc response sent! requestId="+ id + ". The address is " + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
-                    }
-                    if (!future.isSuccess()) {
-                        LOGGER.error("Rpc response send failed! id="+ id + ". The address is "+ RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()), future.cause());
-                    }
+            ctx.writeAndFlush(response).addListener((ChannelFutureListener) future -> {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Rpc response sent! requestId="+ id + ". The address is " + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                }
+                if (!future.isSuccess()) {
+                    LOGGER.error("Rpc response send failed! id="+ id + ". The address is "+ RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()), future.cause());
                 }
             });
         }

@@ -80,18 +80,19 @@ public class Connection {
     public Connection(Channel channel) {
         this.channel = channel;
         this.channel.attr(CONNECTION).set(this);
+        this.init();
     }
 
     public Connection(Channel channel, Url url) {
         this(channel);
         this.url = url;
         this.poolKeys.add(url.getUniqueKey());
+        this.init();
     }
 
 
     private void init() {
         this.channel.attr(HEARTBEAT_COUNT).set(0);
-//        this.channel.attr(PROTOCOL).set(this.protocolCode);
         this.channel.attr(HEARTBEAT_SWITCH).set(true);
         this.channel.attr(HEARTBEAT_TRIGGER).set(new MqttHeartbeatTrigger());
     }
@@ -216,7 +217,6 @@ public class Connection {
             iter.remove();
             InvokeFuture future = entry.getValue();
             if (future != null) {
-                future.putResponse(future.createConnectionClosedResponse(this.getRemoteAddress()));
                 future.cancelTimeout();
                 future.tryAsyncExecuteInvokeCallbackAbnormally();
             }
