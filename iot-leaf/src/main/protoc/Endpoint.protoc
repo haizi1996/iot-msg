@@ -1,0 +1,14 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.leaf.common.protoc;
+option java_outer_classname="EndpointBuf";
+
+message Endpoint {
+	//ip地址
+	string ip = 1;
+	//端口
+	uint32 port = 2;
+    //时间戳
+	uint64 timestamp = 3;
+}
