@@ -31,8 +31,6 @@ import java.util.stream.Collectors;
 public class RedisClientService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientService.class);
-    private String zk_AddressNode = null;//保存自身的key  ip:port-000000001
-    private String listenAddress = null;//保存自身的key ip:port
 
     //redis自增key
     private static final String REDIS_INCR_KEY = "redis_incr_key";
@@ -40,8 +38,6 @@ public class RedisClientService {
     private int workerID;
     private String ip;
     private Integer port;
-    private String connectionString;
-    private long lastUpdateTime;
 
     private static final int IDLE_TIME = 5;
 
@@ -60,7 +56,7 @@ public class RedisClientService {
         this.port = port;
         this.redisUrl = redisUrl;
 //        redisClient = RedisClient.create("redis://"+ ip +":" + port + "/1");
-        redisClient = RedisClient.create(redisUrl);
+        redisClient = RedisClient.create(this.redisUrl);
         commands = redisClient.connect(new ByteArrayCodec()).sync();
         asyncCommands = redisClient.connect(new ByteArrayCodec()).async();
     }
