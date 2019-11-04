@@ -9,6 +9,7 @@ message Endpoint {
 	string ip = 1;
 	//端口
 	uint32 port = 2;
-    //时间戳
-	uint64 timestamp = 3;
+
+	//workerId
+	uint32 workerID = 3;
 }

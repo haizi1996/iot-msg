@@ -47,12 +47,12 @@ public final class EndpointBuf {
 
     /**
      * <pre>
-     *时间戳
+     *workerId
      * </pre>
      *
-     * <code>optional uint64 timestamp = 3;</code>
+     * <code>optional uint32 workerID = 3;</code>
      */
-    long getTimestamp();
+    int getWorkerID();
   }
   /**
    * Protobuf type {@code com.hailin.iot.leaf.common.protoc.Endpoint}
@@ -68,7 +68,7 @@ public final class EndpointBuf {
     private Endpoint() {
       ip_ = "";
       port_ = 0;
-      timestamp_ = 0L;
+      workerID_ = 0;
     }
 
     @java.lang.Override
@@ -109,7 +109,7 @@ public final class EndpointBuf {
             }
             case 24: {
 
-              timestamp_ = input.readUInt64();
+              workerID_ = input.readUInt32();
               break;
             }
           }
@@ -190,17 +190,17 @@ public final class EndpointBuf {
       return port_;
     }
 
-    public static final int TIMESTAMP_FIELD_NUMBER = 3;
-    private long timestamp_;
+    public static final int WORKERID_FIELD_NUMBER = 3;
+    private int workerID_;
     /**
      * <pre>
-     *时间戳
+     *workerId
      * </pre>
      *
-     * <code>optional uint64 timestamp = 3;</code>
+     * <code>optional uint32 workerID = 3;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public int getWorkerID() {
+      return workerID_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -221,8 +221,8 @@ public final class EndpointBuf {
       if (port_ != 0) {
         output.writeUInt32(2, port_);
       }
-      if (timestamp_ != 0L) {
-        output.writeUInt64(3, timestamp_);
+      if (workerID_ != 0) {
+        output.writeUInt32(3, workerID_);
       }
     }
 
@@ -238,9 +238,9 @@ public final class EndpointBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(2, port_);
       }
-      if (timestamp_ != 0L) {
+      if (workerID_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(3, timestamp_);
+          .computeUInt32Size(3, workerID_);
       }
       memoizedSize = size;
       return size;
@@ -262,8 +262,8 @@ public final class EndpointBuf {
           .equals(other.getIp());
       result = result && (getPort()
           == other.getPort());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && (getWorkerID()
+          == other.getWorkerID());
       return result;
     }
 
@@ -278,9 +278,8 @@ public final class EndpointBuf {
       hash = (53 * hash) + getIp().hashCode();
       hash = (37 * hash) + PORT_FIELD_NUMBER;
       hash = (53 * hash) + getPort();
-      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (37 * hash) + WORKERID_FIELD_NUMBER;
+      hash = (53 * hash) + getWorkerID();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -403,7 +402,7 @@ public final class EndpointBuf {
 
         port_ = 0;
 
-        timestamp_ = 0L;
+        workerID_ = 0;
 
         return this;
       }
@@ -429,7 +428,7 @@ public final class EndpointBuf {
         com.hailin.iot.leaf.common.protoc.EndpointBuf.Endpoint result = new com.hailin.iot.leaf.common.protoc.EndpointBuf.Endpoint(this);
         result.ip_ = ip_;
         result.port_ = port_;
-        result.timestamp_ = timestamp_;
+        result.workerID_ = workerID_;
         onBuilt();
         return result;
       }
@@ -478,8 +477,8 @@ public final class EndpointBuf {
         if (other.getPort() != 0) {
           setPort(other.getPort());
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (other.getWorkerID() != 0) {
+          setWorkerID(other.getWorkerID());
         }
         onChanged();
         return this;
@@ -634,40 +633,40 @@ public final class EndpointBuf {
         return this;
       }
 
-      private long timestamp_ ;
+      private int workerID_ ;
       /**
        * <pre>
-       *时间戳
+       *workerId
        * </pre>
        *
-       * <code>optional uint64 timestamp = 3;</code>
+       * <code>optional uint32 workerID = 3;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public int getWorkerID() {
+        return workerID_;
       }
       /**
        * <pre>
-       *时间戳
+       *workerId
        * </pre>
        *
-       * <code>optional uint64 timestamp = 3;</code>
+       * <code>optional uint32 workerID = 3;</code>
        */
-      public Builder setTimestamp(long value) {
+      public Builder setWorkerID(int value) {
         
-        timestamp_ = value;
+        workerID_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       *时间戳
+       *workerId
        * </pre>
        *
-       * <code>optional uint64 timestamp = 3;</code>
+       * <code>optional uint32 workerID = 3;</code>
        */
-      public Builder clearTimestamp() {
+      public Builder clearWorkerID() {
         
-        timestamp_ = 0L;
+        workerID_ = 0;
         onChanged();
         return this;
       }
@@ -735,9 +734,9 @@ public final class EndpointBuf {
   static {
     java.lang.String[] descriptorData = {
       "\n\017Endpoint.protoc\022!com.hailin.iot.leaf.c" +
-      "ommon.protoc\"7\n\010Endpoint\022\n\n\002ip\030\001 \001(\t\022\014\n\004" +
-      "port\030\002 \001(\r\022\021\n\ttimestamp\030\003 \001(\004B\rB\013Endpoin" +
-      "tBufb\006proto3"
+      "ommon.protoc\"6\n\010Endpoint\022\n\n\002ip\030\001 \001(\t\022\014\n\004" +
+      "port\030\002 \001(\r\022\020\n\010workerID\030\003 \001(\rB\rB\013Endpoint" +
+      "Bufb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -756,7 +755,7 @@ public final class EndpointBuf {
     internal_static_com_hailin_iot_leaf_common_protoc_Endpoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_hailin_iot_leaf_common_protoc_Endpoint_descriptor,
-        new java.lang.String[] { "Ip", "Port", "Timestamp", });
+        new java.lang.String[] { "Ip", "Port", "WorkerID", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

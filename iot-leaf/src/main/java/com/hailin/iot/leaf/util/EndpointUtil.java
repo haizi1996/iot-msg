@@ -33,7 +33,7 @@ public class EndpointUtil {
         }
         EndpointBuf.Endpoint.Builder builder = EndpointBuf.Endpoint.newBuilder();
         return  builder.setIp(endpoint.getIp())
-        .setPort(endpoint.getPort()).setTimestamp(endpoint.getTimestamp())
+        .setPort(endpoint.getPort()).setWorkerID(endpoint.getWorkerID())
                 .build().toByteArray();
     }
 
@@ -44,7 +44,7 @@ public class EndpointUtil {
         }
         try {
             EndpointBuf.Endpoint endpoint = EndpointBuf.Endpoint.parseFrom(bytes);
-            Endpoint res = Endpoint.builder().ip(endpoint.getIp()).port(endpoint.getPort()).timestamp(endpoint.getTimestamp()).build();
+            Endpoint res = Endpoint.builder().ip(endpoint.getIp()).port(endpoint.getPort()).workerID(endpoint.getWorkerID()).build();
             return res;
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
