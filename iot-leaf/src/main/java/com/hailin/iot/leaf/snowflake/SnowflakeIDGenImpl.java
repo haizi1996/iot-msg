@@ -42,16 +42,16 @@ public class SnowflakeIDGenImpl implements IDGen {
     }
 
     /**
-     * @param zkAddress zk地址
+     * @param redisUrl reids地址
      * @param port      snowflake监听端口
      * @param twepoch   起始的时间戳
      */
-    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
+    public SnowflakeIDGenImpl(String redisUrl, int port, long twepoch) {
         this.twepoch = twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
-        RedisClientService service = new RedisClientService(ip, port);
-        LOGGER.info("twepoch:{} ,ip:{} ,redis Address:{} port:{}", twepoch, ip, zkAddress, port);
+        RedisClientService service = new RedisClientService(ip, port , redisUrl);
+        LOGGER.info("twepoch:{} ,ip:{} ,redis Address:{} port:{}", twepoch, ip, redisUrl, port);
         boolean initFlag = service.init();
         if (initFlag) {
             workerId = service.getWorkerID();

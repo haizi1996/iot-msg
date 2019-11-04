@@ -1,14 +1,13 @@
 package com.hailin.iot.leaf.snowflake;
 
 import com.hailin.iot.leaf.common.Endpoint;
+import com.hailin.iot.leaf.util.EndpointUtil;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
-import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.async.RedisAsyncCommands;
-import io.lettuce.core.api.sync.RedisHashCommands;
 import io.lettuce.core.codec.ByteArrayCodec;
-import io.lettuce.core.protocol.RedisCommand;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
+@Slf4j
 public class RedisClientService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientService.class);
@@ -33,25 +33,53 @@ public class RedisClientService {
 
     private static final String WORK_ID_KEY = "snowflake_leaf";
 
-    private static final RedisClientService INSTANCE = null;
 
     private RedisClient redisClient;
 
-    public RedisClientService(String ip , Integer port) {
+    private RedisAsyncCommands<byte[] , byte[]> commands;
+
+    private String redisUrl;
+
+    public RedisClientService(String ip , Integer port , String redisUrl) {
         this.ip = ip;
         this.port = port;
-        redisClient = RedisClient.create("redis://"+ ip +":" + port + "/1");
+        this.redisUrl = redisUrl;
+//        redisClient = RedisClient.create("redis://"+ ip +":" + port + "/1");
+        redisClient = RedisClient.create(redisUrl);
+        commands =  redisClient.connect(new ByteArrayCodec()).async();
     }
 
-    public boolean init() throws ExecutionException, InterruptedException {
+    public boolean init() {
         long now = System.currentTimeMillis();
-        RedisAsyncCommands<byte[] , byte[]> commands =  redisClient.connect(new ByteArrayCodec()).async();
         RedisFuture<List<byte[]>> future = commands.zrange(WORK_ID_KEY.getBytes() ,  now - (IDLE_TIME << 1)  , now);
-        List<byte[]> bytes = future.get();
-        //第一台机器
-        if(CollectionUtils.isEmpty(bytes)){
-
+        List<byte[]> bytes = null;
+        try {
+            bytes = future.get();
+            //第一台机器
+            if(CollectionUtils.isEmpty(bytes)){
+                createNode();
+                //worker id 默认是0
+                updateLocalWorkerID(workerID);
+                //定时上报本机时间给forever节点
+                ScheduledUploadData(curator, zk_AddressNode);
+            }
+        } catch (InterruptedException e) {
+            log.error("" , e);
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            log.error("" , e);
+            throw new RuntimeException(e);
         }
 
+
+    }
+
+    private void createNode() {
+        try {
+            commands.zadd(WORK_ID_KEY.getBytes() , System.currentTimeMillis() , EndpointUtil.serializeToByteArray(new Endpoint(ip , port,System.currentTimeMillis())));
+        } catch (Exception e) {
+            LOGGER.error("create node error msg {} ", e.getMessage());
+            throw e;
+        }
     }
 }
