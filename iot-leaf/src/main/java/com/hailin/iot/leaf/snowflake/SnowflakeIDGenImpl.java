@@ -62,7 +62,7 @@ public class SnowflakeIDGenImpl implements IDGen {
         Preconditions.checkArgument(workerId >= 0 && workerId <= maxWorkerId, "workerID must gte 0 and lte 1023");
     }
     @Override
-    public synchronized Result get(String key) {
+    public synchronized Result get() {
         //获取当前时间
         long timestamp = timeGen();
 

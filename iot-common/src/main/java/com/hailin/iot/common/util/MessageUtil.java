@@ -2,7 +2,6 @@ package com.hailin.iot.common.util;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.hailin.iot.common.model.Message;
-import com.hailin.iot.common.protoc.MessageBuf;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
