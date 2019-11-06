@@ -1,6 +1,7 @@
 package com.hailin.iot.store.hbase.config;
 
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Scan;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class HbaseConfigTest {
 
     @Test
     public void getByRow() {
+
         String res = hbaseTemplate.get("test" , "row1" , new RowMapper<String>(){
             @Override
             public String mapRow(Result result, int i) throws Exception {

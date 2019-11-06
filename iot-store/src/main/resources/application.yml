@@ -5,5 +5,8 @@ spring:
       config:
         hbase:
           zookeeper:
-            quorum: 192.168.99.101
+            quorum: localhost
           rootdir: file:///workspace/hbase
+          fs:
+            default:
+              name: file:///Users/zhanghailin/workspace/hbase
