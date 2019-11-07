@@ -1,6 +1,9 @@
 package com.hailin.iot.store.hbase;
 
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.UnpooledHeapByteBuf;
+import lombok.NoArgsConstructor;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -12,14 +15,29 @@ import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
+
+@NoArgsConstructor
 public class HbaseUtils {
+
+    /**
+     * 构建出rowkey
+     *
+     * hash(session id) |  session id | 逆序消息id
+     */
+    public static byte[] buildRowKey(String sessionId , long messageId){
+
+        return ByteBuffer.allocate(4).putInt(sessionId.hashCode())
+                .putChar('|').put(sessionId.getBytes()).putChar('|').array();
+    }
+
+
 
 
     Configuration config = HBaseConfiguration.create();
