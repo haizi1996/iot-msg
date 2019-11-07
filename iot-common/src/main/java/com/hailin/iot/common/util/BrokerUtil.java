@@ -1,4 +1,4 @@
-package com.hailin.iot.remoting.util;
+package com.hailin.iot.common.util;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.hailin.iot.common.model.Broker;

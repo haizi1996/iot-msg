@@ -1,9 +1,12 @@
 package com.hailin.iot.store.hbase;
 
 
+import com.hailin.iot.common.contanst.MessageBit;
+import com.hailin.iot.common.model.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledHeapByteBuf;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -34,10 +37,35 @@ public class HbaseUtils {
     public static byte[] buildRowKey(String sessionId , long messageId){
 
         return ByteBuffer.allocate(4).putInt(sessionId.hashCode())
-                .putChar('|').put(sessionId.getBytes()).putChar('|').array();
+                .putChar('|').put(sessionId.getBytes()).putChar('|').putLong(Long.MAX_VALUE ^ messageId).array();
     }
 
+    /**
+     * 构建SessionId
+     * 群聊消息就是 群号
+     * 私聊消息是 小userId #|# 大号userId
+     * @param message 消息
+     */
+    public static String buildSession(Message message){
+        if(MessageBit.GROUP_CHAT.isBit(message.getMessageBit())){
+            return message.getAcceptUser();
+        }else if (MessageBit.PRIVATE_CHAT.isBit(message.getMessageId())){
+            return message.getSendUser().compareTo(message.getAcceptUser()) < 0 ? buildSessionId(message.getSendUser() , message.getAcceptUser()) : buildSessionId(message.getAcceptUser() , message.getSendUser());
+        }else {
+            return StringUtils.EMPTY;
+        }
 
+    }
+
+    /**
+     * 拼接成Session
+     * @param smallUserId
+     * @param bigUsrId
+     * @return
+     */
+    public static String buildSessionId(String smallUserId, String bigUsrId) {
+        return new StringBuilder().append(smallUserId).append("#$#$|#").append(bigUsrId).toString();
+    }
 
 
     Configuration config = HBaseConfiguration.create();

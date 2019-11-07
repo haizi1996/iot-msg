@@ -1,0 +1,12 @@
+## HBase 配置
+spring:
+  data:
+    hbase:
+      config:
+        hbase:
+          zookeeper:
+            quorum: centos1
+          rootdir: file:///workspace/hbase
+          fs:
+            default:
+              name: file:///workspace/hbase

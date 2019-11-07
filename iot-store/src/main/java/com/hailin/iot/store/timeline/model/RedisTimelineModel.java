@@ -9,6 +9,7 @@ import lombok.Setter;
 @Builder
 public class RedisTimelineModel implements TimeLineModel  {
 
+    // 消息的rowkey
     private byte[] key;
 
     private byte[] timeLineId;

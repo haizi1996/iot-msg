@@ -11,6 +11,7 @@ import org.springframework.data.hadoop.hbase.RowMapper;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @SpringBootTest
@@ -23,13 +24,17 @@ public class HbaseConfigTest {
     @Test
     public void getByRow() {
 
-        String res = hbaseTemplate.get("test" , "row1" , new RowMapper<String>(){
+        Scan scan = new Scan();
+        scan.setLimit(1);
+        scan.withStartRow("row3".getBytes() , false);
+
+        List<String> res = hbaseTemplate.find("test" , scan , new RowMapper<String>(){
             @Override
             public String mapRow(Result result, int i) throws Exception {
                 return result.toString();
             }
         });
         System.out.println("----->");
-        System.out.println(res);
+        res.forEach(System.out::println);
     }
 }
