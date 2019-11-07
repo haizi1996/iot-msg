@@ -1,9 +1,8 @@
 package com.hailin.iot.remoting;
 
 import com.hailin.iot.common.exception.RemotingException;
-import com.hailin.iot.common.remoting.LifeCycle;
-import com.hailin.iot.common.remoting.config.Configurable;
-import com.hailin.iot.common.remoting.connection.Connection;
+import com.hailin.iot.remoting.config.Configurable;
+import com.hailin.iot.remoting.connection.Connection;
 
 /**
  * 客户端通讯接口

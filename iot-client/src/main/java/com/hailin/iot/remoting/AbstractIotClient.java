@@ -1,16 +1,15 @@
 package com.hailin.iot.remoting;
 
-import com.hailin.iot.common.remoting.AbstractLifeCycle;
-import com.hailin.iot.common.remoting.config.IotOption;
-import com.hailin.iot.common.remoting.config.IotOptions;
-import com.hailin.iot.common.remoting.config.ConfigManager;
-import com.hailin.iot.common.remoting.config.ConfigType;
-import com.hailin.iot.common.remoting.config.Configurable;
-import com.hailin.iot.common.remoting.config.configs.ConfigContainer;
-import com.hailin.iot.common.remoting.config.configs.ConfigItem;
-import com.hailin.iot.common.remoting.config.configs.ConfigurableInstance;
-import com.hailin.iot.common.remoting.config.configs.DefaultConfigContainer;
-import com.hailin.iot.common.remoting.config.switches.GlobalSwitch;
+import com.hailin.iot.remoting.config.IotOption;
+import com.hailin.iot.remoting.config.IotOptions;
+import com.hailin.iot.remoting.config.ConfigManager;
+import com.hailin.iot.remoting.config.ConfigType;
+import com.hailin.iot.remoting.config.Configurable;
+import com.hailin.iot.remoting.config.configs.ConfigContainer;
+import com.hailin.iot.remoting.config.configs.ConfigItem;
+import com.hailin.iot.remoting.config.configs.ConfigurableInstance;
+import com.hailin.iot.remoting.config.configs.DefaultConfigContainer;
+import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 
 import java.util.Objects;
 

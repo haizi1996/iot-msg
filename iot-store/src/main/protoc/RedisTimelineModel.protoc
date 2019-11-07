@@ -1,0 +1,15 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.store.protoc;
+option java_outer_classname="RedisTimelineModelBuf";
+
+message RedisTimelineModel {
+	//ip地址
+	repeated ip = 1;
+	//端口
+	repeated uint8 port = 2;
+
+	//workerId
+	uint32 workerID = 3;
+}

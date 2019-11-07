@@ -1,9 +1,8 @@
 package com.hailin.iot.remoting.processor;
 
-import com.hailin.iot.common.remoting.ConnectionEventProcessor;
-import com.hailin.iot.common.remoting.connection.Connection;
+import com.hailin.iot.remoting.ConnectionEventProcessor;
+import com.hailin.iot.remoting.connection.Connection;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttVersion;

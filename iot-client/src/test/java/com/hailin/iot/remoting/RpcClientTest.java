@@ -1,7 +1,7 @@
 package com.hailin.iot.remoting;
 
 
-import com.hailin.iot.common.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.Connection;
 import org.junit.Test;
 
 public class RpcClientTest {
