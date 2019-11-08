@@ -1,7 +1,7 @@
 package com.hailin.iot.remoting.processor;
 
 import com.hailin.iot.remoting.RemotingContext;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.slf4j.Logger;

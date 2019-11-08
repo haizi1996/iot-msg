@@ -36,7 +36,7 @@ public class HbaseUtils {
      */
     public static byte[] buildRowKey(String sessionId , long messageId){
 
-        return ByteBuffer.allocate(4).putInt(sessionId.hashCode())
+        return ByteBuffer.allocate(50).putInt(sessionId.hashCode())
                 .putChar('|').put(sessionId.getBytes()).putChar('|').putLong(Long.MAX_VALUE ^ messageId).array();
     }
 

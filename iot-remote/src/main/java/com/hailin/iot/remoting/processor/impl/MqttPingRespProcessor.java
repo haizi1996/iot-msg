@@ -4,7 +4,7 @@ import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.future.InvokeFuture;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.slf4j.Logger;

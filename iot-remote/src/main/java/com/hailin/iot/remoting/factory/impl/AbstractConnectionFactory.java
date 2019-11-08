@@ -9,7 +9,7 @@ import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.config.configs.ConfigurableInstance;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.factory.ConnectionFactory;
-import com.hailin.iot.common.util.NettyEventLoopUtil;
+import com.hailin.iot.remoting.util.NettyEventLoopUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;

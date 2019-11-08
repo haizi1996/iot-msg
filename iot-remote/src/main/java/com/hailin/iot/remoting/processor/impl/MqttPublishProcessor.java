@@ -8,7 +8,7 @@ import com.hailin.iot.remoting.UserProcessor;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;
 import com.hailin.iot.remoting.processor.AsyncUserProcessor;
 import com.hailin.iot.common.util.MessageUtil;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;

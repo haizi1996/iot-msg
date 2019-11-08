@@ -2,7 +2,7 @@ package com.hailin.iot.remoting;
 
 
 import com.hailin.iot.remoting.connection.Connection;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 

@@ -3,7 +3,7 @@ package com.hailin.iot.remoting;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.connection.Reconnector;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
