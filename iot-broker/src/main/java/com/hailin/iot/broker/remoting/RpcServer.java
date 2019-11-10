@@ -1,6 +1,7 @@
 package com.hailin.iot.broker.remoting;
 
 import com.hailin.iot.common.exception.RemotingException;
+import com.hailin.iot.common.model.Message;
 import com.hailin.iot.remoting.AbstractRemotingServer;
 import com.hailin.iot.remoting.ConnectionEventHandler;
 import com.hailin.iot.remoting.ConnectionEventListener;
@@ -79,6 +80,7 @@ public class RpcServer extends AbstractRemotingServer {
 
     private RemotingAddressParser addressParser;
 
+    @Getter
     private DefaultServerConnectionManager connectionManager;
 
     protected RpcRemoting rpcRemoting;
@@ -247,7 +249,7 @@ public class RpcServer extends AbstractRemotingServer {
         this.connectionEventListener.addConnectionEventProcessor(type , processor);
     }
 
-    public void invokeWithCallback(final Url url, final MqttPublishMessage message,
+    public void invokeWithCallback(final Url url, final Message message,
                                    final InvokeContext invokeContext,
                                    final InvokeCallback invokeCallback, final int timeoutMillis)
             throws RemotingException,

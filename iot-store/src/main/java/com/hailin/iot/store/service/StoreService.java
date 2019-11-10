@@ -6,6 +6,9 @@ import com.hailin.iot.store.hbase.HbaseUtils;
 import org.apache.hadoop.hbase.client.Put;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * 封装对外提供的接口
  * @author zhanghailin
@@ -44,4 +47,6 @@ public interface StoreService {
             htable.put(put);
             return rowKey;} );
     }
+
+    List<Message> getMessageByRowKeys(byte[] rowKeys , Integer limit);
 }
