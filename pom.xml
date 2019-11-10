@@ -16,6 +16,7 @@
         <module>iot-store</module>
         <module>iot-leaf</module>
         <module>iot-remote</module>
+        <module>iot-user</module>
     </modules>
     <properties>
         <junit.version>4.12</junit.version>
@@ -26,6 +27,7 @@
         <swagger.version>2.5.0</swagger.version>
         <mysql.version>5.1.21</mysql.version>
         <protobuf.version>3.10.0</protobuf.version>
+        <dubbo.version>2.7.0</dubbo.version>
         <mybatis.starter.version>2.1.0</mybatis.starter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -114,11 +116,23 @@
                 <version>${springboot.mybatis.version}</version>
             </dependency>
 
-            <!-- 阿里druid数据库连接池依赖 -->
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>1.1.10</version>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-dependencies-zookeeper</artifactId>
+                <version>${dubbo.version}</version>
+                <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

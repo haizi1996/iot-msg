@@ -1,14 +1,17 @@
 package com.hailin.iot.remoting.connection;
 
 import com.google.common.collect.Sets;
+import com.hailin.iot.remoting.ConnectionManager;
 import com.hailin.iot.remoting.HeartbeatTrigger;
 import com.hailin.iot.remoting.MqttHeartbeatTrigger;
+import com.hailin.iot.remoting.RemotingAddressParser;
 import com.hailin.iot.remoting.future.InvokeFuture;
 import com.hailin.iot.remoting.Url;
 import com.hailin.iot.remoting.util.ConcurrentHashSet;
 import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +39,6 @@ public class Connection {
     @Getter
     private Channel channel;
 
-    private final ConcurrentHashMap<Integer, InvokeFuture> invokeFutureMap  = new ConcurrentHashMap<Integer, InvokeFuture>(4);
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
 
@@ -53,7 +56,11 @@ public class Connection {
 
     //客户端标识
     public static final AttributeKey<String> CLIENT_IDENTIFIER = AttributeKey.valueOf("clientIdentifier");
+    public static final AttributeKey<RemotingAddressParser> ADDRESS_PARSER = AttributeKey.valueOf("addressParser");
 
+    @Getter
+    @Setter
+    private String userName;
 
     //心跳的futurn
     @Setter
@@ -63,7 +70,7 @@ public class Connection {
     @Getter
     private Url url;
 
-    private final ConcurrentHashMap<Integer/* id */, String/* poolKey */> id2PoolKey = new ConcurrentHashMap<Integer, String>(
+    private final ConcurrentHashMap<Object/* id */, String/* poolKey */> id2PoolKey = new ConcurrentHashMap<Object, String>(
             256);
 
     private Set<String> poolKeys = new ConcurrentHashSet<String>();
@@ -74,16 +81,21 @@ public class Connection {
 
     private  final AtomicInteger referenceCount = new AtomicInteger();
 
+    //连接管理器
+    @Getter
+    private final ConnectionManager connectionManager;
+
     private static final int NO_REFERENCE = 0;
 
-    public Connection(Channel channel) {
+    public Connection(Channel channel ,ConnectionManager connectionManager) {
         this.channel = channel;
         this.channel.attr(CONNECTION).set(this);
+        this.connectionManager = connectionManager;
         this.init();
     }
 
-    public Connection(Channel channel, Url url) {
-        this(channel);
+    public Connection(Channel channel, Url url, ConnectionManager connectionManager) {
+        this(channel , connectionManager);
         this.url = url;
         this.poolKeys.add(url.getUniqueKey());
         this.init();
@@ -192,42 +204,12 @@ public class Connection {
         attributes.put(key, value);
     }
 
-    public boolean isInvokeFutureMapFinish() {
-        return invokeFutureMap.isEmpty();
-    }
 
-    public InvokeFuture getInvokeFuture(int id) {
-        return this.invokeFutureMap.get(id);
-    }
-
-    public InvokeFuture addInvokeFuture(InvokeFuture future) {
-        return this.invokeFutureMap.putIfAbsent(future.invokeId(), future);
-    }
-
-    public InvokeFuture removeInvokeFuture(int id) {
-        return this.invokeFutureMap.remove(id);
-    }
-
-
-    public void onClose() {
-        Iterator<Map.Entry<Integer, InvokeFuture>> iter = invokeFutureMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<Integer, InvokeFuture> entry = iter.next();
-            iter.remove();
-            InvokeFuture future = entry.getValue();
-            if (future != null) {
-                future.cancelTimeout();
-                future.tryAsyncExecuteInvokeCallbackAbnormally();
-            }
-        }
-    }
-
-    public void addIdPoolKeyMapping(Integer id, String poolKey) {
+    public void addIdPoolKeyMapping(Object id, String poolKey) {
         this.id2PoolKey.put(id, poolKey);
     }
 
-    public String removeIdPoolKeyMapping(Integer id) {
+    public String removeIdPoolKeyMapping(Object id) {
         return this.id2PoolKey.remove(id);
     }
-
 }

@@ -1,6 +1,7 @@
-package com.hailin.iot.route.dao;
+package com.hailin.iot.user.dao;
 
-import com.hailin.iot.route.model.User;
+
+import com.hailin.iot.common.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,5 +13,5 @@ public interface UserMapper {
      * 根据用户名查询用户信息
      * @param userName 用户名
      */
-    User findByUserName(@Param("userName")String userName);
+    User findByUserName(@Param("userName") String userName);
 }

@@ -3,6 +3,7 @@ package com.hailin.iot.remoting;
 
 import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.ConnectionPool;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,9 @@ public interface ConnectionManager  extends Scannable, LifeCycle {
      */
     Connection get(String poolKey);
 
+
+    ConnectionPool getConnectionPool(String poolKey);
+
     List<Connection> getAll(String poolKey);
 
 
@@ -46,16 +50,17 @@ public interface ConnectionManager  extends Scannable, LifeCycle {
 
     void check(Connection connection) throws RemotingException;
 
-    Connection create(Url url) throws RemotingException;
+    Connection create(Url url ) throws RemotingException;
 
-    Connection getAndCreateIfAbsent(Url url) throws InterruptedException, RemotingException;
+    Connection getAndCreateIfAbsent(Url url ) throws InterruptedException, RemotingException;
 
-    Connection create(String address, int connectTimeout) throws RemotingException;
+    Connection create(String address, int connectTimeout ) throws RemotingException;
 
-    void createConnectionAndHealIfNeed(Url url) throws InterruptedException, RemotingException;
+    void createConnectionAndHealIfNeed(Url url ) throws InterruptedException, RemotingException;
     /**
      * 统计特定池里的连接
      * @param poolKey 池的key
      */
     int count(String poolKey);
+
 }

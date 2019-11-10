@@ -37,27 +37,5 @@ public class ConnectionUtil {
         return null;
     }
 
-    public static void addIdGroupCallbackMapping(Integer id, InvokeFuture callback, Channel channel) {
-        Connection connection = getConnectionFromChannel(channel);
-        if (connection != null) {
-            connection.addInvokeFuture(callback);
-        }
-    }
 
-    public static InvokeFuture removeIdGroupCallbackMapping(Integer id, Channel channel) {
-        Connection connection = getConnectionFromChannel(channel);
-        if (connection != null) {
-            return connection.removeInvokeFuture(id);
-        }
-        return null;
-    }
-
-    public static InvokeFuture getGroupRequestCallBack(Integer id, Channel channel) {
-        Connection connection = getConnectionFromChannel(channel);
-        if (connection != null) {
-            return connection.getInvokeFuture(id);
-        }
-
-        return null;
-    }
 }

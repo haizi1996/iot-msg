@@ -78,7 +78,7 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
         LOGGER.info("Connection closed: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
         final Connection conn = ctx.channel().attr(Connection.CONNECTION).get();
         if (conn != null) {
-            conn.onClose();
+//            conn.onClose();
         }
 
         super.close(ctx, promise);

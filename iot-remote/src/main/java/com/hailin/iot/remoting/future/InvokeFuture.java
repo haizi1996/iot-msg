@@ -16,7 +16,7 @@ public interface InvokeFuture {
 
     void setCause(Throwable cause);
 
-    void getCause();
+    Throwable getCause();
 
     InvokeCallback getInvokeCallback();
 

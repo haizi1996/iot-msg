@@ -70,7 +70,7 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
                 public String getRemoteAddress() {
                     return ctx.channel().remoteAddress().toString();
                 }
-            } , null);
+            } , null , heartMessage);
             ctx.writeAndFlush(heartMessage).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {

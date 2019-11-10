@@ -1,11 +1,14 @@
 package com.hailin.iot.broker.remoting;
 
+import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.remoting.AbstractRemotingServer;
 import com.hailin.iot.remoting.ConnectionEventHandler;
 import com.hailin.iot.remoting.ConnectionEventListener;
 import com.hailin.iot.remoting.ConnectionEventProcessor;
 import com.hailin.iot.remoting.ConnectionEventType;
 import com.hailin.iot.remoting.ConnectionSelectStrategy;
+import com.hailin.iot.remoting.InvokeCallback;
+import com.hailin.iot.remoting.InvokeContext;
 import com.hailin.iot.remoting.NamedThreadFactory;
 import com.hailin.iot.remoting.RandomSelectStrategy;
 import com.hailin.iot.remoting.RemotingAddressParser;
@@ -20,8 +23,8 @@ import com.hailin.iot.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
-import com.hailin.iot.common.util.NettyEventLoopUtil;
-import com.hailin.iot.common.util.RemotingUtil;
+import com.hailin.iot.remoting.util.NettyEventLoopUtil;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -35,7 +38,9 @@ import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -48,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.hailin.iot.common.contanst.Contants.IDLE_HANDLER;
 import static com.hailin.iot.common.contanst.Contants.IDLE_STATE_HANDLER;
-
 
 public class RpcServer extends AbstractRemotingServer {
 
@@ -182,9 +186,9 @@ public class RpcServer extends AbstractRemotingServer {
             private void createConncetion(SocketChannel socketChannel) {
                 Url url = addressParser.parse(RemotingUtil.parseRemoteAddress(socketChannel));
                 if (switches().isOn(GlobalSwitch.SERVER_MANAGE_CONNECTION_SWITCH)){
-                    connectionManager.add(new Connection(socketChannel , url) , url.getUniqueKey());
+                    connectionManager.add(new Connection(socketChannel , url , connectionManager) , url.getUniqueKey());
                 }else {
-                    new Connection(socketChannel , url);
+                    new Connection(socketChannel , url , null);
                 }
                 socketChannel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
             }
@@ -243,5 +247,22 @@ public class RpcServer extends AbstractRemotingServer {
         this.connectionEventListener.addConnectionEventProcessor(type , processor);
     }
 
-
+    public void invokeWithCallback(final Url url, final MqttPublishMessage message,
+                                   final InvokeContext invokeContext,
+                                   final InvokeCallback invokeCallback, final int timeoutMillis)
+            throws RemotingException,
+            InterruptedException {
+        check();
+        this.rpcRemoting.invokeWithCallback(url, message, invokeContext, invokeCallback,
+                timeoutMillis);
+    }
+    /**
+     * check whether connection manage feature enabled
+     */
+    private void check() {
+        if (!this.switches().isOn(GlobalSwitch.SERVER_MANAGE_CONNECTION_SWITCH)) {
+            throw new UnsupportedOperationException(
+                    "Please enable connection manage feature of Rpc Server before call this method! See comments in constructor RpcServer(int port, boolean manageConnection) to find how to enable!");
+        }
+    }
 }

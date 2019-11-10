@@ -168,6 +168,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         }
     }
 
+
     /**
      * 创建 连接池实例
      * @param poolKey 池的key
@@ -231,13 +232,19 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         return null == pool ? null : pool.get();
     }
 
+    @Override
+    public ConnectionPool getConnectionPool(String poolKey) {
+        return this.getConnectionPool(this.connTasks.get(poolKey));
+    }
+
     /**
      * 获取连接池
      */
     private ConnectionPool getConnectionPool(RunStateRecordedFutureTask<ConnectionPool> task) {
         return FutureTaskUtil.getFutureTaskResult(task, LOGGER);
-
     }
+
+
 
     @Override
     public List<Connection> getAll(String poolKey) {
@@ -300,7 +307,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
             this.whetherInitConnection = false;
         }
 
-        public ConnectionPoolCall(Url url) {
+        public ConnectionPoolCall(Url url ) {
             this.url = url;
             this.whetherInitConnection = true;
         }
@@ -320,7 +327,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         }
     }
 
-    private void doCreate(final Url url, final ConnectionPool pool , final String taskName, final int syncCreateNumWhenNotWarmup) {
+    private void doCreate(final Url url, final ConnectionPool pool , final String taskName, final int syncCreateNumWhenNotWarmup ) {
         final int actualNum = pool.size() , expectNum = url.getConnNum();
         if (actualNum > expectNum){
             return;
@@ -329,7 +336,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
                 taskName);
         if (url.isConnWarmup()){
             for (int i = actualNum ; i < expectNum ; i ++){
-                Connection connection = create(url);
+                Connection connection = create(url );
                 pool.add(connection);
             }
         }else {
@@ -340,7 +347,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
             // 同步的方式创建连接
             if (syncCreateNumWhenNotWarmup > 0) {
                 for (int i = 0; i < syncCreateNumWhenNotWarmup; ++i) {
-                    Connection connection = create(url);
+                    Connection connection = create(url );
                     pool.add(connection);
                 }
                 if (syncCreateNumWhenNotWarmup >= url.getConnNum()) {
@@ -354,7 +361,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
                     for (int i = pool.size(); i < url.getConnNum(); i++) {
                         Connection connection = null;
                         try {
-                            connection = create(url);
+                            connection = create(url );
                         } catch (RemotingException e) {
                             LOGGER.error("Exception occurred in async create connection thread for {}, taskName {}",
                                     url.getUniqueKey(), taskName, e);
@@ -373,8 +380,8 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     }
 
     @Override
-    public Connection getAndCreateIfAbsent(Url url) throws InterruptedException, RemotingException {
-        ConnectionPool connectionPool = this.getConnectionPoolAndCreateIfAbsent(url.getUniqueKey() , new ConnectionPoolCall(url));
+    public Connection getAndCreateIfAbsent(Url url ) throws InterruptedException, RemotingException {
+        ConnectionPool connectionPool = this.getConnectionPoolAndCreateIfAbsent(url.getUniqueKey() , new ConnectionPoolCall(url ));
         if (Objects.isNull(connectionPool)){
             return connectionPool.get();
         }else {
@@ -386,7 +393,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     @Override
     public void createConnectionAndHealIfNeed(Url url) throws InterruptedException, RemotingException {
         ConnectionPool pool = this.getConnectionPoolAndCreateIfAbsent(url.getUniqueKey(),
-                new ConnectionPoolCall(url));
+                new ConnectionPoolCall(url ));
         if (null != pool) {
             healIfNeed(pool, url);
         } else {
@@ -402,7 +409,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
             FutureTask<Integer> task = this.healTasks.get(poolKey);
             if (null == task) {
                 FutureTask<Integer> newTask = new FutureTask<Integer>(new HealConnectionCall(url,
-                        pool));
+                        pool , this));
                 task = this.healTasks.putIfAbsent(poolKey, newTask);
                 if (null == task) {
                     task = newTask;
@@ -437,10 +444,12 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         private Url url;
         private ConnectionPool pool;
 
+        private ConnectionManager connectionManager;
+
 
         @Override
         public Integer call() throws Exception {
-            doCreate(url , this.pool , this.getClass().getSimpleName() , 0);
+            doCreate(url , this.pool , this.getClass().getSimpleName() , 0 );
             return pool.size();
         }
     }
@@ -449,14 +458,14 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     public Connection create(String address, int connectTimeout) throws RemotingException {
         Url url = this.addressParser.parse(address);
         url.setConnectTimeout(connectTimeout);
-        return create(url);
+        return create(url );
     }
 
     @Override
-    public Connection create(Url url) throws RemotingException {
+    public Connection create(Url url ) throws RemotingException {
         Connection conn;
         try {
-            conn = this.connectionFactory.createConnection(url);
+            conn = this.connectionFactory.createConnection(url , this);
         } catch (Exception e) {
             throw new RemotingException("Create connection failed. The address is "
                     + url.getOriginUrl(), e);

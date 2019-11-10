@@ -2,6 +2,7 @@ package com.hailin.iot.remoting.factory.impl;
 
 import com.hailin.iot.remoting.ConnectionEventHandler;
 import com.hailin.iot.remoting.ConnectionEventType;
+import com.hailin.iot.remoting.ConnectionManager;
 import com.hailin.iot.remoting.NamedThreadFactory;
 import com.hailin.iot.remoting.Url;
 import com.hailin.iot.remoting.codec.Codec;
@@ -114,17 +115,17 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
                 lowWaterMark, highWaterMark));
     }
     @Override
-    public Connection createConnection(Url url) throws Exception {
+    public Connection createConnection(Url url  , ConnectionManager connectionManager) throws Exception {
         Channel channel = doCreateConnection(url.getIp(), url.getPort(), url.getConnectTimeout());
-        Connection conn = new Connection(channel , url);
+        Connection conn = new Connection(channel , url , connectionManager);
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         return conn;
     }
 
     @Override
-    public Connection createConnection(String targetIp, int targetPort, int connectTimeOut) throws Exception {
+    public Connection createConnection(String targetIp, int targetPort, int connectTimeOut , ConnectionManager connectionManager) throws Exception {
         Channel channel = doCreateConnection(targetIp, targetPort, connectTimeOut);
-        Connection conn = new Connection(channel,   new Url(targetIp, targetPort));
+        Connection conn = new Connection(channel,   new Url(targetIp, targetPort) , connectionManager);
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         return conn;
     }

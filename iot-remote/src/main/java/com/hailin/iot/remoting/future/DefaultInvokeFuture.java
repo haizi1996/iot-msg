@@ -2,6 +2,7 @@ package com.hailin.iot.remoting.future;
 
 import com.hailin.iot.remoting.InvokeCallback;
 import com.hailin.iot.remoting.InvokeContext;
+import com.hailin.iot.remoting.RpcResponse;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.util.Timeout;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
@@ -37,11 +39,10 @@ public class DefaultInvokeFuture implements InvokeFuture {
 
     private ClassLoader classLoader;
 
-
     private InvokeContext invokeContext;
 
     public DefaultInvokeFuture(int invokeId, InvokeCallbackListener callbackListener,
-                               InvokeCallback callback ) {
+                               InvokeCallback callback,  MqttMessage request ) {
         this.invokeId = invokeId;
         this.callbackListener = callbackListener;
         this.callback = callback;
@@ -49,8 +50,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
     }
 
     public DefaultInvokeFuture(int invokeId, InvokeCallbackListener callbackListener,
-                               InvokeCallback callback, InvokeContext invokeContext) {
-        this(invokeId, callbackListener, callback );
+                               InvokeCallback callback, InvokeContext invokeContext ,  MqttMessage request) {
+        this(invokeId, callbackListener, callback,request );
         this.invokeContext = invokeContext;
     }
 
@@ -80,8 +81,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
     }
 
     @Override
-    public void getCause() {
-
+    public Throwable getCause() {
+        return null;
     }
 
     @Override
@@ -118,4 +119,5 @@ public class DefaultInvokeFuture implements InvokeFuture {
     public InvokeContext getInvokeContext() {
         return null;
     }
+
 }

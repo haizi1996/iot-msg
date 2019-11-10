@@ -1,7 +1,6 @@
-package com.hailin.iot.route.service;
+package com.hailin.iot.user.service;
 
-import com.hailin.iot.route.model.User;
-import org.apache.ibatis.annotations.Param;
+import com.hailin.iot.common.model.User;
 
 public interface UserService {
 
@@ -15,5 +14,5 @@ public interface UserService {
      * 根据用户名查询用户信息
      * @param userName 用户名
      */
-    User findByUserName( String userName);
+    User findByUserName(String userName);
 }

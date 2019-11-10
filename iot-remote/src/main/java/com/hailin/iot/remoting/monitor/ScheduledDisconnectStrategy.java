@@ -64,16 +64,16 @@ public class ScheduledDisconnectStrategy implements ConnectionMonitorStrategy {
                 }
 
                 for (Connection offConn : serviceOffConnections) {
-                    if (offConn.isInvokeFutureMapFinish()) {
-                        if (offConn.isFine()) {
-                            offConn.close();
-                        }
-                    } else {
-                        if (logger.isInfoEnabled()) {
-                            logger.info("Address={} won't close at this schedule turn",
-                                    RemotingUtil.parseRemoteAddress(offConn.getChannel()));
-                        }
-                    }
+//                    if (offConn.isInvokeFutureMapFinish()) {
+//                        if (offConn.isFine()) {
+//                            offConn.close();
+//                        }
+//                    } else {
+//                        if (logger.isInfoEnabled()) {
+//                            logger.info("Address={} won't close at this schedule turn",
+//                                    RemotingUtil.parseRemoteAddress(offConn.getChannel()));
+//                        }
+//                    }
                 }
             }
         }catch (Exception e){

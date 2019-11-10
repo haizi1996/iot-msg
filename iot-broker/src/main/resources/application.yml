@@ -4,3 +4,19 @@ server:
 netty:
   //netty监听链接地址
   port: 5000,5001
+
+dubbo:
+  application:
+    name: chat-dubbo
+    qosEnable: false
+  protocol:
+    name: dubbo
+    port: 20880
+
+  registy:
+    id: register
+    address: zookeeper://localhost:2181
+
+spring:
+  aop:
+    proxy-target-class: true

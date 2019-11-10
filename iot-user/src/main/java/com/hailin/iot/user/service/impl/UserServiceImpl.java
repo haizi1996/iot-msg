@@ -1,8 +1,8 @@
-package com.hailin.iot.route.service.impl;
+package com.hailin.iot.user.service.impl;
 
-import com.hailin.iot.route.dao.UserMapper;
-import com.hailin.iot.route.model.User;
-import com.hailin.iot.route.service.UserService;
+import com.hailin.iot.common.model.User;
+import com.hailin.iot.user.dao.UserMapper;
+import com.hailin.iot.user.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,11 +15,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long saveUser(User user) {
-        return 0;
+        return userMapper.saveUser(user);
     }
 
     @Override
     public User findByUserName(String userName) {
-        return null;
+        return userMapper.findByUserName(userName);
     }
 }
