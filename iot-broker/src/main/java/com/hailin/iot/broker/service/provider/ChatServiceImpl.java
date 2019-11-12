@@ -3,19 +3,11 @@ package com.hailin.iot.broker.service.provider;
 import com.hailin.iot.broker.remoting.RpcServer;
 import com.hailin.iot.common.model.Message;
 import com.hailin.iot.common.rpc.ChatService;
-import com.hailin.iot.common.util.MessageUtil;
 import com.hailin.iot.remoting.InvokeContext;
 import com.hailin.iot.remoting.NamedThreadFactory;
 import com.hailin.iot.store.service.StoreService;
 import com.hailin.iot.store.timeline.TimeLine;
-import com.hailin.iot.store.timeline.impl.RedisTimeLine;
 import com.hailin.iot.store.timeline.model.TimeLineModel;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageBuilders;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.dubbo.config.annotation.Service;
@@ -48,7 +40,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public boolean noticePrivateChat(String username , String messageId) {
-
+        log.debug(username + " invoke id" + messageId);
         List<TimeLineModel> timeLineModels = redisTimeLine.getModels(username.getBytes() , 2);
         if(CollectionUtils.isEmpty(timeLineModels)){
             return true;
