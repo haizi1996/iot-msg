@@ -50,11 +50,11 @@ spring:
       config:
         hbase:
           zookeeper:
-            quorum: centos1
+            quorum: localhost
           rootdir: file:///workspace/hbase
           fs:
             default:
-              name: file:///workspace/hbase
+              name: file:///Users/zhanghailin/workspace/hbase
 
   datasource:
     url: jdbc:mysql://localhost:3306/iot

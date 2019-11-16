@@ -10,8 +10,8 @@ import com.hailin.iot.store.timeline.TimeLine;
 import com.hailin.iot.store.timeline.model.TimeLineModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
  * @author hailin
  */
 @Slf4j
-@Service(version = "1.0.0")
+@Service("chatService")
 public class ChatServiceImpl implements ChatService {
 
     private Executor executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() , new NamedThreadFactory("ChatServiceImpl"));
@@ -40,7 +40,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public boolean noticePrivateChat(String username , String messageId) {
-        log.debug(username + " invoke id" + messageId);
+        log.debug(username + " invoke id " + messageId);
         List<TimeLineModel> timeLineModels = redisTimeLine.getModels(username.getBytes() , 2);
         if(CollectionUtils.isEmpty(timeLineModels)){
             return true;

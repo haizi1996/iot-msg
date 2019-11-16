@@ -1,0 +1,1 @@
+logFilter=com.hailin.iot.broker.service.filter.DubboLogFilter
