@@ -18,4 +18,6 @@ public interface Contants {
 
     String IDLE_HANDLER = "IdleHandler";
 
+    String USER_ONLINE = "user_online";
+
 }

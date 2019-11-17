@@ -9,15 +9,13 @@ import java.util.concurrent.Executor;
  * 处理逻辑processor接口
  * @param <T>
  */
-public interface UserProcessor<T> {
+public interface UserProcessor<T extends MqttMessage> {
 
     BizContext preHandleRequest(RemotingContext remotingContext , T request);
 
     void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
 
     Object handleRequest(BizContext bizContext , MqttMessage request) throws Exception;
-
-    String interst();
 
     Executor getExecutor();
 

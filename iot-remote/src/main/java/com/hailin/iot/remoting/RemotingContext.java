@@ -44,6 +44,7 @@ public class RemotingContext {
                            ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors) {
         this.channelContext = ctx;
         this.serverSide = serverSide;
+        this.arriveTimestamp = System.currentTimeMillis();
         this.userProcessors = userProcessors;
         this.invokeContext = invokeContext;
     }

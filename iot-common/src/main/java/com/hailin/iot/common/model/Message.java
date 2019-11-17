@@ -2,6 +2,7 @@ package com.hailin.iot.common.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Message {
+
 
     //消息ID
     private long messageId;

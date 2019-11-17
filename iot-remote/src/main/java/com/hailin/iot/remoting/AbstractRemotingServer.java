@@ -1,6 +1,5 @@
 package com.hailin.iot.remoting;
 
-import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.remoting.config.IotOption;
 import com.hailin.iot.remoting.config.IotOptions;
 import com.hailin.iot.remoting.config.Configurable;

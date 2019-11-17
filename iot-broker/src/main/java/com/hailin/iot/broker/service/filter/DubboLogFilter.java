@@ -1,6 +1,5 @@
 package com.hailin.iot.broker.service.filter;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;

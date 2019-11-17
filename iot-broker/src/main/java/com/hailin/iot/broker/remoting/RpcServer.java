@@ -15,7 +15,6 @@ import com.hailin.iot.remoting.RandomSelectStrategy;
 import com.hailin.iot.remoting.RemotingAddressParser;
 import com.hailin.iot.remoting.RpcAddressParser;
 import com.hailin.iot.remoting.RpcConnectionEventHandler;
-import com.hailin.iot.remoting.RpcHandler;
 import com.hailin.iot.remoting.RpcRemoting;
 import com.hailin.iot.remoting.Url;
 import com.hailin.iot.remoting.UserProcessor;
@@ -44,6 +43,8 @@ import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;

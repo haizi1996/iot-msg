@@ -19,7 +19,10 @@ dubbo:
   consumer:
     timeout: 5000
 
+
 spring:
+  profiles:
+    active: home
   aop:
     proxy-target-class: true
 #redis 相关配置
@@ -43,18 +46,6 @@ spring:
         max-idle: 8
         #连接池中的最小空闲连接
         min-idle: 0
-  data:
-    hbase:
-      #消息漫游表
-      roamTable: "messageRoamTable"
-      config:
-        hbase:
-          zookeeper:
-            quorum: localhost
-          rootdir: file:///workspace/hbase
-          fs:
-            default:
-              name: file:///Users/zhanghailin/workspace/hbase
 
   datasource:
     url: jdbc:mysql://localhost:3306/iot
@@ -73,3 +64,8 @@ mybatis:
   configuration:
     #驼峰命名
     map-underscore-to-camel-case: true
+
+#idgen的配置
+idgen:
+  redisUrl: redis://127.0.0.1:6379/1
+  port: 6379

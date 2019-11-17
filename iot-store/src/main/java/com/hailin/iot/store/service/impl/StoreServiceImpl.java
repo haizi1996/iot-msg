@@ -8,6 +8,7 @@ import com.hailin.iot.store.timeline.model.RedisTimelineModel;
 import org.apache.hadoop.hbase.client.Scan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-    @Value("${spring.data.hbase.roamTable}")
+    @Value("${spring.data.hbase.config.roamTable}")
     private String roamTableName;
 
     @Autowired

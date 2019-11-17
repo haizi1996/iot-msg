@@ -25,6 +25,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
+import static com.hailin.iot.remoting.InvokeContext.IOT_PROCESS_WAIT_TIME;
+
 public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishMessage> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttPublishProcessor.class);
@@ -34,13 +36,7 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
     @Override
     public void doProcess(RemotingContext ctx, MqttPublishMessage msg) throws Exception {
 
-        long currentTimestamp = System.currentTimeMillis();
-
-        Message message = MessageUtil.deSerializationToObj(msg.content().array());
-
-        message.setSendTime(currentTimestamp );
-
-        preProcessRemotingContext(ctx, message, currentTimestamp);
+        preProcessRemotingContext(ctx);
         if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
             return;// then, discard this request
         }
@@ -90,12 +86,10 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
         executor.execute(new ProcessTask(ctx, msg));
     }
 
-    private void preProcessRemotingContext(RemotingContext ctx, Message msg,
-                                           long currentTimestamp) {
-        ctx.setArriveTimestamp(msg.getSendTime());
+    private void preProcessRemotingContext(RemotingContext ctx) {
+        long currentTimestamp = System.currentTimeMillis();
+        ctx.getInvokeContext().putIfAbsent(IOT_PROCESS_WAIT_TIME , currentTimestamp - ctx.getArriveTimestamp());
         ctx.setTimeout(TIMEOUT);
-        ctx.getInvokeContext().putIfAbsent(InvokeContext.IOT_PROCESS_WAIT_TIME,
-                currentTimestamp - msg.getSendTime());
     }
 
     /**

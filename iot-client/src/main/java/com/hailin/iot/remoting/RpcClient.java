@@ -7,7 +7,6 @@ import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.connection.ReconnectManager;
 import com.hailin.iot.remoting.connection.Reconnector;
-import com.hailin.iot.remoting.factory.impl.MqttConnectionFactory;
 import com.hailin.iot.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.remoting.monitor.ScheduledDisconnectStrategy;

@@ -5,11 +5,12 @@ import com.hailin.iot.remoting.BizContext;
 import com.hailin.iot.remoting.DefaultBizContext;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.UserProcessor;
+import io.netty.handler.codec.mqtt.MqttMessage;
 
 import java.util.concurrent.Executor;
 
 
-public abstract class AbstractUserProcessor<T> implements UserProcessor<T> {
+public abstract class AbstractUserProcessor<T extends MqttMessage> implements UserProcessor<T> {
 
     protected ExecutorSelector executorSelector;
 

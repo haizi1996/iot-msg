@@ -1,6 +1,8 @@
-package com.hailin.iot.remoting.processor.impl;
+package com.hailin.iot.broker.remoting.processor;
 
+import com.hailin.iot.broker.util.IpUtils;
 import com.hailin.iot.common.contanst.Contants;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;
@@ -17,20 +19,27 @@ import io.netty.handler.codec.mqtt.MqttVersion;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.hailin.iot.common.contanst.Contants.IDLE_HANDLER;
-import static com.hailin.iot.common.contanst.Contants.IDLE_STATE_HANDLER;
-import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION;
-import static io.netty.handler.codec.mqtt.MqttVersion.MQTT_3_1_1;
+import static com.hailin.iot.common.contanst.Contants.USER_ONLINE;
 
 /**
  * mqtt 连接建立的消息处理器
  * @author hailin
  */
+@Service
 public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectMessage> {
+
+
+
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public void doProcess(RemotingContext ctx, MqttConnectMessage msg) throws Exception {
@@ -88,6 +97,7 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         connection.setUserName(userName);
         connection.getConnectionManager().remove(connection , connection.getUrl().getUniqueKey());
         connection.getConnectionManager().add(connection , userName);
+        redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , userName.getBytes() , IpUtils.getLocalIpAddress().getBytes());
     }
 
 

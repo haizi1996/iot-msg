@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ChatServiceImplTest {
+public class NotifyChatServiceImplTest {
 
     @Resource
     private ApplicationContext applicationContext;

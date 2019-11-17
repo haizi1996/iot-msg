@@ -1,9 +1,9 @@
-package com.hailin.iot.remoting.factory.impl;
+package com.hailin.iot.broker.remoting;
 
-import com.hailin.iot.remoting.RpcHandler;
 import com.hailin.iot.remoting.UserProcessor;
 import com.hailin.iot.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.remoting.config.configs.ConfigurableInstance;
+import com.hailin.iot.remoting.factory.impl.DefaultConnectionFactory;
 import com.hailin.iot.remoting.handler.HeartbeatHandler;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 

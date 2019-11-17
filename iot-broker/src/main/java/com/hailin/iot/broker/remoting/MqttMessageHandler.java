@@ -1,17 +1,18 @@
-package com.hailin.iot.remoting.handler;
+package com.hailin.iot.broker.remoting;
 
+import com.hailin.iot.broker.remoting.processor.MqttConnectProcessor;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.config.ConfigManager;
+import com.hailin.iot.remoting.handler.MessageHandler;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;
+import com.hailin.iot.remoting.processor.ProcessorManager;
+import com.hailin.iot.remoting.processor.RemotingProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttConnAckProcessor;
-import com.hailin.iot.remoting.processor.impl.MqttConnectProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttDisconnectProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttPingReqProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttPingRespProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttPubAckProcessor;
 import com.hailin.iot.remoting.processor.impl.MqttPublishProcessor;
-import com.hailin.iot.remoting.processor.ProcessorManager;
-import com.hailin.iot.remoting.processor.RemotingProcessor;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -35,7 +36,7 @@ public class MqttMessageHandler implements MessageHandler {
 
     private ProcessorManager processorManager;
 
-    private static MqttMessageHandler handler = new  MqttMessageHandler();
+    private static MqttMessageHandler handler = new MqttMessageHandler();
 
     public static MqttMessageHandler getHandler() {
         return handler;

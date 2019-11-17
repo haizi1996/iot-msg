@@ -5,20 +5,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd        http://dubbo.apache.org/schema/dubbo        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
-    <dubbo:application name="consumer-app"  />
+    <dubbo:application name="dubbo-app" />
 
-    <dubbo:provider filter="logFilter"/>
+    <dubbo:provider filter="logFilter" loadbalance="dubboLoadBalance"  />
 
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
     <dubbo:registry address="zookeeper://127.0.0.1:2181" />
 
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
-    <dubbo:reference id="rpcChatService" interface="com.hailin.iot.common.rpc.ChatService" version="1.0.0"/>
+    <dubbo:reference id="rpcChatService" interface="com.hailin.iot.common.rpc.ChatService" version="1.0.0"  />
 
     <!-- 和本地bean一样实现服务 -->
     <!--<bean id="helloService" class="com.hailin.iot.broker.service.provider.ChatServiceImpl" />-->
 
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="com.hailin.iot.common.rpc.ChatService" ref="chatService" version="1.0.0" />
+    <dubbo:service interface="com.hailin.iot.common.rpc.ChatService" ref="chatService" version="1.0.0" scope="remote" dynamic="true" />
 
 </beans>

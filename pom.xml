@@ -17,6 +17,7 @@
         <module>iot-leaf</module>
         <module>iot-remote</module>
         <module>iot-user</module>
+        <module>iot-rocketmq</module>
     </modules>
     <properties>
         <junit.version>4.12</junit.version>

@@ -1,0 +1,12 @@
+## HBase 配置
+spring:
+  data:
+    hbase:
+      config:
+        roamTable: "messageRoamTable"
+        zookeeper:
+          quorum: localhost
+        rootdir: file:///workspace/hbase
+        fs:
+          default:
+            name: file:///Users/zhanghailin/workspace/hbase
