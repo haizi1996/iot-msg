@@ -34,18 +34,31 @@ public interface StoreService {
      */
     void storePrivateChatMessage(Message message);
 
-    default byte[] storeMessage(HbaseTemplate hbaseTemplate , String roamTableName , Message message){
+    default void storeMessage(HbaseTemplate hbaseTemplate , String roamTableName , Message message){
 
-        String sessionId = HbaseUtils.buildSession(message);
-        byte[] rowKey = HbaseUtils.buildRowKey( sessionId, message.getMessageId());
-        return hbaseTemplate.execute(roamTableName ,htable -> {
-            Put put = new Put(rowKey)
-                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), sessionId.getBytes())
+        // 存储发送人的timeline
+        String sendUserTimelineId = HbaseUtils.buildSessionId(message.getSendUser() , message.getAcceptUser());
+        byte[] sendUserRowKey = HbaseUtils.buildRowKey( sendUserTimelineId, message.getMessageId());
+
+        // 存储接收人的timeline
+        String acceptUserTimelineId = HbaseUtils.buildSessionId(message.getSendUser() , message.getAcceptUser());
+        byte[] acceptUserRowKey = HbaseUtils.buildRowKey( sendUserTimelineId, message.getMessageId());
+        hbaseTemplate.execute(roamTableName ,htable -> {
+            Put sendUserPut = new Put(sendUserRowKey)
+                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), sendUserTimelineId.getBytes())
                     .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
                     .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
                     .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
-            htable.put(put);
-            return rowKey;} );
+
+            htable.put(sendUserPut);
+            Put acceptUserPut = new Put(acceptUserRowKey)
+                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), acceptUserTimelineId.getBytes())
+                    .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
+                    .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
+                    .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
+            htable.put(acceptUserPut);
+            return sendUserRowKey;} );
+
     }
 
     List<Message> getMessageByRowKeys(byte[] rowKeys , Integer limit);

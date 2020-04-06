@@ -39,8 +39,8 @@ public class ChatServiceImpl implements ChatService {
     private StoreService storeService;
 
     @Override
-    public boolean noticePrivateChat(String username , String messageId) {
-        log.debug(username + " invoke id " + messageId);
+    public boolean noticePrivateChat(String acceptUsername , String sendUsername , String messageId) {
+        log.debug(acceptUsername + " invoke id " + messageId);
         List<TimeLineModel> timeLineModels = redisTimeLine.getModels(username.getBytes() , 2);
         if(CollectionUtils.isEmpty(timeLineModels)){
             return true;

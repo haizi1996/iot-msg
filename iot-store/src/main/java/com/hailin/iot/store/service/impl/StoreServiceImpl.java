@@ -29,15 +29,15 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public void storeGroupChatMessage(Message message) {
-        byte[] rowKey = storeMessage(hbaseTemplate , roamTableName , message);
+        storeMessage(hbaseTemplate , roamTableName , message);
     }
 
     @Override
     public void storePrivateChatMessage(Message message) {
         //消息存储hbase 返回rowkey
-        byte[] rowKey = storeMessage(hbaseTemplate , roamTableName , message);
+        storeMessage(hbaseTemplate , roamTableName , message);
         //构建timeline模型， 去也是hbase的二级索引
-        redisTimeLine.putModel(RedisTimelineModel.builder().timeLineId(message.getAcceptUser().getBytes()).key(rowKey).build());
+//        redisTimeLine.putModel(RedisTimelineModel.builder().timeLineId(message.getAcceptUser().getBytes()).key(rowKey).build());
 
     }
 

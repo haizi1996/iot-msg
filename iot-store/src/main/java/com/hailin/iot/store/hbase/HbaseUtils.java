@@ -43,7 +43,7 @@ public class HbaseUtils {
     /**
      * 构建SessionId
      * 群聊消息就是 群号
-     * 私聊消息是 小userId #|# 大号userId
+     * 私聊消息是 某个userId的timeline #|# 另一个userId
      * @param message 消息
      */
     public static String buildSession(Message message){

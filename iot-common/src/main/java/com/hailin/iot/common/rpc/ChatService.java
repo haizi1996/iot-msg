@@ -10,7 +10,7 @@ public interface ChatService {
      * 通知私聊的接口
      * @return
      */
-    boolean noticePrivateChat(String username , String messageId);
+    boolean noticePrivateChat(String acceptUsername , String sendUsername , String messageId);
 
     /**
      * 通知群聊接口
