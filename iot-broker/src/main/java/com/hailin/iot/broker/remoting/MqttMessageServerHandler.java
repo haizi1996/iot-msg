@@ -30,19 +30,19 @@ import java.util.concurrent.RejectedExecutionException;
  * @author zhanghailin
  */
 
-public class MqttMessageHandler implements MessageHandler {
+public class MqttMessageServerHandler implements MessageHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MqttMessageHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MqttMessageServerHandler.class);
 
     private ProcessorManager processorManager;
 
-    private static MqttMessageHandler handler = new MqttMessageHandler();
+    private static MqttMessageServerHandler handler = new MqttMessageServerHandler();
 
-    public static MqttMessageHandler getHandler() {
+    public static MqttMessageServerHandler getHandler() {
         return handler;
     }
 
-    private MqttMessageHandler() {
+    private MqttMessageServerHandler() {
         this.processorManager = new ProcessorManager();
         //MqttConnect request
         this.processorManager.registerProcessor(MqttMessageType.CONNECT, new MqttConnectProcessor());
@@ -76,7 +76,7 @@ public class MqttMessageHandler implements MessageHandler {
                             LOGGER.debug("Batch message! size={}", ((List<?>) msg).size());
                         }
                         for (final Object m : (List<?>) msg) {
-                            MqttMessageHandler.this.process(ctx, m);
+                            MqttMessageServerHandler.this.process(ctx, m);
                         }
                     }
                 };

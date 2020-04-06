@@ -1,8 +1,6 @@
-package com.hailin.iot.broker.remoting;
+package com.hailin.iot.remoting;
 
-import com.hailin.iot.remoting.InvokeContext;
-import com.hailin.iot.remoting.RemotingContext;
-import com.hailin.iot.remoting.UserProcessor;
+import com.hailin.iot.remoting.handler.MessageHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,26 +18,28 @@ public class RpcHandler extends ChannelInboundHandlerAdapter {
 
     private ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors;
 
+    private MessageHandler messageHandler;
+
     public RpcHandler() {
         serverSide = false;
     }
 
-    public RpcHandler(ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors) {
-        this(false , userProcessors);
+    public RpcHandler(ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
+        this(false , userProcessors , messageHandler);
     }
 
-    public RpcHandler(boolean serverSide, ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors) {
+    public RpcHandler(boolean serverSide, ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
         this.serverSide = serverSide;
         this.userProcessors = userProcessors;
+        this.messageHandler = messageHandler;
     }
-
 
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.debug(msg.toString());
         if (msg instanceof MqttMessage){
-            MqttMessageHandler.getHandler().handleMessage(new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors) ,(MqttMessage) msg);
+            messageHandler.handleMessage(new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors) ,(MqttMessage) msg);
         }
     }
 }

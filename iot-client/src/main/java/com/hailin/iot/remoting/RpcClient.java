@@ -5,12 +5,14 @@ import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.remoting.config.IotGenericOption;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.MqttConnectionFactory;
 import com.hailin.iot.remoting.connection.ReconnectManager;
 import com.hailin.iot.remoting.connection.Reconnector;
 import com.hailin.iot.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.remoting.monitor.ScheduledDisconnectStrategy;
 import com.hailin.iot.remoting.processor.ConnectEventProcessor;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -79,7 +81,7 @@ public class RpcClient extends AbstractIotClient {
             strategy = new RandomSelectStrategy(switches());
         }
         this.connectionManager = new DefaultClientConnectionManager(strategy ,
-                new MqttConnectionFactory(userProcessors , this)
+                new MqttConnectionFactory(userProcessors , this , null)
                 , connectionEventHandler , connectionEventListener ,switches());
         this.connectionManager.setAddressParser(addressParser);
         this.connectionManager.startup();
@@ -110,5 +112,9 @@ public class RpcClient extends AbstractIotClient {
     public Connection createStandaloneConnection(String address, int connectTimeout)
             throws RemotingException {
         return this.connectionManager.create(address, connectTimeout);
+    }
+
+
+    public void sendMqttMessage(MqttMessage message){
     }
 }

@@ -1,15 +1,19 @@
 package com.hailin.iot.remoting;
 
+import com.google.common.collect.Lists;
 import com.hailin.iot.remoting.config.Configs;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.ConnectionPool;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class RandomSelectStrategy implements ConnectionSelectStrategy {
@@ -27,18 +31,18 @@ public class RandomSelectStrategy implements ConnectionSelectStrategy {
     }
 
     @Override
-    public Connection select(List<Connection> connections) {
-        if (CollectionUtils.isEmpty(connections)){
+    public Connection select(Map<Connection.TermType, Connection> connections) {
+        if (MapUtils.isEmpty(connections)){
             return null;
         }
         try {
             Connection result ;
             if (this.globalSwitch == null
             || !this.globalSwitch.isOn(GlobalSwitch.CONN_MONITOR_SWITCH)){
-                result =randomGet(connections);
+                result =randomGet(Lists.newArrayList(connections.values()));
             }else {
                 List<Connection> serviceStatusOnConnections = new ArrayList<Connection>();
-                for (Connection conn : connections) {
+                for (Connection conn : connections.values()) {
                     String serviceStatus = (String) conn.getAttribute(Configs.CONN_SERVICE_STATUS);
                     if (!StringUtils.equals(serviceStatus, Configs.CONN_SERVICE_STATUS_OFF)) {
                         serviceStatusOnConnections.add(conn);

@@ -15,6 +15,7 @@ import com.hailin.iot.remoting.RandomSelectStrategy;
 import com.hailin.iot.remoting.RemotingAddressParser;
 import com.hailin.iot.remoting.RpcAddressParser;
 import com.hailin.iot.remoting.RpcConnectionEventHandler;
+import com.hailin.iot.remoting.RpcHandler;
 import com.hailin.iot.remoting.RpcRemoting;
 import com.hailin.iot.remoting.Url;
 import com.hailin.iot.remoting.UserProcessor;
@@ -43,8 +44,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;
@@ -85,6 +84,8 @@ public class RpcServer extends AbstractRemotingServer {
     protected RpcRemoting rpcRemoting;
 
     private Codec codec = new MqttCoder() ;
+
+
 
     static {
         if (workerGroup instanceof NioEventLoopGroup){
@@ -164,7 +165,7 @@ public class RpcServer extends AbstractRemotingServer {
         final boolean idleSwitch = ConfigManager.tcp_idle_switch();
         final int idleTime = ConfigManager.tcp_server_idle();
         final ChannelHandler serverIdleHandler = new ServerIdleHandler();
-        final RpcHandler rpcHandler = new RpcHandler(true , userProcessors);
+        final RpcHandler rpcHandler = new RpcHandler(true , userProcessors , MqttMessageServerHandler.getHandler());
         this.bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {

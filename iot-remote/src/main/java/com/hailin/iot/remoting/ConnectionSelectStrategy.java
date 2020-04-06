@@ -1,8 +1,7 @@
 package com.hailin.iot.remoting;
 
 import com.hailin.iot.remoting.connection.Connection;
-
-import java.util.List;
+import java.util.Map;
 
 /**
  * 选择连接器策略接口
@@ -10,5 +9,5 @@ import java.util.List;
  */
 public interface ConnectionSelectStrategy {
 
-    Connection select(List<Connection> connections);
+    Connection select(Map<Connection.TermType, Connection> connections);
 }

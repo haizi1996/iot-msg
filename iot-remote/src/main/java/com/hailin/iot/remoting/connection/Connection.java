@@ -70,6 +70,8 @@ public class Connection {
     @Getter
     private Url url;
 
+    private Connection.TermType type;
+
     private final ConcurrentHashMap<Object/* id */, String/* poolKey */> id2PoolKey = new ConcurrentHashMap<Object, String>(
             256);
 
@@ -211,5 +213,18 @@ public class Connection {
 
     public String removeIdPoolKeyMapping(Object id) {
         return this.id2PoolKey.remove(id);
+    }
+
+    /**
+     * 终端类型
+     */
+    public static enum TermType{
+        APP,
+
+        PC,
+
+        WEB
+
+
     }
 }

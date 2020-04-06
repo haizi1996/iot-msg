@@ -161,7 +161,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
                     e);
         }
         if (pool != null) {
-            pool.add(connection);
+            pool.add(  connection , connection.getType() );
         } else {
             // should not reach here.
             LOGGER.error("[NOTIFYME] Connection pool NULL!");
@@ -337,7 +337,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         if (url.isConnWarmup()){
             for (int i = actualNum ; i < expectNum ; i ++){
                 Connection connection = create(url );
-                pool.add(connection);
+                pool.add(connection , connection.getType());
             }
         }else {
             if (syncCreateNumWhenNotWarmup < 0 || syncCreateNumWhenNotWarmup > url.getConnNum()){
@@ -348,7 +348,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
             if (syncCreateNumWhenNotWarmup > 0) {
                 for (int i = 0; i < syncCreateNumWhenNotWarmup; ++i) {
                     Connection connection = create(url );
-                    pool.add(connection);
+                    pool.add(connection, connection.getType());
                 }
                 if (syncCreateNumWhenNotWarmup >= url.getConnNum()) {
                     return;
@@ -366,7 +366,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
                             LOGGER.error("Exception occurred in async create connection thread for {}, taskName {}",
                                     url.getUniqueKey(), taskName, e);
                         }
-                        pool.add(connection);
+                        pool.add(connection, connection.getType());
                     }
                 }finally{
                         pool.markAsyncCreationDone();

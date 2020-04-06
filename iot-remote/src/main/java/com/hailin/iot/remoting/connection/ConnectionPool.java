@@ -1,9 +1,10 @@
 package com.hailin.iot.remoting.connection;
 
+import com.google.common.collect.Lists;
 import com.hailin.iot.remoting.ConnectionSelectStrategy;
 import com.hailin.iot.remoting.Scannable;
 import com.hailin.iot.remoting.future.InvokeFuture;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -26,7 +26,8 @@ public class ConnectionPool implements Scannable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPool.class);
 
-    private CopyOnWriteArrayList<Connection> connections;
+    // key 设备类型
+    private ConcurrentHashMap<Connection.TermType,  Connection> connections;
 
     private ConnectionSelectStrategy strategy;
 
@@ -68,40 +69,41 @@ public class ConnectionPool implements Scannable {
 
     public ConnectionPool(ConnectionSelectStrategy strategy) {
         this.strategy = strategy;
-        this.connections = new CopyOnWriteArrayList<>();
+        this.connections = new ConcurrentHashMap<>();
         this.asyncCreationDone = true;
     }
-    public void removeAndTryClose(Connection connection){
-        if (connection ==null){
-            return;
-        }
-        boolean res = connections.remove(connection);
-        if (res) {
-            connection.decreaseRef();
-        }
-        if (connection.noRef()) {
-            connection.close();
-        }
-    }
+//    public void removeAndTryClose(Connection connection){
+//        if (connection ==null){
+//            return;
+//        }
+//        boolean res = connections.remove(connection);
+//        if (res) {
+//            connection.decreaseRef();
+//        }
+//        if (connection.noRef()) {
+//            connection.close();
+//        }
+//    }
 
     public Connection get() {
         markAccess();
-        if (CollectionUtils.isEmpty(connections)) {
+        if (MapUtils.isEmpty(connections)) {
             return null;
         }
-        List<Connection> snapshot = new ArrayList<Connection>(connections);
-        return strategy.select(snapshot);
+//        List<Connection> snapshot = new ArrayList<Connection>(connections);
+        return strategy.select(connections);
     }
 
-    public void add(Connection connection) {
+    public void add(Connection connection , Connection.TermType type) {
         markAccess();
         if (null == connection) {
             return;
         }
-        boolean res = connections.addIfAbsent(connection);
-        if (res) {
-            connection.increaseRef();
+        if(connections.contains(type)){
+            connections.get(type).close();
         }
+        connections.put(type , connection);
+        connection.increaseRef();
     }
 
     private void markAccess() {
@@ -110,27 +112,32 @@ public class ConnectionPool implements Scannable {
 
     @Override
     public void scan() {
-        if (CollectionUtils.isEmpty(connections)){
+        if (MapUtils.isEmpty(connections)){
             return;
         }
-        for (Connection connection : connections) {
-            if (!connection.isFine()) {
+        List<Connection.TermType> keys = Lists.newArrayList(connections.keySet());
+        for (Connection.TermType type : keys) {
+            if (!connections.get(type).isFine()) {
                 LOGGER.warn(
                         "Remove bad connection when scanning conns of ConnectionPool - {}:{}",
-                        connection.getRemoteIp(), connection.getRemotePort());
-                connection.close();
-                removeAndTryClose(connection);
+                        connections.get(type).getRemoteIp(), connections.get(type).getRemotePort());
+                connections.get(type).close();
+                connections.remove(type);
+//                removeAndTryClose(connection);
+
             }
+
         }
     }
     public List<Connection> getAll() {
         markAccess();
-        return new ArrayList<>(connections);
+        return new ArrayList<>(connections.values());
     }
 
     public void removeAllAndTryClose() {
-        for (Connection connection : connections) {
-            removeAndTryClose(connection);
+        for (Connection connection : connections.values()) {
+//            removeAndTryClose(connection);
+            connection.close();
         }
         connections.clear();
     }
@@ -184,4 +191,5 @@ public class ConnectionPool implements Scannable {
             }
         }
     }
+
 }
