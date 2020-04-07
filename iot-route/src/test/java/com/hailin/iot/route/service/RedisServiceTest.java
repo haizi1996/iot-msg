@@ -1,5 +1,6 @@
 package com.hailin.iot.route.service;
 
+import com.hailin.iot.common.service.RedisService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.hailin.iot.broker.netty;
 
-import com.hailin.iot.broker.util.IpUtils;
+import com.hailin.iot.common.util.IpUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

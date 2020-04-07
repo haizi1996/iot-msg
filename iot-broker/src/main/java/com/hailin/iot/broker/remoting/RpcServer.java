@@ -267,4 +267,11 @@ public class RpcServer extends AbstractRemotingServer {
                     "Please enable connection manage feature of Rpc Server before call this method! See comments in constructor RpcServer(int port, boolean manageConnection) to find how to enable!");
         }
     }
+
+
+
+    public void sendMessageToUser(String acceptUsername , Object message , long timeout) throws RemotingException,
+            InterruptedException {
+
+    }
 }

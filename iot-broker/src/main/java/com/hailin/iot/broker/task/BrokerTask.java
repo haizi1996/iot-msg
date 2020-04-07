@@ -1,8 +1,10 @@
 package com.hailin.iot.broker.task;
 
-import com.hailin.iot.broker.util.IpUtils;
+import com.hailin.iot.common.util.IpUtils;
+import com.hailin.iot.common.cache.BrokerCacheInstance;
 import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.common.model.Broker;
+import com.hailin.iot.common.service.RedisService;
 import com.hailin.iot.common.util.BrokerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,10 +22,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class RegisterBroker {
+public class BrokerTask {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisService redisService;
 
     @Value("${netty.port}")
     private List<Integer> ports;
@@ -40,6 +45,14 @@ public class RegisterBroker {
                 .map(broker -> new DefaultTypedTuple(BrokerUtil.serializeToByteArray(broker) , new Double(now)))
                 .collect(Collectors.toSet());
         redisTemplate.opsForZSet().add(Contants.REDIS_BROKER_KEY.getBytes() , brokers);
+    }
+    @Scheduled(fixedRate = 5000) //每5秒执行一次
+    public void getBrokers(){
+        long now = System.currentTimeMillis();
+        List<Broker> brokers = redisService.getAddBroker(now , 5000L);
+        if(CollectionUtils.isEmpty(brokers)){
+            BrokerCacheInstance.getInstance(redisService).put(brokers);
+        }
     }
 
 }

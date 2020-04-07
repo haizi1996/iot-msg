@@ -1,8 +1,7 @@
 package com.hailin.iot.broker.remoting.processor;
 
-import com.hailin.iot.broker.util.IpUtils;
+import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.common.contanst.Contants;
-import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;

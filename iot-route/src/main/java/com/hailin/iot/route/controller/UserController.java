@@ -1,7 +1,11 @@
 package com.hailin.iot.route.controller;
 
+import com.hailin.iot.common.cache.BrokerCacheInstance;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.model.User;
-import com.hailin.iot.route.dto.BrokerInfo;
+import com.hailin.iot.common.dto.BrokerInfo;
+import com.hailin.iot.common.service.LoadBalance;
+import com.hailin.iot.common.service.impl.ConsistentHashLoadBalancer;
 import com.hailin.iot.user.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
-import java.util.Objects;
 
 /**
  * 用户登录的模块
@@ -23,13 +26,12 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @PostMapping("/user/login")
-    public BrokerInfo login(@NotEmpty  String userName){
-        User user = userService.findByUserName(userName);
-        if(Objects.nonNull(user)){
+    private LoadBalance loadBalance = new ConsistentHashLoadBalancer();
 
-        }
-        return null;
+    @PostMapping("/user/login")
+    public Broker login(@NotEmpty  String userName){
+        User user = userService.findByUserName(userName);
+        return loadBalance.select(BrokerCacheInstance.getInstance(null).getAllBrokerInfos(), userName);
     }
 
     @PostMapping("/user/register")

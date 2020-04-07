@@ -29,15 +29,31 @@ import java.nio.ByteBuffer;
 @NoArgsConstructor
 public class HbaseUtils {
 
+    //分隔符号
+    private static final String SPARTER="#$#$|#";
+
     /**
      * 构建出rowkey
+     * 倒叙
      *
      * hash(session id) |  session id | 逆序消息id
      */
-    public static byte[] buildRowKey(String sessionId , long messageId){
+    public static byte[] buildRowKeyDesc(String sessionId , long messageId){
 
         return ByteBuffer.allocate(50).putInt(sessionId.hashCode())
                 .putChar('|').put(sessionId.getBytes()).putChar('|').putLong(Long.MAX_VALUE ^ messageId).array();
+    }
+
+    /**
+     * 构建出rowkey
+     * 正序
+     *
+     * hash(session id) |  session id | 逆序消息id
+     */
+    public static byte[] buildRowKeyAsc(String sessionId , long messageId){
+
+        return ByteBuffer.allocate(50).putInt(sessionId.hashCode())
+                .putChar('|').put(sessionId.getBytes()).putChar('|').putLong(messageId).array();
     }
 
     /**
@@ -59,12 +75,12 @@ public class HbaseUtils {
 
     /**
      * 拼接成Session
-     * @param smallUserId
-     * @param bigUsrId
+     * @param oneUserId
+     * @param twoUserId
      * @return
      */
-    public static String buildSessionId(String smallUserId, String bigUsrId) {
-        return new StringBuilder().append(smallUserId).append("#$#$|#").append(bigUsrId).toString();
+    public static String buildSessionId(String oneUserId, String twoUserId) {
+        return new StringBuilder().append(oneUserId).append(SPARTER).append(twoUserId).toString();
     }
 
 

@@ -11,16 +11,12 @@ import com.hailin.iot.remoting.util.ConcurrentHashSet;
 import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;

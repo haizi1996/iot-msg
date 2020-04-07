@@ -11,6 +11,9 @@ import java.util.List;
 public interface Contants {
 
     String REDIS_BROKER_KEY = "redisBrokerKey";
+    String REDIS_USER_KEY = "redisUserKey";
+
+    String BROKER= "broker";
 
     long BROKER_FIRE_TIME = 5 * 1000;
 

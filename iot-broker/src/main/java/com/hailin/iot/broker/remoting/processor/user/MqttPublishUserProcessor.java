@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-//@Service
+@Service
 public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishMessage> {
 
     @Value("${idgen.redisUrl}")
@@ -54,7 +54,7 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
                 .content(chatMessage.getContent())
                 .acceptUser(chatMessage.getAcceptUser())
                 .messageBit(chatMessage.getMessageBit()).build();
-        storeService.storePrivateChatMessage(message);
+        storeService.storeMessage(message);
         return null;
     }
 }

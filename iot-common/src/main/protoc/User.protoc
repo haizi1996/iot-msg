@@ -1,0 +1,20 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.common.protoc;
+option java_outer_classname="UserBuf";
+
+message User {
+
+	int64 id = 1;
+
+	string userName = 2;
+
+	int64 ip = 3;
+
+	int32 port = 4;
+
+	int64  logic = 5;
+
+	int64 lastMessageId = 6;
+}

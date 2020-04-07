@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 public class NotifyChatServiceImpl implements NotifyChatService {
 
+
+
     //如果接收方 不在线 直接返回
     @Autowired
     private RedisTemplate redisTemplate;
@@ -35,7 +37,7 @@ public class NotifyChatServiceImpl implements NotifyChatService {
             connection.getChannel().writeAndFlush(buildMqttPublishMessage(message));
             return true;
         }
-        chatService.noticePrivateChat(accepterUser , String.valueOf(message.getMessageId()));
+        chatService.noticePrivateChat(accepterUser , message.getMessageId());
         return true;
     }
 

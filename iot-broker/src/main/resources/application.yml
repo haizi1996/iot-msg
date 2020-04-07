@@ -22,7 +22,7 @@ dubbo:
 
 spring:
   profiles:
-    active: home
+    active: work
   aop:
     proxy-target-class: true
 #redis 相关配置
