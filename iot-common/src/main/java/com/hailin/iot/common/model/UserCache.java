@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class User {
+public class UserCache {
 
     private long id;
 

@@ -162,6 +162,7 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
         }
         if (pool != null) {
             pool.add(  connection , connection.getType() );
+            connection.setPool(pool);
         } else {
             // should not reach here.
             LOGGER.error("[NOTIFYME] Connection pool NULL!");

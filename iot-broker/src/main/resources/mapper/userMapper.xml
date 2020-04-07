@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hailin.iot.user.dao.UserMapper">
-    <select id="findByUserName" parameterType="String" resultType="user">
+<mapper namespace="com.hailin.iot.route.dao.UserMapper">
+    <select id="findByUserName" parameterType="String" resultType="com.hailin.iot.broker.user.model.User">
         select * from `user` where username = #{userName}
     </select>
 
-    <insert id="saveUser" parameterType="user"
+    <insert id="saveUser" parameterType="com.hailin.iot.broker.user.model.User"
             useGeneratedKeys="true" keyProperty="id">
-        insert into user (username,password , create_time , update_Time) values (#{userName},#{password} , now() , now())
+        insert into `user` (username,password , create_time , update_Time) values (#{userName},#{password} , now() , now())
     </insert>
+
+    <update id="updatUser" parameterType="com.hailin.iot.broker.user.model.User" >
+        update `user` set username = #{username}
+        ,last_message_id = #{lastMessageId}
+        where id = #{id}
+    </update>
+
 </mapper>

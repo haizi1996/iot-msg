@@ -1,6 +1,7 @@
 package com.hailin.iot.remoting;
 
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.ConnectionPool;
 
 /**
  * 业务上下文接口
@@ -15,6 +16,8 @@ public interface BizContext {
     Integer getRemotePort();
 
     Connection getConnection();
+
+    ConnectionPool getConnectionPool();
 
     boolean isRequestTimeout();
 

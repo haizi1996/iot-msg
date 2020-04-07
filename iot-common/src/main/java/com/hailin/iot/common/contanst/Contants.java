@@ -13,7 +13,8 @@ public interface Contants {
     String REDIS_BROKER_KEY = "redisBrokerKey";
     String REDIS_USER_KEY = "redisUserKey";
 
-    String BROKER= "broker";
+    String BROKER_IP= "broker_ip";
+    String BROKER_PORT= "broker_port";
 
     long BROKER_FIRE_TIME = 5 * 1000;
 

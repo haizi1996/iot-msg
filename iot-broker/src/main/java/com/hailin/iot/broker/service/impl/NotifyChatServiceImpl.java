@@ -12,16 +12,11 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class NotifyChatServiceImpl implements NotifyChatService {
-
-
-
-    //如果接收方 不在线 直接返回
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     @Autowired
     private RpcServer rpcServer;

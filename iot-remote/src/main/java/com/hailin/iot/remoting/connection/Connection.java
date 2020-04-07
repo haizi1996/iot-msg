@@ -35,6 +35,10 @@ public class Connection {
     @Getter
     private Channel channel;
 
+    @Getter
+    @Setter
+    private ConnectionPool pool;
+
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
 

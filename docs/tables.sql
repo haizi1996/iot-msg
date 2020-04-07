@@ -1,7 +1,7 @@
 
 create database if not exists iot ;
 
-create table `user` (
+create table `userCache` (
     `id` bigint primary key ,
     username varchar (30) comment '用户名',
     password varchar (60) comment '密码',

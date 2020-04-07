@@ -1,6 +1,5 @@
 package com.hailin.iot.common.rpc;
 
-import com.hailin.iot.common.model.Message;
 
 /**
  * 聊天服务提供接口

@@ -1,5 +1,6 @@
 package com.hailin.iot.broker.remoting.processor.user;
 
+import com.hailin.iot.broker.service.NotifyChatService;
 import com.hailin.iot.common.dto.ChatMessage;
 import com.hailin.iot.common.model.Message;
 import com.hailin.iot.common.util.ChatMessageUtil;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishMessage> {
 
@@ -31,6 +34,9 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
     private StoreService storeService;
 
     private IDGen idGen = new SnowflakeIDGenImpl(redisUrl , port );
+
+    @Autowired
+    private NotifyChatService notifyChatService;
 
 
     public MqttPublishUserProcessor() {
@@ -55,6 +61,23 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
                 .acceptUser(chatMessage.getAcceptUser())
                 .messageBit(chatMessage.getMessageBit()).build();
         storeService.storeMessage(message);
+        // 多终端同步 需要发送到其它信息 会保证多个终端在同一个broker上
+        sendMultiTermMessage(bizContext.getConnection() , message);
+
+        // 通知 消息接收者
+        notifyChatService.sendMessageChat(message.getAcceptUser() , message);
         return null;
+    }
+
+    private void sendMultiTermMessage(Connection connection, Message message) {
+        if (Objects.isNull(connection.getPool())){
+            return;
+        }
+        for ( Connection item : connection.getPool().getAll()) {
+            if (Objects.equals( item , connection)){
+                continue;
+            }
+            connection.getChannel().writeAndFlush(message);
+        }
     }
 }

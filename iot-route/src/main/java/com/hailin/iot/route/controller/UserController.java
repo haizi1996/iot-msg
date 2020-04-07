@@ -2,7 +2,7 @@ package com.hailin.iot.route.controller;
 
 import com.hailin.iot.common.cache.BrokerCacheInstance;
 import com.hailin.iot.common.model.Broker;
-import com.hailin.iot.common.model.User;
+import com.hailin.iot.common.model.UserCache;
 import com.hailin.iot.common.dto.BrokerInfo;
 import com.hailin.iot.common.service.LoadBalance;
 import com.hailin.iot.common.service.impl.ConsistentHashLoadBalancer;
@@ -30,13 +30,13 @@ public class UserController {
 
     @PostMapping("/user/login")
     public Broker login(@NotEmpty  String userName){
-        User user = userService.findByUserName(userName);
+        UserCache userCache = userService.findByUserName(userName);
         return loadBalance.select(BrokerCacheInstance.getInstance(null).getAllBrokerInfos(), userName);
     }
 
     @PostMapping("/user/register")
-    public BrokerInfo registerUser(User user){
-        Long num = userService.saveUser(user);
+    public BrokerInfo registerUser(UserCache userCache){
+        Long num = userService.saveUser(userCache);
         if(num > 0){
 
         }

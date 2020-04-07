@@ -2,6 +2,7 @@ package com.hailin.iot.remoting;
 
 
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.ConnectionPool;
 import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -78,6 +79,10 @@ public class DefaultBizContext implements BizContext {
         return null;
     }
 
+    @Override
+    public ConnectionPool getConnectionPool() {
+        return null;
+    }
 
     @Override
     public boolean isRequestTimeout() {
