@@ -1,9 +1,8 @@
 package com.hailin.iot.broker.remoting.processor.user;
 
 import com.hailin.iot.broker.service.NotifyChatService;
-import com.hailin.iot.common.dto.ChatMessage;
 import com.hailin.iot.common.model.Message;
-import com.hailin.iot.common.util.ChatMessageUtil;
+import com.hailin.iot.common.util.MessageUtil;
 import com.hailin.iot.leaf.IDGen;
 import com.hailin.iot.leaf.snowflake.SnowflakeIDGenImpl;
 import com.hailin.iot.remoting.BizContext;
@@ -65,7 +64,7 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
             publishMessage.payload().readBytes(data);
         }
 
-        ChatMessage chatMessage = ChatMessageUtil.deSerializationToObj(data);
+        Message chatMessage = MessageUtil.deSerializationToObj(data);
         Message message = Message.builder()
                 .sendTime(System.currentTimeMillis())
                 .messageId(idGen.get().getId())

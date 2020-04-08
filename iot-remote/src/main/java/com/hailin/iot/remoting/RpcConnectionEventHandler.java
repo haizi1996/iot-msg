@@ -24,10 +24,10 @@ public class RpcConnectionEventHandler extends ConnectionEventHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Connection connection = ctx.channel().attr(Connection.CONNECTION).get();
-        if (connection != null){
-            this.getConnectionManager().remove(connection);
-        }
+//        Connection connection = ctx.channel().attr(Connection.CONNECTION).get();
+//        if (connection != null){
+//            this.getConnectionManager().remove(connection);
+//        }
         super.channelInactive(ctx);
     }
 }
