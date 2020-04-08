@@ -1,10 +1,12 @@
 package com.hailin.iot.broker;
 
 
-import org.apache.dubbo.config.ProtocolConfig;
+import com.hailin.iot.broker.remoting.RpcServer;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 
@@ -15,13 +17,18 @@ import java.util.concurrent.CountDownLatch;
 @MapperScan(basePackages = {"com.hailin.iot.user.dao"})
 @ComponentScan(basePackages = {"com.hailin.iot"})
 @ImportResource("classpath:/dubbo.xml")
-public class BrokerApplication  {
+public class BrokerApplication {
+
 
     public static void main(String[] args) throws InterruptedException {
-        SpringApplication.run(BrokerApplication.class , args);
+        ApplicationContext applicationContext = SpringApplication.run(BrokerApplication.class , args);
+        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
+        rpcServer.startup();
         System.out.println("dubbo service started");
         new CountDownLatch(1).await();
     }
+
+
 
     @PreDestroy
     public void close(){

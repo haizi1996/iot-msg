@@ -24,6 +24,6 @@ public class NotifyChatServiceImplTest {
 //        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ConsumerConfiguration.class);
 //        context.start();
 //        final ChatService chatService = (ChatService) context.getBean("chatService");
-        chatService.noticePrivateChat("zhl" , "jjjjjjj");
+//        chatService.noticePrivateChat("zhl" , "jjjjjjj");
     }
 }

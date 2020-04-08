@@ -23,6 +23,8 @@ public interface UserProcessor<T extends MqttMessage> {
 
     boolean timeoutDiscard();
 
+    MqttMessageType interest();
+
     void setExecutorSelector( ExecutorSelector executorSelector);
 
     ExecutorSelector getExecutorSelector();

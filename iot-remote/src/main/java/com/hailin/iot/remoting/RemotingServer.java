@@ -49,5 +49,5 @@ public interface RemotingServer extends LifeCycle, Configurable {
      *
      * @param processor user processor which can be a single-interest processor or a multi-interest processor
      */
-//    void registerUserProcessor(UserProcessor<?> processor);
+    void registerUserProcessor(UserProcessor<?> processor);
 }

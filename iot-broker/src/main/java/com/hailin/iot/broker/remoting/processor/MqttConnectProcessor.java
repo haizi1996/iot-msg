@@ -1,5 +1,11 @@
 package com.hailin.iot.broker.remoting.processor;
 
+import com.hailin.iot.broker.config.ConfigValue;
+import com.hailin.iot.broker.user.dao.UserMapper;
+import com.hailin.iot.broker.user.model.User;
+import com.hailin.iot.broker.user.model.UserExample;
+import com.hailin.iot.common.model.Broker;
+import com.hailin.iot.common.util.BrokerUtil;
 import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.remoting.RemotingContext;
@@ -17,11 +23,13 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttVersion;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,6 +44,12 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private ConfigValue configValue;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public void doProcess(RemotingContext ctx, MqttConnectMessage msg) throws Exception {
@@ -64,7 +78,12 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         // 验证身份
         String userName = payload.userName();
         String password = new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
-
+        UserExample example = new UserExample();
+        example.createCriteria().andUsernameEqualTo(userName).andPasswordEqualTo(password);
+        List<User> users= userMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(users)){
+            connectReturnCode = MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED;
+        }
 
         IdleStateHandler idle = ctx.getChannelContext().channel().pipeline().remove(IdleStateHandler.class);
         if (idle == null){
@@ -93,7 +112,8 @@ public class MqttConnectProcessor extends AbstractRemotingProcessor<MqttConnectM
         connection.setUserName(payload.userName());
         connection.getChannel().attr(Connection.CONNECTION_ACK).set(Boolean.TRUE);
         connection.getConnectionManager().add(connection , payload.clientIdentifier());
-        redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , payload.userName().getBytes() , IpUtils.getLocalIpAddress().getBytes());
+        Broker broker = Broker.builder().host(IpUtils.getLocalIpAddress()).port(configValue.getPort()).score(System.currentTimeMillis()).build();
+        redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , payload.userName().getBytes() , BrokerUtil.serializeToByteArray(broker));
     }
 
 

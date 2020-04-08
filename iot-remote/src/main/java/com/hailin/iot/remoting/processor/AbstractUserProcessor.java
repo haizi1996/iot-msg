@@ -1,11 +1,13 @@
 package com.hailin.iot.remoting.processor;
 
 
+import com.hailin.iot.remoting.AsyncContext;
 import com.hailin.iot.remoting.BizContext;
 import com.hailin.iot.remoting.DefaultBizContext;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.UserProcessor;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 
 import java.util.concurrent.Executor;
 
@@ -49,6 +51,21 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
         return false;
     }
 
+
+    @Override
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) {
+
+    }
+
+    @Override
+    public Object handleRequest(BizContext bizContext, MqttMessage request) throws Exception {
+        return null;
+    }
+
+    @Override
+    public MqttMessageType interest() {
+        return MqttMessageType.CONNECT;
+    }
 
     @Override
     public boolean timeoutDiscard() {

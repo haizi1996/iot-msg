@@ -33,7 +33,8 @@ import static com.hailin.iot.common.contanst.Contants.REDIS_USER_KEY;
  * @author hailin
  */
 @Slf4j
-@Service("chatService")
+//@Service("chatService")
+@Service
 public class ChatServiceImpl implements ChatService {
 
     private Executor executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() , new NamedThreadFactory("ChatServiceImpl"));

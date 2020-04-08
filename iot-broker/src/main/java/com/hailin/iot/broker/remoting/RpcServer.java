@@ -24,6 +24,7 @@ import com.hailin.iot.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.processor.UserProcessorRegisterHelper;
 import com.hailin.iot.remoting.util.NettyEventLoopUtil;
 import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -268,7 +269,10 @@ public class RpcServer extends AbstractRemotingServer {
         }
     }
 
-
+    @Override
+    public void registerUserProcessor(UserProcessor<?> processor) {
+        UserProcessorRegisterHelper.registerUserProcessor(processor, this.userProcessors);
+    }
 
     public void sendMessageToUser(String acceptUsername , Object message , long timeout) throws RemotingException,
             InterruptedException {

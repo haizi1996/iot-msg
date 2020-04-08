@@ -1,11 +1,14 @@
 package com.hailin.iot.broker.user.service.impl;
 
 import com.hailin.iot.broker.user.dao.UserMapper;
+import com.hailin.iot.broker.user.model.User;
+import com.hailin.iot.broker.user.model.UserExample;
 import com.hailin.iot.broker.user.service.UserService;
-import com.hailin.iot.common.model.UserCache;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -14,12 +17,15 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public long saveUser(UserCache userCache) {
-        return userMapper.saveUser(userCache);
+    public long saveUser(User userCache) {
+        return userMapper.insert(userCache);
     }
 
     @Override
-    public UserCache findByUserName(String userName) {
-        return userMapper.findByUserName(userName);
+    public User findByUserName(String userName) {
+        UserExample example = new UserExample();
+        example.createCriteria().andUsernameEqualTo(userName);
+        List<User> res = userMapper.selectByExample(example);
+        return CollectionUtils.isEmpty(res) ? null : res.get(0);
     }
 }
