@@ -6,13 +6,18 @@ import com.hailin.iot.remoting.BizContext;
 import com.hailin.iot.remoting.DefaultBizContext;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.UserProcessor;
+import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executor;
 
 
 public abstract class AbstractUserProcessor<T extends MqttMessage> implements UserProcessor<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractUserProcessor.class);
 
     protected ExecutorSelector executorSelector;
 
@@ -53,7 +58,7 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
 
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) {
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx) {
 
     }
 
@@ -70,5 +75,40 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
     @Override
     public boolean timeoutDiscard() {
         return true;
+    }
+
+    class ProcessTask implements Runnable {
+
+        RemotingContext   ctx;
+        MqttMessage msg;
+
+        public ProcessTask(RemotingContext ctx, MqttMessage msg) {
+            this.ctx = ctx;
+            this.msg = msg;
+        }
+
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        @Override
+        public void run() {
+            try {
+                AbstractUserProcessor.this.doProcess(ctx, msg);
+            } catch (Throwable e) {
+                //protect the thread running this task
+                String remotingAddress = RemotingUtil.parseRemoteAddress(ctx.getChannelContext()
+                        .channel());
+                logger
+                        .error(
+                                "Exception caught when process rpc request command in RpcRequestProcessor, Id="
+                                        + msg.toString() + "! Invoke source address is [" + remotingAddress
+                                        + "].", e);
+            }
+        }
+
+    }
+
+    protected  void doProcess(RemotingContext ctx, MqttMessage msg){
+
     }
 }

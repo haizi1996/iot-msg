@@ -13,9 +13,10 @@ public interface UserProcessor<T extends MqttMessage> {
 
     BizContext preHandleRequest(RemotingContext remotingContext , T request);
 
-    void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
+    void handleRequest(BizContext bizCtx, AsyncContext asyncCtx);
 
     Object handleRequest(BizContext bizContext , MqttMessage request) throws Exception;
+
 
     Executor getExecutor();
 
@@ -32,4 +33,6 @@ public interface UserProcessor<T extends MqttMessage> {
     interface ExecutorSelector {
         Executor select(MqttMessageType messageType, Object requestHeader);
     }
+
+
 }

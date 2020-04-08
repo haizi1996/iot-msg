@@ -20,26 +20,29 @@ public class RpcHandler extends ChannelInboundHandlerAdapter {
 
     private MessageHandler messageHandler;
 
+    private ConnectionManager connectionManager;
+
     public RpcHandler() {
         serverSide = false;
     }
 
-    public RpcHandler(ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
-        this(false , userProcessors , messageHandler);
+    public RpcHandler(ConnectionManager connectionManager ,ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
+        this(false , connectionManager ,userProcessors , messageHandler);
     }
 
-    public RpcHandler(boolean serverSide, ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
+    public RpcHandler(boolean serverSide, ConnectionManager connectionManager , ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors , MessageHandler messageHandler) {
         this.serverSide = serverSide;
         this.userProcessors = userProcessors;
         this.messageHandler = messageHandler;
+        this.connectionManager = connectionManager;
     }
 
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        log.debug(msg.toString());
+        log.debug("read a message ====> " + msg.toString());
         if (msg instanceof MqttMessage){
-            messageHandler.handleMessage(new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors) ,(MqttMessage) msg);
+            messageHandler.handleMessage(new RemotingContext(ctx, new InvokeContext() , connectionManager, serverSide, userProcessors) ,(MqttMessage) msg);
         }
     }
 }

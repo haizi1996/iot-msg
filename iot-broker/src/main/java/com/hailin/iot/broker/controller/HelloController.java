@@ -13,12 +13,12 @@ public class HelloController {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    private ChatService chatService;
+//    @Autowired
+//    private ChatService chatService;
 
     @GetMapping("/hello")
     public String sayHello(){
-        ChatService chatService = (ChatService)applicationContext.getBean("rpcChatService");
+//        ChatService chatService = (ChatService)applicationContext.getBean("rpcChatService");
 //        chatService.noticePrivateChat("username" , "password");
         return "哈哈哈";
     }

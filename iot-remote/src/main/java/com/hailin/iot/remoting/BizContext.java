@@ -30,4 +30,6 @@ public interface BizContext {
     String get(String key);
 
     InvokeContext getInvokeContext();
+
+    RemotingContext getRemotingCtx();
 }

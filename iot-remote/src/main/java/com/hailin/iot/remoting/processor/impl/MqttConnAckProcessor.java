@@ -14,7 +14,7 @@ public class MqttConnAckProcessor extends AbstractRemotingProcessor<MqttConnAckM
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttConnAckProcessor.class);
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttConnAckMessage msg)  {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttConnAckMessage msg , long timestamp)  {
         final MqttConnAckVariableHeader header = msg.variableHeader();
         MqttConnectReturnCode connectReturnCode = header.connectReturnCode();
         switch (connectReturnCode){

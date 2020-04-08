@@ -17,7 +17,7 @@ public class UserProcessorRegisterHelper {
         if (processor instanceof MultiInterestUserProcessor) {
             registerUserProcessor(((MultiInterestUserProcessor) processor), userProcessors);
         } else {
-            if (Objects.nonNull(processor.interest())) {
+            if (Objects.isNull(processor.interest())) {
                 throw new RuntimeException("Processor interest should not be blank!");
             }
             UserProcessor<?> preProcessor = userProcessors.putIfAbsent(processor.interest(),

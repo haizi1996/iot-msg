@@ -33,6 +33,8 @@ public class RemotingContext {
 
     private InvokeContext invokeContext;
 
+    private ConnectionManager connectionManager;
+
     private ConcurrentHashMap<MqttMessageType , UserProcessor<?>> userProcessors;
 
     public RemotingContext setTimeoutDiscard(boolean failFastEnabled) {
@@ -40,9 +42,11 @@ public class RemotingContext {
         return this;
     }
     public RemotingContext(ChannelHandlerContext ctx, InvokeContext invokeContext,
+                           ConnectionManager connectionManager,
                            boolean serverSide,
                            ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors) {
         this.channelContext = ctx;
+        this.connectionManager = connectionManager;
         this.serverSide = serverSide;
         this.arriveTimestamp = System.currentTimeMillis();
         this.userProcessors = userProcessors;

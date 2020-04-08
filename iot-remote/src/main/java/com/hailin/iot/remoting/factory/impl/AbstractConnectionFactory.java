@@ -117,7 +117,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
     @Override
     public Connection createConnection(Url url  , ConnectionManager connectionManager) throws Exception {
         Channel channel = doCreateConnection(url.getIp(), url.getPort(), url.getConnectTimeout());
-        Connection conn = new Connection(channel , url , connectionManager);
+        Connection conn = new Connection(channel , url);
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         return conn;
     }
@@ -125,7 +125,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
     @Override
     public Connection createConnection(String targetIp, int targetPort, int connectTimeOut , ConnectionManager connectionManager) throws Exception {
         Channel channel = doCreateConnection(targetIp, targetPort, connectTimeOut);
-        Connection conn = new Connection(channel,   new Url(targetIp, targetPort) , connectionManager);
+        Connection conn = new Connection(channel,   new Url(targetIp, targetPort) );
         channel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         return conn;
     }

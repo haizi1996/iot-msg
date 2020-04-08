@@ -14,24 +14,25 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 
 @Service
 public class NotifyChatServiceImpl implements NotifyChatService {
 
-    @Autowired
-    private RpcServer rpcServer;
 
-    @Autowired
+
+    @Resource(name = "chatService")
     private ChatService chatService;
 
     @Override
     public boolean sendPrivateChat(String accepterUser, Message message) {
-        //获取
-        Connection connection = rpcServer.getConnectionManager().get(accepterUser);
-        if(connection != null){
-            connection.getChannel().writeAndFlush(buildMqttPublishMessage(message));
-            return true;
-        }
+//        //获取
+//        Connection connection = rpcServer.getConnectionManager().get(accepterUser);
+//        if(connection != null){
+//            connection.getChannel().writeAndFlush(buildMqttPublishMessage(message));
+//            return true;
+//        }
         chatService.noticePrivateChat(accepterUser , message.getMessageId());
         return true;
     }

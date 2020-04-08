@@ -15,7 +15,7 @@ public class MqttDisconnectProcessor extends AbstractRemotingProcessor<MqttMessa
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttDisconnectProcessor.class);
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttMessage msg , long timestamp) throws Exception {
 
         MqttFixedHeader header = msg.fixedHeader();
         if(!Objects.equals(header.messageType() , MqttMessageType.DISCONNECT )){

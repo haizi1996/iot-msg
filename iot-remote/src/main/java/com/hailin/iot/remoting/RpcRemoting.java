@@ -51,7 +51,7 @@ public abstract class RpcRemoting extends BaseRemoting {
     protected void invokeWithCallback(final Connection conn, final Message message,
                                       final InvokeCallback invokeCallback, final int timeoutMillis) {
 
-        ConnectionPool connectionPool = conn.getConnectionManager().getConnectionPool(conn.getUserName());
+        ConnectionPool connectionPool = connectionManager.getConnectionPool(conn.getUserName());
         int messageId = connectionPool.getMessageId();
         MqttPublishMessage mqttPublishMessage = buildMqttMessage(message , messageId);
 

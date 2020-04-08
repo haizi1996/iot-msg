@@ -6,6 +6,7 @@ import com.hailin.iot.remoting.UserProcessor;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,7 +31,7 @@ public class DefaultExecutorSelector implements UserProcessor.ExecutorSelector {
 
     @Override
     public Executor select(MqttMessageType messageType, Object requestHeader) {
-        if (StringUtils.equals(chooseExecutorStr, (String) requestHeader)) {
+        if (Objects.equals(chooseExecutorStr, requestHeader)) {
             return executor1;
         } else {
             return executor0;

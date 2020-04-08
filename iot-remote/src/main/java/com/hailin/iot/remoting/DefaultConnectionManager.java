@@ -1,5 +1,6 @@
 package com.hailin.iot.remoting;
 
+import com.google.common.collect.Lists;
 import com.hailin.iot.common.exception.LifeCycleException;
 import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.remoting.config.ConfigManager;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
@@ -68,10 +71,12 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
 
     public ConnectionEventListener connectionEventListener;
 
+    private Deque<Connection> tcpDeque = new ConcurrentLinkedDeque<>();
+
     public DefaultConnectionManager() {
         this.healTasks = new ConcurrentHashMap<>();
-        healTasks = new ConcurrentHashMap<>();
-
+        this.connTasks = new ConcurrentHashMap<>();
+        this.connectionSelectStrategy = new RandomSelectStrategy(globalSwitch);
     }
 
     public DefaultConnectionManager(ConnectionSelectStrategy connectionSelectStrategy) {
@@ -147,6 +152,8 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
             this.add(connection , poolKey);
         }
     }
+
+
 
     @Override
     public void add(Connection connection, String poolKey) {

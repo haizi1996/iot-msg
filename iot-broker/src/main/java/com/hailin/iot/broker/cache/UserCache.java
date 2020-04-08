@@ -1,4 +1,4 @@
-package com.hailin.iot.common.model;
+package com.hailin.iot.broker.cache;
 
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,5 @@ public class UserCache {
 
     // 最后一次 推送消息ID
     private volatile long lastMessageId;
-
-
 
 }

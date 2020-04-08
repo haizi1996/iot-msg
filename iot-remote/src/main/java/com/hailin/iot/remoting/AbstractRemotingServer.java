@@ -1,5 +1,6 @@
 package com.hailin.iot.remoting;
 
+import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.remoting.config.IotOption;
 import com.hailin.iot.remoting.config.IotOptions;
 import com.hailin.iot.remoting.config.Configurable;
@@ -33,7 +34,8 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     private final ConfigContainer configContainer;
 
     public AbstractRemotingServer(int port) {
-        this(new InetSocketAddress(port).getAddress().getHostAddress(), port);
+//        this(new InetSocketAddress(port).getAddress().getHostAddress(), port);
+        this(IpUtils.getLocalIpAddress(), port);
     }
 
     public AbstractRemotingServer(String ip, int port) {

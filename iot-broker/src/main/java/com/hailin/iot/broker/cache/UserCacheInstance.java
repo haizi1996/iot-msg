@@ -2,7 +2,6 @@ package com.hailin.iot.broker.cache;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hailin.iot.common.model.UserCache;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

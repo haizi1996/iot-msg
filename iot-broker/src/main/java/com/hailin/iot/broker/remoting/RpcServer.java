@@ -67,7 +67,7 @@ public class RpcServer extends AbstractRemotingServer {
 
     private ConnectionEventListener connectionEventListener = new ConnectionEventListener();
 
-    private ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors = new ConcurrentHashMap<>(4);
+    private ConcurrentHashMap<MqttMessageType, UserProcessor<?>> userProcessors = new ConcurrentHashMap<>(16);
 
     private final EventLoopGroup bossGroup = NettyEventLoopUtil.newEventLoopGroup(1, new NamedThreadFactory(
                             "Rpc-netty-server-boss", false));
@@ -92,12 +92,12 @@ public class RpcServer extends AbstractRemotingServer {
         if (workerGroup instanceof NioEventLoopGroup){
             ((NioEventLoopGroup)workerGroup).setIoRatio(ConfigManager.netty_io_ratio());
         }else if (workerGroup instanceof EpollEventLoopGroup){
-            ((EpollEventLoopGroup)workerGroup).setIoRatio(ConfigManager.netty_io_ratio());
+//            ((EpollEventLoopGroup)workerGroup).setIoRatio(ConfigManager.netty_io_ratio());
         }
     }
 
     public RpcServer(int port) {
-        this(port, false);
+        this(port, true);
     }
 
     public RpcServer(String ip, int port) {
@@ -166,7 +166,7 @@ public class RpcServer extends AbstractRemotingServer {
         final boolean idleSwitch = ConfigManager.tcp_idle_switch();
         final int idleTime = ConfigManager.tcp_server_idle();
         final ChannelHandler serverIdleHandler = new ServerIdleHandler();
-        final RpcHandler rpcHandler = new RpcHandler(true , userProcessors , MqttMessageServerHandler.getHandler());
+        final RpcHandler rpcHandler = new RpcHandler(true , connectionManager , userProcessors , MqttMessageServerHandler.getHandler());
         this.bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
@@ -179,21 +179,7 @@ public class RpcServer extends AbstractRemotingServer {
                 }
                 pipeline.addLast("connectionEventHandler" , connectionEventHandler);
                 pipeline.addLast("handler" , rpcHandler);
-                createConncetion(socketChannel);
-            }
 
-            /**
-             * 创建connection对象
-             * @param socketChannel socket
-             */
-            private void createConncetion(SocketChannel socketChannel) {
-                Url url = addressParser.parse(RemotingUtil.parseRemoteAddress(socketChannel));
-                if (switches().isOn(GlobalSwitch.SERVER_MANAGE_CONNECTION_SWITCH)){
-                    connectionManager.add(new Connection(socketChannel , url , connectionManager) , url.getUniqueKey());
-                }else {
-                    new Connection(socketChannel , url , null);
-                }
-                socketChannel.pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
             }
         });
 

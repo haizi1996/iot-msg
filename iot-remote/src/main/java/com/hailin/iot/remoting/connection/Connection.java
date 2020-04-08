@@ -84,20 +84,20 @@ public class Connection {
     private  final AtomicInteger referenceCount = new AtomicInteger();
 
     //连接管理器
-    @Getter
-    private final ConnectionManager connectionManager;
+//    @Getter
+//    private final ConnectionManager connectionManager;
 
     private static final int NO_REFERENCE = 0;
 
-    public Connection(Channel channel ,ConnectionManager connectionManager) {
+    public Connection(Channel channel ) {
         this.channel = channel;
         this.channel.attr(CONNECTION).set(this);
-        this.connectionManager = connectionManager;
+//        this.connectionManager = connectionManager;
         this.init();
     }
 
-    public Connection(Channel channel, Url url, ConnectionManager connectionManager) {
-        this(channel , connectionManager);
+    public Connection(Channel channel, Url url) {
+        this(channel );
         this.url = url;
         this.poolKeys.add(url.getUniqueKey());
         this.init();

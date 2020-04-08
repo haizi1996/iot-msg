@@ -1,6 +1,6 @@
 package com.hailin.iot.broker.remoting;
 
-import com.hailin.iot.broker.remoting.processor.MqttConnectProcessor;
+import com.hailin.iot.remoting.processor.impl.MqttConnectProcessor;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.handler.MessageHandler;
@@ -58,7 +58,7 @@ public class MqttMessageServerHandler implements MessageHandler {
         this.processorManager
                 .registerDefaultProcessor(new AbstractRemotingProcessor<MqttMessage>() {
                     @Override
-                    public void doProcess(RemotingContext ctx, MqttMessage msg) throws Exception {
+                    public void preProcessRemotingContext(RemotingContext ctx, MqttMessage msg , long timestamp) throws Exception {
                         LOGGER.error("No processor available for message type {}, msg {}",
                                 msg.fixedHeader().messageType(), msg);
                     }

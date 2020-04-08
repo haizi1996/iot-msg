@@ -14,8 +14,7 @@ public abstract class AsyncUserProcessor<T extends MqttMessage> extends Abstract
     }
 
 
-    @Override
-    public abstract void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
+
 
 
 }

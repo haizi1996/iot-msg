@@ -15,7 +15,7 @@ public class MqttPingReqProcessor extends AbstractRemotingProcessor<MqttMessage>
     public static final Logger LOGGER = LoggerFactory.getLogger(MqttPingReqProcessor.class);
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttMessage msg , long timestamp) throws Exception {
         if (MqttMessageType.PINGREQ.equals(msg.fixedHeader().messageType())) {
             MqttMessage ack = MqttMessageFactory.newMessage(new MqttFixedHeader(MqttMessageType.PINGRESP, false, MqttQoS.AT_LEAST_ONCE, false, 0), null, null);
             ctx.writeAndFlush(ack).addListener(future -> {

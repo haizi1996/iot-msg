@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MqttUnsubScribeProcessor extends AbstractRemotingProcessor<MqttUnsubscribeMessage> {
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttUnsubscribeMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttUnsubscribeMessage msg , long timestamp) throws Exception {
         MqttFixedHeader fixedHeader = msg.fixedHeader();
         MqttUnsubscribePayload payload = msg.payload();
         if(!fixedHeader.isDup()){

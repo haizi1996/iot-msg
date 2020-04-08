@@ -15,7 +15,7 @@ public class MqttPingRespProcessor extends AbstractRemotingProcessor {
     public static final Logger LOGGER = LoggerFactory.getLogger(MqttPingRespProcessor.class);
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttMessage msg , long timestamp) throws Exception {
        if (MqttMessageType.PINGRESP.equals(msg.fixedHeader().messageType())) {
             Connection conn = ctx.getChannelContext().channel().attr(Connection.CONNECTION).get();
             InvokeFuture future = conn.getHeartbeatFuture();

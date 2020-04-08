@@ -15,7 +15,9 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class DefaultBizContext implements BizContext {
 
+
     private RemotingContext remotingCtx;
+
 
 
     public DefaultBizContext(RemotingContext remotingCtx) {
@@ -27,7 +29,7 @@ public class DefaultBizContext implements BizContext {
      *
      * @return RemotingContext
      */
-    protected RemotingContext getRemotingCtx() {
+    public RemotingContext getRemotingCtx() {
         return this.remotingCtx;
     }
 

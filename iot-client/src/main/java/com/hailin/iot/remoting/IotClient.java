@@ -10,6 +10,6 @@ import com.hailin.iot.remoting.connection.Connection;
  */
 public interface IotClient extends LifeCycle , Configurable {
 
-
-    Connection createStandaloneConnection(String address, int connectTimeout) throws RemotingException;
+    Connection createStandaloneConnection(String ip , int port, int connectTimeout) throws RemotingException;
+    Connection createStandaloneConnection(String address , int connectTimeout) throws RemotingException;
 }

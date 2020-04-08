@@ -31,57 +31,13 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
     private static final int TIMEOUT = 500;
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttPublishMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttPublishMessage msg , long timestamp) throws Exception {
 
-        preProcessRemotingContext(ctx);
-        if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
-            return;// then, discard this request
-        }
-        // decode request all
-        dispatchToUserProcessor(ctx, msg);
+
 
     }
 
-    @Override
-    public void process(RemotingContext ctx, MqttPublishMessage msg, ExecutorService defaultExecutor) throws Exception {
-        MqttFixedHeader fixedHeader = msg.fixedHeader();
-        UserProcessor userProcessor = ctx.getUserProcessor(fixedHeader.messageType());
-        if (userProcessor == null) {
-            String errMsg = "No user processor found for request: " + fixedHeader.messageType();
-            LOGGER.error(errMsg);
-            return;// must end process
-        }
 
-        // set timeout check state from user's processor
-        ctx.setTimeoutDiscard(userProcessor.timeoutDiscard());
-
-        // to check whether to process in io thread
-        if (userProcessor.processInIOThread()) {
-
-            // process in io thread
-            new ProcessTask(ctx, msg).run();
-            return;// end
-        }
-
-        Executor executor;
-        // to check whether get executor using executor selector
-        if (null == userProcessor.getExecutorSelector()) {
-            executor = userProcessor.getExecutor();
-        } else {
-
-            //try get executor with strategy
-            executor = userProcessor.getExecutorSelector().select(fixedHeader.messageType(),
-                    msg);
-        }
-
-        // Till now, if executor still null, then try default
-        if (executor == null) {
-            executor = (this.getExecutor() == null ? defaultExecutor : this.getExecutor());
-        }
-
-        // use the final executor dispatch process task
-        executor.execute(new ProcessTask(ctx, msg));
-    }
 
     private void preProcessRemotingContext(RemotingContext ctx) {
         long currentTimestamp = System.currentTimeMillis();
@@ -89,40 +45,6 @@ public class MqttPublishProcessor extends AbstractRemotingProcessor<MqttPublishM
         ctx.setTimeout(TIMEOUT);
     }
 
-    /**
-     * dispatch request command to user processor
-     * @param ctx remoting context
-     * @param msg rpc request command
-     */
-    private void dispatchToUserProcessor(RemotingContext ctx, MqttPublishMessage msg) {
-        MqttPublishVariableHeader variableHeader = msg.variableHeader();
-        MqttFixedHeader fixedHeader = msg.fixedHeader();
-        final int packetId = variableHeader.packetId();
-        final MqttMessageType messageType = fixedHeader.messageType();
-        // processor here must not be null, for it have been checked before
-        UserProcessor processor = ctx.getUserProcessor(messageType);
-        if (processor instanceof AsyncUserProcessor) {
-            try {
-                processor.handleRequest(processor.preHandleRequest(ctx, msg), new RpcAsyncContext(ctx, msg, this), msg);
-                sendResponseIfNecessary(ctx,  msg);
-            } catch (RejectedExecutionException e) {
-                LOGGER.warn("RejectedExecutionException occurred when do ASYNC process in RpcRequestProcessor");
-            } catch (Throwable t) {
-                String errMsg = "AYSNC process rpc request failed in RpcRequestProcessor, id=" + packetId;
-                LOGGER.error(errMsg, t);
-            }
-        } else {
-            try {
-               processor.handleRequest(processor.preHandleRequest(ctx, msg), msg);
-                sendResponseIfNecessary(ctx,  msg);
-            } catch (RejectedExecutionException e) {
-                LOGGER.warn("RejectedExecutionException occurred when do SYNC process in RpcRequestProcessor");
-            } catch (Throwable t) {
-                String errMsg = "SYNC process rpc request failed in RpcRequestProcessor, id=" + packetId;
-                LOGGER.error(errMsg, t);
-            }
-        }
-    }
 
     /**
      * 根据请求消息发送响应的消息

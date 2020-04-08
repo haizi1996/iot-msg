@@ -3,6 +3,7 @@ package com.hailin.iot.broker;
 
 import com.hailin.iot.broker.remoting.RpcServer;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,10 +15,13 @@ import javax.annotation.PreDestroy;
 import java.util.concurrent.CountDownLatch;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"com.hailin.iot.user.dao"})
+@MapperScan(basePackages = {"com.hailin.iot.broker.user.dao"})
 @ComponentScan(basePackages = {"com.hailin.iot"})
 @ImportResource("classpath:/dubbo.xml")
 public class BrokerApplication {
+
+    @Autowired
+    private RpcServer rpcServer ;
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -32,6 +36,8 @@ public class BrokerApplication {
 
     @PreDestroy
     public void close(){
+//        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
+        rpcServer.shutdown();
     }
 
 }

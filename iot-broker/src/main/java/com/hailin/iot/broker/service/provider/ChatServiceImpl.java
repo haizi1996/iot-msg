@@ -5,10 +5,10 @@ import com.hailin.iot.broker.remoting.RpcServer;
 import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.common.contanst.LogicBit;
 import com.hailin.iot.common.model.Message;
-import com.hailin.iot.common.model.UserCache;
+import com.hailin.iot.broker.cache.UserCache;
 import com.hailin.iot.common.rpc.ChatService;
 import com.hailin.iot.common.util.IpUtils;
-import com.hailin.iot.common.util.UserUtil;
+import com.hailin.iot.broker.util.UserUtil;
 import com.hailin.iot.remoting.NamedThreadFactory;
 import com.hailin.iot.store.hbase.HbaseUtils;
 import com.hailin.iot.store.service.StoreService;
@@ -33,16 +33,14 @@ import static com.hailin.iot.common.contanst.Contants.REDIS_USER_KEY;
  * @author hailin
  */
 @Slf4j
-//@Service("chatService")
-@Service
+@Service("chatService")
+//@Service
 public class ChatServiceImpl implements ChatService {
 
     private Executor executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() , new NamedThreadFactory("ChatServiceImpl"));
 
     private static final int timeout = 500;
 
-    @Autowired
-    private RpcServer rpcServer;
 
     @Autowired
     private RedisTemplate<String, ?> redisTemplate;
@@ -97,7 +95,7 @@ public class ChatServiceImpl implements ChatService {
             return ;
         }
         try {
-            rpcServer.sendMessageToUser(acceptUsername ,messages , timeout);
+            applicationContext.getBean(RpcServer.class).sendMessageToUser(acceptUsername ,messages , timeout);
             UserCacheInstance.get(acceptUsername).setLastMessageId(messages.get(messages.size() - 1).getMessageId());
         } catch (InterruptedException e) {
             e.printStackTrace();

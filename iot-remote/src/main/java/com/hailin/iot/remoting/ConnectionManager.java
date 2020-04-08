@@ -39,7 +39,6 @@ public interface ConnectionManager  extends Scannable, LifeCycle {
 
     List<Connection> getAll(String poolKey);
 
-
     Map<String, List<Connection>> getAll();
 
     void remove(Connection connection);

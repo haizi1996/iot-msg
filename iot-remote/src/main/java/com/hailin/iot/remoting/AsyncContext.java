@@ -14,4 +14,6 @@ public interface AsyncContext {
      */
     void sendResponse(MqttMessage message);
 
+    MqttMessage getMessage();
+
 }

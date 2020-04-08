@@ -1,7 +1,7 @@
-package com.hailin.iot.common.util;
+package com.hailin.iot.broker.util;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.hailin.iot.common.model.UserCache;
+import com.hailin.iot.broker.cache.UserCache;
 import com.hailin.iot.common.protoc.UserBuf;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;

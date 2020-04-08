@@ -27,7 +27,7 @@ import static com.hailin.iot.remoting.connection.Connection.CLIENT_IDENTIFIER;
 public class MqttSubscribeProcessor extends AbstractRemotingProcessor<MqttSubscribeMessage> {
 
     @Override
-    public void doProcess(RemotingContext ctx, MqttSubscribeMessage msg) throws Exception {
+    public void preProcessRemotingContext(RemotingContext ctx, MqttSubscribeMessage msg , long timestamp) throws Exception {
         MqttFixedHeader fixedHeader = msg.fixedHeader();
         List<MqttTopicSubscription> topicSubscriptions = msg.payload().topicSubscriptions();
 

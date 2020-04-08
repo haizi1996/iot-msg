@@ -18,6 +18,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -81,7 +82,7 @@ public class RpcClient extends AbstractIotClient {
             strategy = new RandomSelectStrategy(switches());
         }
         this.connectionManager = new DefaultClientConnectionManager(strategy ,
-                new MqttConnectionFactory(userProcessors , this , null)
+                new MqttConnectionFactory(userProcessors , connectionManager,this , null)
                 , connectionEventHandler , connectionEventListener ,switches());
         this.connectionManager.setAddressParser(addressParser);
         this.connectionManager.startup();
@@ -109,12 +110,17 @@ public class RpcClient extends AbstractIotClient {
         }
     }
     @Override
-    public Connection createStandaloneConnection(String address, int connectTimeout)
+    public Connection createStandaloneConnection(String ip , int port, int connectTimeout)
             throws RemotingException {
-        return this.connectionManager.create(address, connectTimeout);
+        return createStandaloneConnection(ip + ":" + port , connectTimeout);
     }
 
 
     public void sendMqttMessage(MqttMessage message){
+    }
+
+    @Override
+    public Connection createStandaloneConnection(String address, int connectTimeout) throws RemotingException {
+        return this.connectionManager.create(address, connectTimeout);
     }
 }
