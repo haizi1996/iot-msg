@@ -51,7 +51,7 @@ public interface Configs {
 
     /** TCP idle switch */
     public static final String TCP_IDLE_SWITCH                       = "iot.tcp.heartbeat.switch";
-    public static final String TCP_IDLE_SWITCH_DEFAULT               = "false";
+    public static final String TCP_IDLE_SWITCH_DEFAULT               = "true";
 
     /** TCP idle interval for client */
     public static final String TCP_IDLE                              = "iot.tcp.heartbeat.interval";

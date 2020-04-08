@@ -192,4 +192,19 @@ public class ConnectionPool implements Scannable {
         }
     }
 
+    public boolean isEmpty() {
+        return connections.isEmpty();
+    }
+
+    public void removeAndTryClose(Connection connection) {
+        if (null == connection) {
+            return;
+        }
+        connections.remove(connection.getType());
+        connection.decreaseRef();
+        if (connection.noRef()) {
+            connection.close();
+        }
+    }
+
 }

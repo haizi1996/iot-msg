@@ -28,7 +28,7 @@ public class ConnectEventProcessor implements ConnectionEventProcessor {
                 .keepAlive(5).protocolVersion(MqttVersion.MQTT_3_1_1)
                 .clientId(connection.getChannel().id().asShortText())
                 .build();
-        connection.getChannel().writeAndFlush(mqttConnectMessage);
+//        connection.getChannel().writeAndFlush(mqttConnectMessage);
         log.debug(" send mqtt connect message end !");
     }
 }

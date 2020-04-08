@@ -14,11 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -272,17 +274,58 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
 
     @Override
     public Map<String, List<Connection>> getAll() {
-        return null;
+        Map<String, List<Connection>> allConnections = new HashMap<String, List<Connection>>();
+        Iterator<Map.Entry<String, RunStateRecordedFutureTask<ConnectionPool>>> iterator = this
+                .getConnPools().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, RunStateRecordedFutureTask<ConnectionPool>> entry = iterator.next();
+            ConnectionPool pool = FutureTaskUtil.getFutureTaskResult(entry.getValue(), LOGGER);
+            if (null != pool) {
+                allConnections.put(entry.getKey(), pool.getAll());
+            }
+        }
+        return allConnections;
     }
 
     @Override
     public void remove(Connection connection) {
-
+        if (null == connection) {
+            return;
+        }
+        Set<String> poolKeys = connection.getPoolKeys();
+        if (null == poolKeys || poolKeys.isEmpty()) {
+            connection.close();
+            LOGGER.warn("Remove and close a standalone connection.");
+        } else {
+            for (String poolKey : poolKeys) {
+                this.remove(connection, poolKey);
+            }
+        }
     }
 
     @Override
     public void remove(Connection connection, String poolKey) {
-
+        if (null == connection || StringUtils.isBlank(poolKey)) {
+            return;
+        }
+        ConnectionPool pool = this.getConnectionPool(this.connTasks.get(poolKey));
+        if (null == pool) {
+            connection.close();
+            LOGGER.warn("Remove and close a standalone connection.");
+        } else {
+            pool.removeAndTryClose(connection);
+            if (pool.isEmpty()) {
+                this.removeTask(poolKey);
+                LOGGER.warn(
+                        "Remove and close the last connection in ConnectionPool with poolKey {}",
+                        poolKey);
+            } else {
+                LOGGER
+                        .warn(
+                                "Remove and close a connection in ConnectionPool with poolKey {}, {} connections left.",
+                                poolKey, pool.size());
+            }
+        }
     }
 
     @Override
@@ -303,6 +346,16 @@ public class DefaultConnectionManager extends AbstractLifeCycle implements Conne
     @Override
     public void scan() {
 
+    }
+
+    protected void removeTask(String poolKey) {
+        RunStateRecordedFutureTask<ConnectionPool> task = this.connTasks.remove(poolKey);
+        if (null != task) {
+            ConnectionPool pool = FutureTaskUtil.getFutureTaskResult(task, LOGGER);
+            if (null != pool) {
+                pool.removeAllAndTryClose();
+            }
+        }
     }
 
     private class ConnectionPoolCall implements Callable<ConnectionPool>{

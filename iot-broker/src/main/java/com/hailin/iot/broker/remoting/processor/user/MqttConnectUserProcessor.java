@@ -129,6 +129,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         connection.setType(Connection.TermType.valueOf(payload.clientIdentifier()));
         connection.setUserName(payload.userName());
         connection.getChannel().attr(Connection.CONNECTION_ACK).set(Boolean.TRUE);
+        connection.getChannel().attr(Connection.CONNECTION).set(connection);
         ctx.getChannelContext().channel().pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         ctx.getConnectionManager().add(connection , connection.getUserName());
 //        connection.getConnectionManager().add(connection , payload.clientIdentifier());

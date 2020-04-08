@@ -91,9 +91,11 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
                 case CONNECT:
                     Channel channel = ctx.channel();
                     if (null != channel) {
-                        Connection connection = channel.attr(Connection.CONNECTION).get();
-                        this.onEvent(connection, connection.getUrl().getOriginUrl(),
-                                ConnectionEventType.CONNECT);
+                        Attribute<Connection> connection = channel.attr(Connection.CONNECTION);
+                        if (Objects.nonNull(connection)) {
+                            this.onEvent(connection.get(), connection.get().getUrl().getOriginUrl(),
+                                    ConnectionEventType.CONNECT);
+                        }
                     } else {
                         log.warn("channel null when handle user triggered event in ConnectionEventHandler!");
                     }

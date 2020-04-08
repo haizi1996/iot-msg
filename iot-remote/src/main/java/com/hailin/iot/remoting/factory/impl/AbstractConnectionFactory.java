@@ -91,7 +91,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
                     pipeline.addLast("heartbeatHandler", heartbeatHandler);
                 }
 
-                pipeline.addLast("connectionEventHandler", connectionEventHandler);
+//                pipeline.addLast("connectionEventHandler", connectionEventHandler);
                 pipeline.addLast("handler", handler);
             }
         });
