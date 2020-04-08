@@ -68,7 +68,7 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
         Message message = Message.builder()
                 .sendTime(System.currentTimeMillis())
                 .messageId(idGen.get().getId())
-                .sendUser(connection.getUserName())
+                .sendUser(chatMessage.getSendUser())
                 .content(chatMessage.getContent())
                 .acceptUser(chatMessage.getAcceptUser())
                 .messageBit(chatMessage.getMessageBit()).build();
