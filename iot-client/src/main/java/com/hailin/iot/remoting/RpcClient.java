@@ -8,6 +8,7 @@ import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.connection.MqttConnectionFactory;
 import com.hailin.iot.remoting.connection.ReconnectManager;
 import com.hailin.iot.remoting.connection.Reconnector;
+import com.hailin.iot.remoting.handler.MqttMessageServerHandler;
 import com.hailin.iot.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.remoting.monitor.ScheduledDisconnectStrategy;
@@ -82,7 +83,7 @@ public class RpcClient extends AbstractIotClient {
             strategy = new RandomSelectStrategy(switches());
         }
         this.connectionManager = new DefaultClientConnectionManager(strategy ,
-                new MqttConnectionFactory(userProcessors , connectionManager,this , null)
+                new MqttConnectionFactory(userProcessors , connectionManager,this , MqttMessageServerHandler.getHandler())
                 , connectionEventHandler , connectionEventListener ,switches());
         this.connectionManager.setAddressParser(addressParser);
         this.connectionManager.startup();

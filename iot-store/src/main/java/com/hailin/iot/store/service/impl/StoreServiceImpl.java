@@ -18,8 +18,11 @@ import java.util.List;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-    @Value("${spring.data.hbase.config.roamTable}")
+    @Value("${spring.data.hbase.roamTable}")
     private String roamTableName;
+
+    @Value("${spring.data.hbase.timeLineTableName}")
+    private String timeLineTableName;
 
     @Autowired
     private HbaseTemplate hbaseTemplate;
@@ -55,8 +58,18 @@ public class StoreServiceImpl implements StoreService {
 
         String seesionId = HbaseUtils.buildSession(message);
         byte[] seesionRowkey = HbaseUtils.buildRowKeyDesc(seesionId ,  message.getMessageId());
-
+        // 消息漫游
         hbaseTemplate.execute(roamTableName ,htable -> {
+            Put sessionPut = new Put(seesionRowkey)
+                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
+                    .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
+                    .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
+                    .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
+            htable.put( sessionPut);
+            return sendUserRowKey;} );
+
+        // 消息推送表
+        hbaseTemplate.execute(timeLineTableName ,htable -> {
             Put sendUserPut = new Put(sendUserRowKey)
                     .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
                     .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
@@ -67,13 +80,9 @@ public class StoreServiceImpl implements StoreService {
                     .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
                     .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
                     .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
-            Put sessionPut = new Put(seesionRowkey)
-                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
-                    .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
-                    .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
-                    .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
-            htable.put(Lists.newArrayList(sendUserPut , acceptUserPut , sessionPut));
-            return sendUserRowKey;} );
+            htable.put(Lists.newArrayList(sendUserPut , acceptUserPut ));
+            return sendUserRowKey;
+        });
     }
 
     @Override

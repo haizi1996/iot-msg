@@ -1,17 +1,17 @@
 package com.hailin.iot.broker.remoting.processor.user;
 
+import com.hailin.iot.broker.cache.UserCache;
+import com.hailin.iot.broker.cache.UserCacheInstance;
 import com.hailin.iot.broker.config.ConfigValue;
 import com.hailin.iot.broker.user.dao.UserMapper;
 import com.hailin.iot.broker.user.model.User;
 import com.hailin.iot.broker.user.model.UserExample;
-import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.util.BrokerUtil;
 import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.remoting.AsyncContext;
 import com.hailin.iot.remoting.BizContext;
 import com.hailin.iot.remoting.ConnectionEventType;
-import com.hailin.iot.remoting.ConnectionManager;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.processor.AbstractUserProcessor;
@@ -24,10 +24,8 @@ import io.netty.handler.codec.mqtt.MqttConnectVariableHeader;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttVersion;
-import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +34,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.hailin.iot.common.contanst.Contants.USER_ONLINE;
@@ -100,7 +97,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
             connectReturnCode = MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED;
         }
         if(connectReturnCode == MqttConnectReturnCode.CONNECTION_ACCEPTED ){
-            initConnection( bizContext.getRemotingCtx(), payload , mqttConnectMessage.variableHeader());
+            initConnection( bizContext.getRemotingCtx(), payload , users.get(0) , mqttConnectMessage.variableHeader());
         }
         //发送ConnectAck 报文
         MqttConnAckVariableHeader ackVariableHeader = new MqttConnAckVariableHeader(connectReturnCode , true);
@@ -119,8 +116,9 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
     /**
      * 初花连接
      * @param ctx
+     * @param user
      */
-    private void initConnection(RemotingContext ctx , MqttConnectPayload payload , MqttConnectVariableHeader connectVariableHeader) {
+    private void initConnection(RemotingContext ctx, MqttConnectPayload payload, User user, MqttConnectVariableHeader connectVariableHeader) {
         //获取keepalive时间 单位是秒
 //        int keepAlive = connectVariableHeader.keepAliveTimeSeconds();
 //        ctx.getChannelContext().channel().pipeline().addBefore(Contants.IDLE_HANDLER , Contants.IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , keepAlive , TimeUnit.SECONDS));
@@ -134,7 +132,11 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         ctx.getConnectionManager().add(connection , connection.getUserName());
 //        connection.getConnectionManager().add(connection , payload.clientIdentifier());
 
-        Broker broker = Broker.builder().host(IpUtils.getLocalIpAddress()).port(configValue.getPort()).score(System.currentTimeMillis()).build();
+        Broker broker = Broker.builder().ip(IpUtils.getLocalIpAddress()).port(configValue.getPort()).score(System.currentTimeMillis()).build();
+        UserCache userCache = UserCache.newUserCache(user);
+        userCache.setPort(configValue.getPort());
+        userCache.setIp(IpUtils.ipToLong(broker.getIp()));
+        UserCacheInstance.put(userCache);
         redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , payload.userName().getBytes() , BrokerUtil.serializeToByteArray(broker));
     }
 }

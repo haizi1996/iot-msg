@@ -41,7 +41,7 @@ public class BrokerTask {
         log.debug("register broker is started!");
         long now = System.currentTimeMillis();
         Set<ZSetOperations.TypedTuple> brokers = ports.stream()
-        .map(port -> Broker.builder().host(IpUtils.getLocalIpAddress()).port(port).build())
+        .map(port -> Broker.builder().ip(IpUtils.ipToLong(IpUtils.getLocalIpAddress())).port(port).build())
                 .map(broker -> new DefaultTypedTuple(BrokerUtil.serializeToByteArray(broker) , new Double(now)))
                 .collect(Collectors.toSet());
         redisTemplate.opsForZSet().add(Contants.REDIS_BROKER_KEY.getBytes() , brokers);

@@ -5,3 +5,4 @@ spring:
     hbase:
       #消息漫游表
       roamTable: "messageRoamTable"
+      timeLineTableName: "timeLineTableName"

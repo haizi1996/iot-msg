@@ -44,4 +44,8 @@ public class UserCacheInstance {
         cache.invalidate(userName);
     }
 
+    public static void put(UserCache userCache){
+        cache.put(userCache.getUserName() , userCache);
+    }
+
 }

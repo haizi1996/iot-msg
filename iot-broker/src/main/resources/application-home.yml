@@ -3,7 +3,6 @@ spring:
   data:
     hbase:
       config:
-        roamTable: "messageRoamTable"
         zookeeper:
           quorum: centos1
         rootdir: file:///workspace/hbase

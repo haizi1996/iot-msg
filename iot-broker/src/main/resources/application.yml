@@ -21,6 +21,11 @@ dubbo:
 
 
 spring:
+  data:
+    hbase:
+      #消息漫游表
+      roamTable: "messageRoamTable"
+      timeLineTableName: "timeLineTableName"
   profiles:
     active: work
   aop:
@@ -50,7 +55,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/iot?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
     username: root
-    password: 123456
+    password: 12345678
     driver-class-name: com.mysql.jdbc.Driver
     druid:
       filters: stat

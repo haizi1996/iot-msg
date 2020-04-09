@@ -1,9 +1,8 @@
-package com.hailin.iot.broker.remoting;
+package com.hailin.iot.remoting.handler;
 
 import com.hailin.iot.remoting.processor.impl.MqttConnectProcessor;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.config.ConfigManager;
-import com.hailin.iot.remoting.handler.MessageHandler;
 import com.hailin.iot.remoting.processor.AbstractRemotingProcessor;
 import com.hailin.iot.remoting.processor.ProcessorManager;
 import com.hailin.iot.remoting.processor.RemotingProcessor;
@@ -22,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -99,6 +99,9 @@ public class MqttMessageServerHandler implements MessageHandler {
         try {
             final MqttMessage message = (MqttMessage)msg;
             final RemotingProcessor processor = processorManager.getProcessor(message.fixedHeader().messageType());
+            if (Objects.isNull(processor)){
+                return;
+            }
             processor.process(ctx, message, processorManager.getDefaultExecutor());
         }catch (final Throwable throwable){
             processException(ctx, msg, throwable);

@@ -32,7 +32,7 @@ public class DubboLoadBalance extends AbstractLoadBalance {
             broker = loadBalance.select(BrokerCacheInstance.getInstance(null).getAllBrokerInfos() , accepterUser);
         }else {
             int port = Integer.parseInt(invocation.getAttachment(Contants.BROKER_PORT , "0"));
-            broker = Broker.builder().host(broker_ip).port(port).build();
+            broker = Broker.builder().ip(broker_ip).port(port).build();
         }
         if(Objects.isNull(broker)){
             return null;
@@ -46,6 +46,6 @@ public class DubboLoadBalance extends AbstractLoadBalance {
     }
 
     private <T> boolean isTargetIpAddress(Broker broker, Invoker<T> invoker) {
-        return Objects.equals(invoker.getUrl().getAddress() , broker.getHost()) && invoker.getUrl().getPort() == broker.getPort();
+        return Objects.equals(invoker.getUrl().getAddress() , broker.getIp()) && invoker.getUrl().getPort() == broker.getPort();
     }
 }

@@ -4,11 +4,11 @@ import com.hailin.iot.broker.cache.UserCacheInstance;
 import com.hailin.iot.broker.remoting.RpcServer;
 import com.hailin.iot.common.contanst.Contants;
 import com.hailin.iot.common.contanst.LogicBit;
+import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.model.Message;
 import com.hailin.iot.broker.cache.UserCache;
 import com.hailin.iot.common.rpc.ChatService;
-import com.hailin.iot.common.util.IpUtils;
-import com.hailin.iot.broker.util.UserUtil;
+import com.hailin.iot.common.util.BrokerUtil;
 import com.hailin.iot.remoting.NamedThreadFactory;
 import com.hailin.iot.store.hbase.HbaseUtils;
 import com.hailin.iot.store.service.StoreService;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static com.hailin.iot.common.contanst.Contants.REDIS_USER_KEY;
+import static com.hailin.iot.common.contanst.Contants.USER_ONLINE;
 
 /**
  * 聊天消息调用接口
@@ -43,7 +43,7 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Autowired
-    private RedisTemplate<String, ?> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -60,16 +60,16 @@ public class ChatServiceImpl implements ChatService {
         UserCache userCache = UserCacheInstance.get(acceptUsername);
         //  如果当前用户的信息没有在本broker上 可能是一致性hash重定向错了 可能是不在线
         if(Objects.isNull(userCache)){
-            byte[] data = redisTemplate.< String , byte[] >opsForHash().get(REDIS_USER_KEY ,acceptUsername);
+            byte[] data = (byte[]) redisTemplate.opsForHash().get(USER_ONLINE.getBytes() ,acceptUsername.getBytes());
             if (ArrayUtils.isEmpty(data)){
                 return true;
             }else {
-                UserCache cacheUserCache = UserUtil.deSerializationToObj(data);
+                Broker broker = BrokerUtil.deSerializationToObj(data);
                 // 如果在线的话
-                if(Objects.nonNull(cacheUserCache) && LogicBit.IS_ONLINE.isBit(cacheUserCache.getLogic())){
-                    String ip = IpUtils.longToIP(cacheUserCache.getIp());
-                    RpcContext.getContext().setAttachment(Contants.BROKER_IP , ip);
-                    RpcContext.getContext().setAttachment(Contants.BROKER_PORT , String.valueOf(cacheUserCache.getPort()));
+                if(Objects.nonNull(broker) ){
+//                    String ip = IpUtils.longToIP(cacheUserCache.getIp());
+                    RpcContext.getContext().setAttachment(Contants.BROKER_IP , broker.getIp());
+                    RpcContext.getContext().setAttachment(Contants.BROKER_PORT , String.valueOf(broker.getPort()));
                     ChatService chatService = (ChatService)applicationContext.getBean("rpcChatService");
                     return chatService.noticePrivateChat(acceptUsername , messageId );
                 }

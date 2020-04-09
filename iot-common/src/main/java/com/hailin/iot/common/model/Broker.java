@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 public class Broker {
     //ip地址
-    private String host;
+    private String ip;
     //端口
     private int port;
 
@@ -29,16 +29,11 @@ public class Broker {
         if (o == null || getClass() != o.getClass()) return false;
         Broker broker = (Broker) o;
         return port == broker.port &&
-                host.equals(broker.host);
+                Objects.equals(ip, broker.ip);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(host, port);
-    }
-
-
-    public String getUrl() {
-        return host + ":" + port;
+        return Objects.hash(ip, port);
     }
 }

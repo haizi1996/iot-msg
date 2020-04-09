@@ -23,10 +23,9 @@ import com.hailin.iot.remoting.codec.Codec;
 import com.hailin.iot.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
-import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.handler.MqttMessageServerHandler;
 import com.hailin.iot.remoting.processor.UserProcessorRegisterHelper;
 import com.hailin.iot.remoting.util.NettyEventLoopUtil;
-import com.hailin.iot.remoting.util.RemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -177,7 +176,7 @@ public class RpcServer extends AbstractRemotingServer {
                     pipeline.addLast(IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , idleTime , TimeUnit.SECONDS));
                     pipeline.addLast(IDLE_HANDLER, serverIdleHandler);
                 }
-                pipeline.addLast("connectionEventHandler" , connectionEventHandler);
+//                pipeline.addLast("connectionEventHandler" , connectionEventHandler);
                 pipeline.addLast("handler" , rpcHandler);
 
             }

@@ -30,10 +30,10 @@ public class Demo {
                 .hasUser(true).username("zhangsan").clientId("APP").build();
 
         connection.getChannel().writeAndFlush(zhansanLogin);
+//        System.out.println(connection.toString());
 
         // 王五登录
         Connection wangwu = rpcClient.createStandaloneConnection(IpUtils.getLocalIpAddress() , 5000 , 5000 * 60);
-        System.out.println(connection.toString());
         MqttConnectMessage wangwuConnect = MqttMessageBuilders.connect().willQoS(MqttQoS.AT_LEAST_ONCE).cleanSession(true).protocolVersion(MqttVersion.MQTT_3_1_1).keepAlive(60).willFlag(false).willRetain(false).willTopic("test").hasPassword(true).password("123456".getBytes())
                 .hasUser(true).username("wangwu").clientId("APP").build();
         wangwu.getChannel().writeAndFlush(wangwuConnect);

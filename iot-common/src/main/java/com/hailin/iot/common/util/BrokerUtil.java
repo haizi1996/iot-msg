@@ -30,7 +30,7 @@ public class BrokerUtil {
             return null;
         }
         BrokerBuf.Broker.Builder builder = BrokerBuf.Broker.newBuilder();
-        return  builder.setHost(broker.getHost())
+        return  builder.setHost(broker.getIp())
         .setPort(broker.getPort()).build().toByteArray();
     }
 
@@ -41,7 +41,7 @@ public class BrokerUtil {
         }
         try {
             BrokerBuf.Broker broker = BrokerBuf.Broker.parseFrom(bytes);
-            Broker res = Broker.builder().host(broker.getHost()).port(broker.getPort()).build();
+            Broker res = Broker.builder().ip(broker.getHost()).port(broker.getPort()).build();
             return res;
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);

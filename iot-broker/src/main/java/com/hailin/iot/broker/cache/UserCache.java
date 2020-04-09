@@ -1,5 +1,7 @@
 package com.hailin.iot.broker.cache;
 
+import com.hailin.iot.broker.user.model.User;
+import com.hailin.iot.common.contanst.LogicBit;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,5 +26,10 @@ public class UserCache {
 
     // 最后一次 推送消息ID
     private volatile long lastMessageId;
+
+    public static UserCache newUserCache(User user){
+        UserCache userCache = UserCache.builder().id(user.getId()).password(user.getPassword()).lastMessageId(user.getLastMessageId()).logic(LogicBit.IS_ONLINE.getBit()).userName(user.getUsername()).build();
+        return userCache;
+    }
 
 }
