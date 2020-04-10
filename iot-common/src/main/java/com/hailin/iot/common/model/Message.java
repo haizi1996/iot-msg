@@ -35,4 +35,10 @@ public class Message {
     //消息内容
     private String content;
 
+//    private String timeLineUser;
+//
+//    public Message setTimeLineUser(String timeLineUser) {
+//        this.timeLineUser = timeLineUser;
+//        return this;
+//    }
 }

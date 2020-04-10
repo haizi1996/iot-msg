@@ -15,7 +15,7 @@ public interface UserProcessor<T extends MqttMessage> {
 
     void handleRequest(BizContext bizCtx, AsyncContext asyncCtx);
 
-    Object handleRequest(BizContext bizContext , MqttMessage request) throws Exception;
+    Object handleRequest(BizContext bizContext , T request) throws Exception;
 
 
     Executor getExecutor();

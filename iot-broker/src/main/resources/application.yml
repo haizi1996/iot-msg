@@ -1,17 +1,17 @@
-server:
-  port: 8091
+#server:
+#  port: 8092
 
 netty:
   #netty监听链接地址
-  port: 5000
+  port: 5001
 
-dubbo:
-  application:
-    name: chat-dubbo
-    qosEnable: false
-  protocol:
-    name: dubbo
-    port: 20881
+#dubbo:
+#  application:
+#    name: chat-dubbo
+#    qosEnable: false
+#  protocol:
+#    name: dubbo
+#    port: 20881
 
   registy:
     id: register

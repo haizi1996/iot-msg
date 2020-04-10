@@ -56,6 +56,12 @@ public class HbaseUtils {
                 .putChar('|').put(sessionId.getBytes()).putChar('|').putLong(messageId).array();
     }
 
+    public static String getSubStr(String sessionId ){
+
+        return ByteBuffer.allocate(42).putInt(sessionId.hashCode())
+                .putChar('|').put(sessionId.getBytes()).putChar('|').toString();
+    }
+
     /**
      * 构建SessionId
      * 群聊消息就是 群号

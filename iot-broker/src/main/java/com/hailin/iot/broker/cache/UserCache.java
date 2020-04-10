@@ -16,7 +16,7 @@ public class UserCache {
     private String password;
 
     // 存储ip地址
-    private long ip;
+    private String ip;
 
     //  存储的是端口
     private int port;

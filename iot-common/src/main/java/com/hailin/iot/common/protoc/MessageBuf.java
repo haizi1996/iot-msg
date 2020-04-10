@@ -20,10 +20,21 @@ public final class MessageBuf {
 
     /**
      * <pre>
+     *消息ID
+     * </pre>
+     *
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <pre>
      *发送方
      * </pre>
      *
-     * <code>optional string sendUser = 1;</code>
+     * <code>string sendUser = 2;</code>
+     * @return The sendUser.
      */
     java.lang.String getSendUser();
     /**
@@ -31,7 +42,8 @@ public final class MessageBuf {
      *发送方
      * </pre>
      *
-     * <code>optional string sendUser = 1;</code>
+     * <code>string sendUser = 2;</code>
+     * @return The bytes for sendUser.
      */
     com.google.protobuf.ByteString
         getSendUserBytes();
@@ -41,7 +53,8 @@ public final class MessageBuf {
      *接收方
      * </pre>
      *
-     * <code>optional string acceptUser = 2;</code>
+     * <code>string acceptUser = 3;</code>
+     * @return The acceptUser.
      */
     java.lang.String getAcceptUser();
     /**
@@ -49,7 +62,8 @@ public final class MessageBuf {
      *接收方
      * </pre>
      *
-     * <code>optional string acceptUser = 2;</code>
+     * <code>string acceptUser = 3;</code>
+     * @return The bytes for acceptUser.
      */
     com.google.protobuf.ByteString
         getAcceptUserBytes();
@@ -59,7 +73,8 @@ public final class MessageBuf {
      *消息类型 群聊,私聊,朋友圈
      * </pre>
      *
-     * <code>optional int32 messageBit = 3;</code>
+     * <code>int32 messageBit = 4;</code>
+     * @return The messageBit.
      */
     int getMessageBit();
 
@@ -68,7 +83,8 @@ public final class MessageBuf {
      *消息内容
      * </pre>
      *
-     * <code>optional string content = 4;</code>
+     * <code>string content = 5;</code>
+     * @return The content.
      */
     java.lang.String getContent();
     /**
@@ -76,7 +92,8 @@ public final class MessageBuf {
      *消息内容
      * </pre>
      *
-     * <code>optional string content = 4;</code>
+     * <code>string content = 5;</code>
+     * @return The bytes for content.
      */
     com.google.protobuf.ByteString
         getContentBytes();
@@ -88,6 +105,7 @@ public final class MessageBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:com.hailin.iot.common.protoc.Message)
       MessageOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Message.newBuilder() to construct.
     private Message(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -95,21 +113,31 @@ public final class MessageBuf {
     private Message() {
       sendUser_ = "";
       acceptUser_ = "";
-      messageBit_ = 0;
       content_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new Message();
     }
 
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private Message(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -118,33 +146,39 @@ public final class MessageBuf {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 8: {
 
-              sendUser_ = s;
+              id_ = input.readInt64();
               break;
             }
             case 18: {
               java.lang.String s = input.readStringRequireUtf8();
 
+              sendUser_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
               acceptUser_ = s;
               break;
             }
-            case 24: {
+            case 32: {
 
               messageBit_ = input.readInt32();
               break;
             }
-            case 34: {
+            case 42: {
               java.lang.String s = input.readStringRequireUtf8();
 
               content_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
               break;
             }
           }
@@ -155,6 +189,7 @@ public final class MessageBuf {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -163,6 +198,7 @@ public final class MessageBuf {
       return com.hailin.iot.common.protoc.MessageBuf.internal_static_com_hailin_iot_common_protoc_Message_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.hailin.iot.common.protoc.MessageBuf.internal_static_com_hailin_iot_common_protoc_Message_fieldAccessorTable
@@ -170,14 +206,29 @@ public final class MessageBuf {
               com.hailin.iot.common.protoc.MessageBuf.Message.class, com.hailin.iot.common.protoc.MessageBuf.Message.Builder.class);
     }
 
-    public static final int SENDUSER_FIELD_NUMBER = 1;
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <pre>
+     *消息ID
+     * </pre>
+     *
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int SENDUSER_FIELD_NUMBER = 2;
     private volatile java.lang.Object sendUser_;
     /**
      * <pre>
      *发送方
      * </pre>
      *
-     * <code>optional string sendUser = 1;</code>
+     * <code>string sendUser = 2;</code>
+     * @return The sendUser.
      */
     public java.lang.String getSendUser() {
       java.lang.Object ref = sendUser_;
@@ -196,7 +247,8 @@ public final class MessageBuf {
      *发送方
      * </pre>
      *
-     * <code>optional string sendUser = 1;</code>
+     * <code>string sendUser = 2;</code>
+     * @return The bytes for sendUser.
      */
     public com.google.protobuf.ByteString
         getSendUserBytes() {
@@ -212,14 +264,15 @@ public final class MessageBuf {
       }
     }
 
-    public static final int ACCEPTUSER_FIELD_NUMBER = 2;
+    public static final int ACCEPTUSER_FIELD_NUMBER = 3;
     private volatile java.lang.Object acceptUser_;
     /**
      * <pre>
      *接收方
      * </pre>
      *
-     * <code>optional string acceptUser = 2;</code>
+     * <code>string acceptUser = 3;</code>
+     * @return The acceptUser.
      */
     public java.lang.String getAcceptUser() {
       java.lang.Object ref = acceptUser_;
@@ -238,7 +291,8 @@ public final class MessageBuf {
      *接收方
      * </pre>
      *
-     * <code>optional string acceptUser = 2;</code>
+     * <code>string acceptUser = 3;</code>
+     * @return The bytes for acceptUser.
      */
     public com.google.protobuf.ByteString
         getAcceptUserBytes() {
@@ -254,27 +308,29 @@ public final class MessageBuf {
       }
     }
 
-    public static final int MESSAGEBIT_FIELD_NUMBER = 3;
+    public static final int MESSAGEBIT_FIELD_NUMBER = 4;
     private int messageBit_;
     /**
      * <pre>
      *消息类型 群聊,私聊,朋友圈
      * </pre>
      *
-     * <code>optional int32 messageBit = 3;</code>
+     * <code>int32 messageBit = 4;</code>
+     * @return The messageBit.
      */
     public int getMessageBit() {
       return messageBit_;
     }
 
-    public static final int CONTENT_FIELD_NUMBER = 4;
+    public static final int CONTENT_FIELD_NUMBER = 5;
     private volatile java.lang.Object content_;
     /**
      * <pre>
      *消息内容
      * </pre>
      *
-     * <code>optional string content = 4;</code>
+     * <code>string content = 5;</code>
+     * @return The content.
      */
     public java.lang.String getContent() {
       java.lang.Object ref = content_;
@@ -293,7 +349,8 @@ public final class MessageBuf {
      *消息内容
      * </pre>
      *
-     * <code>optional string content = 4;</code>
+     * <code>string content = 5;</code>
+     * @return The bytes for content.
      */
     public com.google.protobuf.ByteString
         getContentBytes() {
@@ -310,6 +367,7 @@ public final class MessageBuf {
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -319,45 +377,55 @@ public final class MessageBuf {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
       if (!getSendUserBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, sendUser_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sendUser_);
       }
       if (!getAcceptUserBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, acceptUser_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, acceptUser_);
       }
       if (messageBit_ != 0) {
-        output.writeInt32(3, messageBit_);
+        output.writeInt32(4, messageBit_);
       }
       if (!getContentBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, content_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, content_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
       if (!getSendUserBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, sendUser_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sendUser_);
       }
       if (!getAcceptUserBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, acceptUser_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, acceptUser_);
       }
       if (messageBit_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, messageBit_);
+          .computeInt32Size(4, messageBit_);
       }
       if (!getContentBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, content_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, content_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -368,16 +436,18 @@ public final class MessageBuf {
       }
       com.hailin.iot.common.protoc.MessageBuf.Message other = (com.hailin.iot.common.protoc.MessageBuf.Message) obj;
 
-      boolean result = true;
-      result = result && getSendUser()
-          .equals(other.getSendUser());
-      result = result && getAcceptUser()
-          .equals(other.getAcceptUser());
-      result = result && (getMessageBit()
-          == other.getMessageBit());
-      result = result && getContent()
-          .equals(other.getContent());
-      return result;
+      if (getId()
+          != other.getId()) return false;
+      if (!getSendUser()
+          .equals(other.getSendUser())) return false;
+      if (!getAcceptUser()
+          .equals(other.getAcceptUser())) return false;
+      if (getMessageBit()
+          != other.getMessageBit()) return false;
+      if (!getContent()
+          .equals(other.getContent())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -386,7 +456,10 @@ public final class MessageBuf {
         return memoizedHashCode;
       }
       int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
       hash = (37 * hash) + SENDUSER_FIELD_NUMBER;
       hash = (53 * hash) + getSendUser().hashCode();
       hash = (37 * hash) + ACCEPTUSER_FIELD_NUMBER;
@@ -400,6 +473,17 @@ public final class MessageBuf {
       return hash;
     }
 
+    public static com.hailin.iot.common.protoc.MessageBuf.Message parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.hailin.iot.common.protoc.MessageBuf.Message parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static com.hailin.iot.common.protoc.MessageBuf.Message parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -459,6 +543,7 @@ public final class MessageBuf {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -466,6 +551,7 @@ public final class MessageBuf {
     public static Builder newBuilder(com.hailin.iot.common.protoc.MessageBuf.Message prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -489,6 +575,7 @@ public final class MessageBuf {
         return com.hailin.iot.common.protoc.MessageBuf.internal_static_com_hailin_iot_common_protoc_Message_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.hailin.iot.common.protoc.MessageBuf.internal_static_com_hailin_iot_common_protoc_Message_fieldAccessorTable
@@ -511,8 +598,11 @@ public final class MessageBuf {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
+        id_ = 0L;
+
         sendUser_ = "";
 
         acceptUser_ = "";
@@ -524,15 +614,18 @@ public final class MessageBuf {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return com.hailin.iot.common.protoc.MessageBuf.internal_static_com_hailin_iot_common_protoc_Message_descriptor;
       }
 
+      @java.lang.Override
       public com.hailin.iot.common.protoc.MessageBuf.Message getDefaultInstanceForType() {
         return com.hailin.iot.common.protoc.MessageBuf.Message.getDefaultInstance();
       }
 
+      @java.lang.Override
       public com.hailin.iot.common.protoc.MessageBuf.Message build() {
         com.hailin.iot.common.protoc.MessageBuf.Message result = buildPartial();
         if (!result.isInitialized()) {
@@ -541,8 +634,10 @@ public final class MessageBuf {
         return result;
       }
 
+      @java.lang.Override
       public com.hailin.iot.common.protoc.MessageBuf.Message buildPartial() {
         com.hailin.iot.common.protoc.MessageBuf.Message result = new com.hailin.iot.common.protoc.MessageBuf.Message(this);
+        result.id_ = id_;
         result.sendUser_ = sendUser_;
         result.acceptUser_ = acceptUser_;
         result.messageBit_ = messageBit_;
@@ -551,32 +646,39 @@ public final class MessageBuf {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
-        return (Builder) super.clone();
+        return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
+          java.lang.Object value) {
+        return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
+        return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
+        return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.hailin.iot.common.protoc.MessageBuf.Message) {
           return mergeFrom((com.hailin.iot.common.protoc.MessageBuf.Message)other);
@@ -588,6 +690,9 @@ public final class MessageBuf {
 
       public Builder mergeFrom(com.hailin.iot.common.protoc.MessageBuf.Message other) {
         if (other == com.hailin.iot.common.protoc.MessageBuf.Message.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
         if (!other.getSendUser().isEmpty()) {
           sendUser_ = other.sendUser_;
           onChanged();
@@ -603,14 +708,17 @@ public final class MessageBuf {
           content_ = other.content_;
           onChanged();
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -629,13 +737,56 @@ public final class MessageBuf {
         return this;
       }
 
+      private long id_ ;
+      /**
+       * <pre>
+       *消息ID
+       * </pre>
+       *
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <pre>
+       *消息ID
+       * </pre>
+       *
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息ID
+       * </pre>
+       *
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object sendUser_ = "";
       /**
        * <pre>
        *发送方
        * </pre>
        *
-       * <code>optional string sendUser = 1;</code>
+       * <code>string sendUser = 2;</code>
+       * @return The sendUser.
        */
       public java.lang.String getSendUser() {
         java.lang.Object ref = sendUser_;
@@ -654,7 +805,8 @@ public final class MessageBuf {
        *发送方
        * </pre>
        *
-       * <code>optional string sendUser = 1;</code>
+       * <code>string sendUser = 2;</code>
+       * @return The bytes for sendUser.
        */
       public com.google.protobuf.ByteString
           getSendUserBytes() {
@@ -674,7 +826,9 @@ public final class MessageBuf {
        *发送方
        * </pre>
        *
-       * <code>optional string sendUser = 1;</code>
+       * <code>string sendUser = 2;</code>
+       * @param value The sendUser to set.
+       * @return This builder for chaining.
        */
       public Builder setSendUser(
           java.lang.String value) {
@@ -691,7 +845,8 @@ public final class MessageBuf {
        *发送方
        * </pre>
        *
-       * <code>optional string sendUser = 1;</code>
+       * <code>string sendUser = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearSendUser() {
         
@@ -704,7 +859,9 @@ public final class MessageBuf {
        *发送方
        * </pre>
        *
-       * <code>optional string sendUser = 1;</code>
+       * <code>string sendUser = 2;</code>
+       * @param value The bytes for sendUser to set.
+       * @return This builder for chaining.
        */
       public Builder setSendUserBytes(
           com.google.protobuf.ByteString value) {
@@ -724,7 +881,8 @@ public final class MessageBuf {
        *接收方
        * </pre>
        *
-       * <code>optional string acceptUser = 2;</code>
+       * <code>string acceptUser = 3;</code>
+       * @return The acceptUser.
        */
       public java.lang.String getAcceptUser() {
         java.lang.Object ref = acceptUser_;
@@ -743,7 +901,8 @@ public final class MessageBuf {
        *接收方
        * </pre>
        *
-       * <code>optional string acceptUser = 2;</code>
+       * <code>string acceptUser = 3;</code>
+       * @return The bytes for acceptUser.
        */
       public com.google.protobuf.ByteString
           getAcceptUserBytes() {
@@ -763,7 +922,9 @@ public final class MessageBuf {
        *接收方
        * </pre>
        *
-       * <code>optional string acceptUser = 2;</code>
+       * <code>string acceptUser = 3;</code>
+       * @param value The acceptUser to set.
+       * @return This builder for chaining.
        */
       public Builder setAcceptUser(
           java.lang.String value) {
@@ -780,7 +941,8 @@ public final class MessageBuf {
        *接收方
        * </pre>
        *
-       * <code>optional string acceptUser = 2;</code>
+       * <code>string acceptUser = 3;</code>
+       * @return This builder for chaining.
        */
       public Builder clearAcceptUser() {
         
@@ -793,7 +955,9 @@ public final class MessageBuf {
        *接收方
        * </pre>
        *
-       * <code>optional string acceptUser = 2;</code>
+       * <code>string acceptUser = 3;</code>
+       * @param value The bytes for acceptUser to set.
+       * @return This builder for chaining.
        */
       public Builder setAcceptUserBytes(
           com.google.protobuf.ByteString value) {
@@ -813,7 +977,8 @@ public final class MessageBuf {
        *消息类型 群聊,私聊,朋友圈
        * </pre>
        *
-       * <code>optional int32 messageBit = 3;</code>
+       * <code>int32 messageBit = 4;</code>
+       * @return The messageBit.
        */
       public int getMessageBit() {
         return messageBit_;
@@ -823,7 +988,9 @@ public final class MessageBuf {
        *消息类型 群聊,私聊,朋友圈
        * </pre>
        *
-       * <code>optional int32 messageBit = 3;</code>
+       * <code>int32 messageBit = 4;</code>
+       * @param value The messageBit to set.
+       * @return This builder for chaining.
        */
       public Builder setMessageBit(int value) {
         
@@ -836,7 +1003,8 @@ public final class MessageBuf {
        *消息类型 群聊,私聊,朋友圈
        * </pre>
        *
-       * <code>optional int32 messageBit = 3;</code>
+       * <code>int32 messageBit = 4;</code>
+       * @return This builder for chaining.
        */
       public Builder clearMessageBit() {
         
@@ -851,7 +1019,8 @@ public final class MessageBuf {
        *消息内容
        * </pre>
        *
-       * <code>optional string content = 4;</code>
+       * <code>string content = 5;</code>
+       * @return The content.
        */
       public java.lang.String getContent() {
         java.lang.Object ref = content_;
@@ -870,7 +1039,8 @@ public final class MessageBuf {
        *消息内容
        * </pre>
        *
-       * <code>optional string content = 4;</code>
+       * <code>string content = 5;</code>
+       * @return The bytes for content.
        */
       public com.google.protobuf.ByteString
           getContentBytes() {
@@ -890,7 +1060,9 @@ public final class MessageBuf {
        *消息内容
        * </pre>
        *
-       * <code>optional string content = 4;</code>
+       * <code>string content = 5;</code>
+       * @param value The content to set.
+       * @return This builder for chaining.
        */
       public Builder setContent(
           java.lang.String value) {
@@ -907,7 +1079,8 @@ public final class MessageBuf {
        *消息内容
        * </pre>
        *
-       * <code>optional string content = 4;</code>
+       * <code>string content = 5;</code>
+       * @return This builder for chaining.
        */
       public Builder clearContent() {
         
@@ -920,7 +1093,9 @@ public final class MessageBuf {
        *消息内容
        * </pre>
        *
-       * <code>optional string content = 4;</code>
+       * <code>string content = 5;</code>
+       * @param value The bytes for content to set.
+       * @return This builder for chaining.
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
@@ -933,14 +1108,16 @@ public final class MessageBuf {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -959,11 +1136,12 @@ public final class MessageBuf {
 
     private static final com.google.protobuf.Parser<Message>
         PARSER = new com.google.protobuf.AbstractParser<Message>() {
+      @java.lang.Override
       public Message parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Message(input, extensionRegistry);
+        return new Message(input, extensionRegistry);
       }
     };
 
@@ -976,6 +1154,7 @@ public final class MessageBuf {
       return PARSER;
     }
 
+    @java.lang.Override
     public com.hailin.iot.common.protoc.MessageBuf.Message getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -997,28 +1176,21 @@ public final class MessageBuf {
   static {
     java.lang.String[] descriptorData = {
       "\n\016Message.protoc\022\034com.hailin.iot.common." +
-      "protoc\"T\n\007Message\022\020\n\010sendUser\030\001 \001(\t\022\022\n\na" +
-      "cceptUser\030\002 \001(\t\022\022\n\nmessageBit\030\003 \001(\005\022\017\n\007c" +
-      "ontent\030\004 \001(\tB\014B\nMessageBufb\006proto3"
+      "protoc\"`\n\007Message\022\n\n\002id\030\001 \001(\003\022\020\n\010sendUse" +
+      "r\030\002 \001(\t\022\022\n\nacceptUser\030\003 \001(\t\022\022\n\nmessageBi" +
+      "t\030\004 \001(\005\022\017\n\007content\030\005 \001(\tB\014B\nMessageBufb\006" +
+      "proto3"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-        }, assigner);
+        });
     internal_static_com_hailin_iot_common_protoc_Message_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_com_hailin_iot_common_protoc_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_hailin_iot_common_protoc_Message_descriptor,
-        new java.lang.String[] { "SendUser", "AcceptUser", "MessageBit", "Content", });
+        new java.lang.String[] { "Id", "SendUser", "AcceptUser", "MessageBit", "Content", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

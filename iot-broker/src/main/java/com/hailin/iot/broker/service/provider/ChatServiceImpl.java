@@ -80,7 +80,7 @@ public class ChatServiceImpl implements ChatService {
         if((userCache.getLastMessageId() != 0 && messageId < userCache.getLastMessageId()) || LogicBit.IS_PUSH.isBit(userCache.getLogic())){
             return true;
         }
-        executor.execute(() -> sendPrivateChatMessages(acceptUsername , messageId ));
+        executor.execute(() -> sendPrivateChatMessages(acceptUsername , userCache.getLastMessageId() ));
         return true;
     }
 
@@ -88,7 +88,7 @@ public class ChatServiceImpl implements ChatService {
      * 发送私聊信息
      */
     private void sendPrivateChatMessages(String acceptUsername, Long messageId ) {
-        List<Message> messages = storeService.getMessageByRowKey(HbaseUtils.buildRowKeyAsc(acceptUsername , messageId) , false , PUSH_MESSAGE_SIZE);
+        List<Message> messages = storeService.getTimeLineMessageByRowKey(HbaseUtils.buildRowKeyAsc(acceptUsername , messageId)  , false , acceptUsername , PUSH_MESSAGE_SIZE);
         if(CollectionUtils.isEmpty(messages)){
             UserCacheInstance.get(acceptUsername).setLogic(LogicBit.IS_PUSH.addBit(UserCacheInstance.get(acceptUsername).getLogic()));
             // todo  检查连接

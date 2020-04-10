@@ -63,7 +63,7 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
     }
 
     @Override
-    public Object handleRequest(BizContext bizContext, MqttMessage request) throws Exception {
+    public Object handleRequest(BizContext bizContext, T request) throws Exception {
         return null;
     }
 

@@ -29,7 +29,9 @@ import io.netty.handler.codec.mqtt.MqttVersion;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.ProtocolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -41,14 +43,15 @@ import static com.hailin.iot.common.contanst.Contants.USER_ONLINE;
 @Service
 public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectMessage> {
 
-    @Autowired
-    private ConfigValue configValue;
 
     @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private ProtocolConfig protocolConfig ;
 
     @Override
     public MqttMessageType interest() {
@@ -57,8 +60,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
 
 
     @Override
-    public Object handleRequest(BizContext bizContext, MqttMessage request) throws Exception {
-        MqttConnectMessage mqttConnectMessage = (MqttConnectMessage)request;
+    public Object handleRequest(BizContext bizContext, MqttConnectMessage mqttConnectMessage) throws Exception {
         MqttConnectPayload payload = mqttConnectMessage.payload();
 
         // ack 消息的可变消息头部
@@ -104,7 +106,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 0) , ackVariableHeader);
         bizContext.getRemotingCtx().writeAndFlush(ackMessage);
 
-        return super.handleRequest(bizContext, request);
+        return super.handleRequest(bizContext, mqttConnectMessage);
     }
 
     @Override
@@ -128,14 +130,12 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         connection.setUserName(payload.userName());
         connection.getChannel().attr(Connection.CONNECTION_ACK).set(Boolean.TRUE);
         connection.getChannel().attr(Connection.CONNECTION).set(connection);
-        ctx.getChannelContext().channel().pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
+//        ctx.getChannelContext().channel().pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         ctx.getConnectionManager().add(connection , connection.getUserName());
 //        connection.getConnectionManager().add(connection , payload.clientIdentifier());
 
-        Broker broker = Broker.builder().ip(IpUtils.getLocalIpAddress()).port(configValue.getPort()).score(System.currentTimeMillis()).build();
+        Broker broker = Broker.builder().ip(protocolConfig.getHost()).port(protocolConfig.getPort()).score(System.currentTimeMillis()).build();
         UserCache userCache = UserCache.newUserCache(user);
-        userCache.setPort(configValue.getPort());
-        userCache.setIp(IpUtils.ipToLong(broker.getIp()));
         UserCacheInstance.put(userCache);
         redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , payload.userName().getBytes() , BrokerUtil.serializeToByteArray(broker));
     }

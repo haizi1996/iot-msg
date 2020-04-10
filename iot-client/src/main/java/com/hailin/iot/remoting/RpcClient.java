@@ -13,6 +13,7 @@ import com.hailin.iot.remoting.monitor.ConnectionMonitorStrategy;
 import com.hailin.iot.remoting.monitor.DefaultConnectionMonitor;
 import com.hailin.iot.remoting.monitor.ScheduledDisconnectStrategy;
 import com.hailin.iot.remoting.processor.ConnectEventProcessor;
+import com.hailin.iot.remoting.processor.UserProcessorRegisterHelper;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.Setter;
@@ -123,5 +124,10 @@ public class RpcClient extends AbstractIotClient {
     @Override
     public Connection createStandaloneConnection(String address, int connectTimeout) throws RemotingException {
         return this.connectionManager.create(address, connectTimeout);
+    }
+
+    @Override
+    public void registerUserProcessor(UserProcessor<?> processor) {
+        UserProcessorRegisterHelper.registerUserProcessor(processor, this.userProcessors);
     }
 }

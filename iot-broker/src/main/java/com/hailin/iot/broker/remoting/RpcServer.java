@@ -2,6 +2,7 @@ package com.hailin.iot.broker.remoting;
 
 import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.common.model.Message;
+import com.hailin.iot.common.util.MessageUtil;
 import com.hailin.iot.remoting.AbstractRemotingServer;
 import com.hailin.iot.remoting.ConnectionEventHandler;
 import com.hailin.iot.remoting.ConnectionEventListener;
@@ -23,10 +24,13 @@ import com.hailin.iot.remoting.codec.Codec;
 import com.hailin.iot.remoting.codec.impl.MqttCoder;
 import com.hailin.iot.remoting.config.ConfigManager;
 import com.hailin.iot.remoting.config.switches.GlobalSwitch;
+import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.connection.ConnectionPool;
 import com.hailin.iot.remoting.handler.MqttMessageServerHandler;
 import com.hailin.iot.remoting.processor.UserProcessorRegisterHelper;
 import com.hailin.iot.remoting.util.NettyEventLoopUtil;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -39,19 +43,20 @@ import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
-import static com.hailin.iot.common.contanst.Contants.IDLE_HANDLER;
-import static com.hailin.iot.common.contanst.Contants.IDLE_STATE_HANDLER;
 
 public class RpcServer extends AbstractRemotingServer {
 
@@ -173,8 +178,8 @@ public class RpcServer extends AbstractRemotingServer {
                 pipeline.addLast("decoder" , codec.newDecoder());
                 pipeline.addLast("encoder" , codec.newEncoder());
                 if (idleSwitch){
-                    pipeline.addLast(IDLE_STATE_HANDLER , new IdleStateHandler(0 , 0 , idleTime , TimeUnit.SECONDS));
-                    pipeline.addLast(IDLE_HANDLER, serverIdleHandler);
+                    pipeline.addLast("idleStateHandler" , new IdleStateHandler(0 , 0 , idleTime , TimeUnit.MILLISECONDS));
+                    pipeline.addLast("serverIdleHandler", serverIdleHandler);
                 }
 //                pipeline.addLast("connectionEventHandler" , connectionEventHandler);
                 pipeline.addLast("handler" , rpcHandler);
@@ -259,8 +264,18 @@ public class RpcServer extends AbstractRemotingServer {
         UserProcessorRegisterHelper.registerUserProcessor(processor, this.userProcessors);
     }
 
-    public void sendMessageToUser(String acceptUsername , Object message , long timeout) throws RemotingException,
+    public void sendMessageToUser(String acceptUsername , List<Message> messages , long timeout) throws RemotingException,
             InterruptedException {
-
+        for (Message message : messages) {
+            ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer();
+            byteBuf.writeBytes(MessageUtil.serializeToByteArray(message));
+            MqttMessage chatMessage = MqttMessageBuilders.publish().topicName("private").messageId(4).qos(MqttQoS.AT_LEAST_ONCE).retained(true)
+                    .payload(byteBuf).build();
+            // 获取connectionPool
+            ConnectionPool pool = connectionManager.getConnectionPool(acceptUsername);
+            for (Connection conn : pool.getAll()) {
+                conn.getChannel().writeAndFlush(chatMessage);
+            }
+        }
     }
 }

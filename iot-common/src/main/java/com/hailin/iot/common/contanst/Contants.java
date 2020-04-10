@@ -18,9 +18,7 @@ public interface Contants {
 
     long BROKER_FIRE_TIME = 5 * 1000;
 
-    String IDLE_STATE_HANDLER = "idleStateHandler";
 
-    String IDLE_HANDLER = "IdleHandler";
 
     String USER_ONLINE = "user_online";
 

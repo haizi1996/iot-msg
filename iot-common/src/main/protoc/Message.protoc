@@ -5,15 +5,18 @@ package com.hailin.iot.common.protoc;
 option java_outer_classname="MessageBuf";
 
 message Message {
+
+    //消息ID
+    int64 id = 1;
 	//发送方
-	string sendUser = 1;
+	string sendUser = 2;
 
 	//接收方
-	string acceptUser = 2;
+	string acceptUser = 3;
 
     //消息类型 群聊,私聊,朋友圈
-	int32 messageBit = 3;
+	int32 messageBit = 4;
 
     //消息内容
-	string content = 4;
+	string content = 5;
 }

@@ -14,6 +14,7 @@ public interface StoreService {
     String familyName = "message";
 
     String SESSION_COLUMN = "session_Id";
+    String TIMELINE_COLUMN = "timeLine_";
     String SEND_USER_COLUMN = "send_user";
     String ACCEPT_USER_COLUMN = "accept_User";
     String CONTENT_COLUMN = "content";
@@ -40,5 +41,5 @@ public interface StoreService {
     }
 
 
-    List<Message> getMessageByRowKey(byte[] startRowKey , boolean inclusive , Integer limit);
+    List<Message> getTimeLineMessageByRowKey( byte[] startRowKey , boolean inclusive , String user , Integer limit);
 }

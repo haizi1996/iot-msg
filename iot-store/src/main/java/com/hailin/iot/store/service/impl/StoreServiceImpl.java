@@ -8,6 +8,8 @@ import com.hailin.iot.store.service.StoreService;
 import com.hailin.iot.store.timeline.TimeLine;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
@@ -33,17 +35,17 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void storeGroupChatMessage(Message message) {
 
-        String seesionId = message.getAcceptUser();
-        byte[] seesionRowkey = HbaseUtils.buildRowKeyDesc(seesionId ,  message.getMessageId());
-
-        hbaseTemplate.execute(roamTableName ,htable -> {
-            Put sessionPut = new Put(seesionRowkey)
-                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
-                    .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
-                    .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
-                    .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
-            htable.put(sessionPut);
-            return seesionRowkey;} );
+//        String seesionId = message.getAcceptUser();
+//        byte[] seesionRowkey = HbaseUtils.buildRowKeyDesc(seesionId ,  message.getMessageId());
+//
+//        hbaseTemplate.execute(roamTableName ,htable -> {
+//            Put sessionPut = new Put(seesionRowkey)
+//                    .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
+//                    .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
+//                    .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
+//                    .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
+//            htable.put(sessionPut);
+//            return seesionRowkey;} );
     }
 
     @Override
@@ -72,12 +74,14 @@ public class StoreServiceImpl implements StoreService {
         hbaseTemplate.execute(timeLineTableName ,htable -> {
             Put sendUserPut = new Put(sendUserRowKey)
                     .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
+                    .addColumn(familyName.getBytes(), TIMELINE_COLUMN.getBytes(), message.getSendUser().getBytes())
                     .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
                     .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
                     .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
             Put acceptUserPut = new Put(acceptUserRowKey)
                     .addColumn(familyName.getBytes(), SESSION_COLUMN.getBytes(), seesionId.getBytes())
                     .addColumn(familyName.getBytes(), SEND_USER_COLUMN.getBytes(), message.getSendUser().getBytes())
+                    .addColumn(familyName.getBytes(), TIMELINE_COLUMN.getBytes(), message.getAcceptUser().getBytes())
                     .addColumn(familyName.getBytes(), ACCEPT_USER_COLUMN.getBytes(), message.getAcceptUser().getBytes())
                     .addColumn(familyName.getBytes() , CONTENT_COLUMN.getBytes() , MessageUtil.serializeToByteArray(message));
             htable.put(Lists.newArrayList(sendUserPut , acceptUserPut ));
@@ -86,9 +90,8 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<Message> getMessageByRowKey(byte[] startRowKey, boolean inclusive , Integer limit) {
-
-        Scan scan = new Scan().withStartRow(startRowKey , false).setLimit(limit);
-        return hbaseTemplate.find(roamTableName , scan ,(result ,i)-> MessageUtil.deSerializationToObj(result.getValue(familyName.getBytes() , CONTENT_COLUMN.getBytes())));
+    public List<Message> getTimeLineMessageByRowKey( byte[] startRowKey, boolean inclusive , final String user , Integer limit) {
+        Scan scan = new Scan().withStartRow(startRowKey , false).setLimit(limit).setFilter(new SingleColumnValueFilter(familyName.getBytes() , TIMELINE_COLUMN.getBytes() ,CompareFilter.CompareOp.EQUAL , user.getBytes() ));
+        return hbaseTemplate.find(timeLineTableName , scan ,(result ,i)->  MessageUtil.deSerializationToObj(result.getValue(familyName.getBytes() , CONTENT_COLUMN.getBytes())));
     }
 }

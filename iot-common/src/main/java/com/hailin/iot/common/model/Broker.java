@@ -36,4 +36,8 @@ public class Broker {
     public int hashCode() {
         return Objects.hash(ip, port);
     }
+
+    public String getUrl() {
+        return ip+":"+port;
+    }
 }

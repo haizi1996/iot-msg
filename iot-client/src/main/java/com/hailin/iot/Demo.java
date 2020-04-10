@@ -6,6 +6,7 @@ import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.common.util.MessageUtil;
 import com.hailin.iot.remoting.RpcClient;
 import com.hailin.iot.remoting.connection.Connection;
+import com.hailin.iot.remoting.processor.PushMqttMessageUserProcessor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
@@ -21,8 +22,9 @@ public class Demo {
 
     public static void main(String[] args) throws InterruptedException {
         RpcClient rpcClient = new RpcClient();
+        rpcClient.registerUserProcessor(new PushMqttMessageUserProcessor());
         rpcClient.startup();
-
+        // 连上broker1
         // 张三登录
         Connection connection = rpcClient.createStandaloneConnection(IpUtils.getLocalIpAddress() , 5000 , 5000 * 60);
         System.out.println(connection.toString());
@@ -31,9 +33,9 @@ public class Demo {
 
         connection.getChannel().writeAndFlush(zhansanLogin);
 //        System.out.println(connection.toString());
-
+        // 连上broker2
         // 王五登录
-        Connection wangwu = rpcClient.createStandaloneConnection(IpUtils.getLocalIpAddress() , 5000 , 5000 * 60);
+        Connection wangwu = rpcClient.createStandaloneConnection(IpUtils.getLocalIpAddress() , 5001 , 5000 * 60);
         MqttConnectMessage wangwuConnect = MqttMessageBuilders.connect().willQoS(MqttQoS.AT_LEAST_ONCE).cleanSession(true).protocolVersion(MqttVersion.MQTT_3_1_1).keepAlive(60).willFlag(false).willRetain(false).willTopic("test").hasPassword(true).password("123456".getBytes())
                 .hasUser(true).username("wangwu").clientId("APP").build();
         wangwu.getChannel().writeAndFlush(wangwuConnect);

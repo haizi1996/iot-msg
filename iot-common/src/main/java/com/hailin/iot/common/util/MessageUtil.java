@@ -27,6 +27,7 @@ public class MessageUtil {
         MessageBuf.Message.Builder builder = MessageBuf.Message.newBuilder();
         return  builder.setAcceptUser(message.getAcceptUser())
                 .setSendUser(message.getSendUser())
+                .setId(message.getMessageId())
                 .setMessageBit(message.getMessageBit())
                 .setContent(message.getContent()).build().toByteArray();
     }
@@ -40,6 +41,7 @@ public class MessageUtil {
             MessageBuf.Message message = MessageBuf.Message.parseFrom(bytes);
             Message res = Message.builder().sendUser(message.getSendUser())
                     .acceptUser(message.getAcceptUser())
+                    .messageId(message.getId())
                     .messageBit(message.getMessageBit())
                     .content(message.getContent()).build();
             return res;

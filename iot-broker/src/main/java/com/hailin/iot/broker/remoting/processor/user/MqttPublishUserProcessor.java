@@ -54,8 +54,7 @@ public class MqttPublishUserProcessor extends AbstractUserProcessor<MqttPublishM
 
 
     @Override
-    public Object handleRequest(BizContext bizContext, MqttMessage request) throws Exception {
-        MqttPublishMessage publishMessage = (MqttPublishMessage)request;
+    public Object handleRequest(BizContext bizContext, MqttPublishMessage publishMessage) throws Exception {
         Connection connection = bizContext.getConnection();
 
         byte[] data ;
