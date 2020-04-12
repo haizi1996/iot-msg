@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -78,8 +79,10 @@ public class ReconnectManager extends AbstractLifeCycle implements Reconnector {
                     if (this.lastConnectTime < HEAL_CONNECTION_INTERVAL){
                         Thread.sleep(HEAL_CONNECTION_INTERVAL);
                     }
-                    task = ReconnectManager.this.tasks.take();
-                    if (task == null){
+                    try {
+                        task = ReconnectManager.this.tasks.take();
+                    }catch (InterruptedException e){}
+                    if (Objects.isNull(task)) {
                         continue;
                     }
                     start = System.currentTimeMillis();

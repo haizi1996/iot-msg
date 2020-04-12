@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * 远程处理接口
- * @author zhanghailin
+ * @author zhanghaili
  *
  */
 public interface RemotingProcessor<T extends MqttMessage> {

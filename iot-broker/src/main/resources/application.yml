@@ -3,7 +3,8 @@
 
 netty:
   #netty监听链接地址
-  port: 5001
+  port: 5000
+#  ip: 5000
 
 #dubbo:
 #  application:
@@ -13,11 +14,11 @@ netty:
 #    name: dubbo
 #    port: 20881
 
-  registy:
-    id: register
-    address: zookeeper://localhost:2181
-  consumer:
-    timeout: 5000
+#  registy:
+#    id: register
+#    address: zookeeper://localhost:2181
+#  consumer:
+#    timeout: 5000
 
 
 spring:
@@ -27,7 +28,7 @@ spring:
       roamTable: "messageRoamTable"
       timeLineTableName: "timeLineTableName"
   profiles:
-    active: work
+    active: home
   aop:
     proxy-target-class: true
 #redis 相关配置
@@ -35,7 +36,7 @@ spring:
     # Redis数据库索引
     database: 0
     # Redis服务器地址
-    host: localhost
+    host: centos1
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
@@ -53,9 +54,9 @@ spring:
         min-idle: 0
 
   datasource:
-    url: jdbc:mysql://localhost:3306/iot?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    url: jdbc:mysql://centos1:3306/iot?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
     username: root
-    password: 12345678
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
     druid:
       filters: stat
@@ -72,5 +73,5 @@ mybatis:
 
 #idgen的配置
 idgen:
-  redisUrl: redis://127.0.0.1:6379/1
+  redisUrl: redis://centos1:6379/1
   port: 6379

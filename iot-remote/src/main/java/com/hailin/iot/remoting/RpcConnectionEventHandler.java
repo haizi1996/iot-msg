@@ -28,6 +28,8 @@ public class RpcConnectionEventHandler extends ConnectionEventHandler {
 //        if (connection != null){
 //            this.getConnectionManager().remove(connection);
 //        }
+        // 触发一个连接关闭的时间
+        ctx.channel().pipeline().fireUserEventTriggered(ConnectionEventType.CLOSE);
         super.channelInactive(ctx);
     }
 }

@@ -10,7 +10,7 @@ message User {
 
 	string userName = 2;
 
-	int64 ip = 3;
+	string ip = 3;
 
 	int32 port = 4;
 

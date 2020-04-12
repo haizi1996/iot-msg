@@ -106,7 +106,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         MqttConnAckMessage ackMessage = new MqttConnAckMessage(new MqttFixedHeader(MqttMessageType.CONNACK , false , MqttQoS.EXACTLY_ONCE , false , 0) , ackVariableHeader);
         bizContext.getRemotingCtx().writeAndFlush(ackMessage);
 
-        return super.handleRequest(bizContext, mqttConnectMessage);
+        return null;
     }
 
     @Override
@@ -129,12 +129,12 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         connection.setType(Connection.TermType.valueOf(payload.clientIdentifier()));
         connection.setUserName(payload.userName());
         connection.getChannel().attr(Connection.CONNECTION_ACK).set(Boolean.TRUE);
-        connection.getChannel().attr(Connection.CONNECTION).set(connection);
+//        connection.getChannel().attr(Connection.CONNECTION).set(connection);
 //        ctx.getChannelContext().channel().pipeline().fireUserEventTriggered(ConnectionEventType.CONNECT);
         ctx.getConnectionManager().add(connection , connection.getUserName());
 //        connection.getConnectionManager().add(connection , payload.clientIdentifier());
 
-        Broker broker = Broker.builder().ip(protocolConfig.getHost()).port(protocolConfig.getPort()).score(System.currentTimeMillis()).build();
+        Broker broker = Broker.builder().ip(IpUtils.getLocalIpAddress()).port(protocolConfig.getPort()).score(System.currentTimeMillis()).build();
         UserCache userCache = UserCache.newUserCache(user);
         UserCacheInstance.put(userCache);
         redisTemplate.opsForHash().put(USER_ONLINE.getBytes() , payload.userName().getBytes() , BrokerUtil.serializeToByteArray(broker));

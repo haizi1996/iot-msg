@@ -16,7 +16,7 @@ public interface Contants {
     String BROKER_IP= "broker_ip";
     String BROKER_PORT= "broker_port";
 
-    long BROKER_FIRE_TIME = 5 * 1000;
+    long BROKER_FIRE_TIME = 50 * 60 * 1000;
 
 
 

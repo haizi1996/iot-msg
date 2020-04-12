@@ -4,6 +4,7 @@ import com.hailin.iot.common.cache.BrokerCacheInstance;
 import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.service.RedisService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Component
-public class BrokerTask {
+@EnableScheduling
+public class BrokerRouteTask {
 
     @Resource
     private RedisService redisService;

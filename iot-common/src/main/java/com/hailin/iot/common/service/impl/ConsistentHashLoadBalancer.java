@@ -3,7 +3,9 @@ package com.hailin.iot.common.service.impl;
 import com.hailin.iot.common.model.Broker;
 import com.hailin.iot.common.service.HashStrategy;
 import com.hailin.iot.common.service.LoadBalance;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,6 +23,9 @@ public class ConsistentHashLoadBalancer implements LoadBalance {
     @Override
     public Broker select(List<Broker> brokerInfos, String username) {
         int invocationHashCode = hashStrategy.getHashCode(username);
+        if (CollectionUtils.isEmpty(brokerInfos)){
+            return null;
+        }
         TreeMap<Integer, Broker> ring = buildConsistentHashRing(brokerInfos);
         Broker brokerInfo = locate(ring, invocationHashCode);
         return brokerInfo;

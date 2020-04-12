@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class BrokerUtil {
 
     public static List<Broker> deSerializationToObj(Collection<byte[]> bytes){
         if(CollectionUtils.isEmpty(bytes)){
-            return null;
+            return Collections.EMPTY_LIST;
         }
         return bytes.stream().map(BrokerUtil::deSerializationToObj).filter(Objects::nonNull).collect(Collectors.toList());
     }

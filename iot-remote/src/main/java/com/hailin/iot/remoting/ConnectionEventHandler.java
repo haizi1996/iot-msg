@@ -12,7 +12,6 @@ import io.netty.channel.ChannelPromise;
 import io.netty.util.Attribute;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +19,28 @@ import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 记录时间状态的日志
  * @author hailin
  */
 @ChannelHandler.Sharable
-@Slf4j
+
 public class ConnectionEventHandler extends ChannelDuplexHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionEventHandler.class);
+    
+    private AtomicInteger count = new AtomicInteger(0);
+
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcConnectionEventHandler.class);
+
+    private static final Logger COUNT_LOGGER = LoggerFactory.getLogger(ConnectionEventHandler.class);
 
     @Getter
     @Setter
@@ -46,12 +55,17 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
 
     private GlobalSwitch globalSwitch;
 
+    private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1,
+            new NamedThreadFactory("Iot-msg-conn-event-executor", true));
+
     public ConnectionEventHandler() {
 
     }
 
     public ConnectionEventHandler(GlobalSwitch globalSwitch) {
         this.globalSwitch = globalSwitch;
+        executor.scheduleAtFixedRate(() -> COUNT_LOGGER.info("当前连接数 : {}" , count  ) , 5 , 5 , TimeUnit.SECONDS);
+
     }
 
 
@@ -97,7 +111,7 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
                                     ConnectionEventType.CONNECT);
                         }
                     } else {
-                        log.warn("channel null when handle user triggered event in ConnectionEventHandler!");
+                        LOGGER.warn("channel null when handle user triggered event in ConnectionEventHandler!");
                     }
                     break;
                 default:
@@ -126,8 +140,18 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
             }
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        final String remoteAddress = RemotingUtil.parseRemoteAddress(ctx.channel());
+        final String localAddress = RemotingUtil.parseLocalAddress(ctx.channel());
+        LOGGER.warn("ExceptionCaught in connection: local[{}], remote[{}], close the connection! Cause[{}:{}]",
+                        localAddress, remoteAddress, cause.getClass().getSimpleName(), cause.getMessage());
+        ctx.channel().close();
+    }
+
     public class ConnectionEventExecutor {
-        private  Logger logger = LoggerFactory.getLogger(ConnectionEventExecutor.class);
+        private Logger logger = LoggerFactory.getLogger(ConnectionEventExecutor.class);
         ExecutorService executor = new ThreadPoolExecutor(1, 1, 60L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(10000),
                 new NamedThreadFactory("Iot-msg-conn-event-executor", true));
@@ -148,26 +172,28 @@ public class ConnectionEventHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        log.debug("Connection channel registered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        LOGGER.debug("Connection channel registered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
         super.channelRegistered(ctx);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        log.debug("Connection channel unregistered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        LOGGER.debug("Connection channel unregistered: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
         super.channelUnregistered(ctx);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.debug("Connection channel active: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        LOGGER.debug("Connection channel active: {}", RemotingUtil.parseRemoteAddress(ctx.channel()));
+        count.incrementAndGet();
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         String remoteAddress = RemotingUtil.parseRemoteAddress(ctx.channel());
-        log.debug("Connection channel inactive: {}", remoteAddress);
+        LOGGER.debug("Connection channel inactive: {}", remoteAddress);
+        count.decrementAndGet();
         super.channelInactive(ctx);
         Attribute attr = ctx.channel().attr(Connection.CONNECTION);
         if (null != attr) {

@@ -3,9 +3,10 @@ spring:
   data:
     hbase:
       config:
-        zookeeper:
-          quorum: centos1
-        rootdir: file:///workspace/hbase
-        fs:
-          default:
-            name: file:///workspace/hbase
+        hbase:
+          zookeeper:
+            quorum: centos1
+          rootdir: file:///workspace/hbase
+          fs:
+            default:
+              name: file:///workspace/hbase

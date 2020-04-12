@@ -1,5 +1,7 @@
 package com.hailin.iot.route.config;
 
+import com.hailin.iot.common.service.RedisService;
+import com.hailin.iot.common.service.impl.RedisServiceImpl;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -15,12 +17,10 @@ import java.lang.reflect.Method;
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
 
-
-
-//    @Bean
-//    public LettuceConnectionFactory redisConnectionFactory() {
-//        return new LettuceConnectionFactory();
-//    }
+    @Bean
+    public RedisService createRedisInstance() {
+        return new RedisServiceImpl();
+    }
 
     @Bean
     public KeyGenerator keyGenerator() {

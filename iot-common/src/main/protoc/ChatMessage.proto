@@ -1,0 +1,12 @@
+//指定版本 使用protobuf3
+syntax = "proto3";
+
+package com.hailin.iot.common.protoc;
+option java_outer_classname="ChatMessageBuf";
+
+import "Message.proto";
+
+message ChatMessage {
+    repeated Message messages = 1;
+}
+

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,8 +29,42 @@ public class MessageUtil {
         return  builder.setAcceptUser(message.getAcceptUser())
                 .setSendUser(message.getSendUser())
                 .setId(message.getMessageId())
+                .setSendTime(message.getSendTime())
                 .setMessageBit(message.getMessageBit())
                 .setContent(message.getContent()).build().toByteArray();
+    }
+
+    public static MessageBuf.Message transforToMessageBuf(Message message){
+        if(message == null){
+            return null;
+        }
+        MessageBuf.Message.Builder builder = MessageBuf.Message.newBuilder();
+        return  builder.setAcceptUser(message.getAcceptUser())
+                .setSendUser(message.getSendUser())
+                .setId(message.getMessageId())
+                .setSendTime(message.getSendTime())
+                .setMessageBit(message.getMessageBit())
+                .setContent(message.getContent()).build();
+    }
+    public static List<MessageBuf.Message> transforToMessageBufs(List<Message> messages){
+        if(CollectionUtils.isEmpty(messages)){
+            return Collections.EMPTY_LIST;
+        }
+        return messages.stream().map(MessageUtil::transforToMessageBuf).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public static Message transforToMessage(MessageBuf.Message messageBuf){
+        if(messageBuf == null){
+            return null;
+        }
+        return  Message.builder().acceptUser(messageBuf.getAcceptUser())
+                .sendUser(messageBuf.getSendUser()).sendTime(messageBuf.getSendTime()).messageId(messageBuf.getId()).content(messageBuf.getContent()).messageBit(messageBuf.getMessageBit()).build();
+    }
+    public static List<Message> transforToMessages(List<MessageBuf.Message> messageBufs){
+        if(CollectionUtils.isEmpty(messageBufs)){
+            return Collections.EMPTY_LIST;
+        }
+        return messageBufs.stream().map(MessageUtil::transforToMessage).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 
@@ -41,6 +76,7 @@ public class MessageUtil {
             MessageBuf.Message message = MessageBuf.Message.parseFrom(bytes);
             Message res = Message.builder().sendUser(message.getSendUser())
                     .acceptUser(message.getAcceptUser())
+                    .sendTime(message.getSendTime())
                     .messageId(message.getId())
                     .messageBit(message.getMessageBit())
                     .content(message.getContent()).build();

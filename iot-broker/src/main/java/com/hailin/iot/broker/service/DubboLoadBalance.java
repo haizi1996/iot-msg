@@ -46,6 +46,6 @@ public class DubboLoadBalance extends AbstractLoadBalance {
     }
 
     private <T> boolean isTargetIpAddress(Broker broker, Invoker<T> invoker) {
-        return Objects.equals(invoker.getUrl().getAddress() , broker.getIp()) && invoker.getUrl().getPort() == broker.getPort();
+        return Objects.equals(invoker.getUrl().getHost() , broker.getIp()) && invoker.getUrl().getPort() == broker.getPort();
     }
 }

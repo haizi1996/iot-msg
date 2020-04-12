@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: work
+    active: home
   data:
     hbase:
       #消息漫游表

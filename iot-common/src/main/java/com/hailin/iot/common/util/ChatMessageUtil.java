@@ -29,11 +29,10 @@ public class ChatMessageUtil {
 
     public static byte[] serializeToByteArray(ChatMessage chatMessage){
         if(chatMessage == null){
-            return null;
+            return new byte[0];
         }
         ChatMessageBuf.ChatMessage.Builder builder = ChatMessageBuf.ChatMessage.newBuilder();
-        return  builder.setAcceptUser(chatMessage.getAcceptUser())
-        .setContent(chatMessage.getContent()).setMessageBit(chatMessage.getMessageBit()).build().toByteArray();
+        return  builder.addAllMessages(MessageUtil.transforToMessageBufs(chatMessage.getMessages())).build().toByteArray();
     }
 
 
@@ -43,9 +42,7 @@ public class ChatMessageUtil {
         }
         try {
             ChatMessageBuf.ChatMessage chatMessage = ChatMessageBuf.ChatMessage.parseFrom(bytes);
-            ChatMessage res = ChatMessage.builder().acceptUser(chatMessage.getAcceptUser()).messageBit(chatMessage.getMessageBit())
-                    .content(chatMessage.getContent()).build();
-            return res;
+            return new ChatMessage(MessageUtil.transforToMessages(chatMessage.getMessagesList()));
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);

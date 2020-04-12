@@ -4,6 +4,7 @@ syntax = "proto3";
 package com.hailin.iot.common.protoc;
 option java_outer_classname="MessageBuf";
 
+
 message Message {
 
     //消息ID
@@ -19,4 +20,7 @@ message Message {
 
     //消息内容
 	string content = 5;
+
+	//发送时间
+	int64 sendTime =6;
 }

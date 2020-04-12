@@ -40,22 +40,16 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
 
     public void doProcess(RemotingContext ctx, T msg) throws Exception{
 
-
-
         MqttFixedHeader fixedHeader = msg.fixedHeader();
-        UserProcessor userProcessor = ctx.getUserProcessor(fixedHeader.messageType());
-
         long currentTimestamp = System.currentTimeMillis();
         preProcessRemotingContext(ctx, msg, currentTimestamp);
-
         // 是否要处理 UserProcessor
         if (Objects.isNull(ctx.getUserProcessor(msg.fixedHeader().messageType()))) {
             return;
         }
 
-        // set timeout check state from user's processor
+        UserProcessor userProcessor = ctx.getUserProcessor(fixedHeader.messageType());
         ctx.setTimeoutDiscard(userProcessor.timeoutDiscard());
-
         // to check whether to process in io thread
         if (userProcessor.processInIOThread()) {
 

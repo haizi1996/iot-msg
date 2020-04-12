@@ -10,7 +10,7 @@ import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MqttPingRespProcessor extends AbstractRemotingProcessor {
+public class MqttPingRespProcessor extends AbstractRemotingProcessor <MqttMessage>{
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MqttPingRespProcessor.class);
 

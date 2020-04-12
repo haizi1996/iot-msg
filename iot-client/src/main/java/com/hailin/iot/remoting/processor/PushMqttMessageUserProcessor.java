@@ -29,6 +29,6 @@ public class PushMqttMessageUserProcessor extends AbstractUserProcessor<MqttPubl
         }
         Message chatMessage = MessageUtil.deSerializationToObj(data);
         LOGGER.info("接受人: " + chatMessage.getAcceptUser() + ", 收到发送人: " + chatMessage.getSendUser() + "的一条消息, 消息内容是: " + chatMessage.getContent());
-        return super.handleRequest(bizContext, publishMessage);
+        return null;
     }
 }

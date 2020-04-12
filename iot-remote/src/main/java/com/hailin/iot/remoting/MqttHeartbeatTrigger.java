@@ -71,6 +71,7 @@ public class MqttHeartbeatTrigger implements HeartbeatTrigger {
                     return ctx.channel().remoteAddress().toString();
                 }
             } , null , heartMessage);
+            conn.setHeartbeatFuture(future);
             ctx.writeAndFlush(heartMessage).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
