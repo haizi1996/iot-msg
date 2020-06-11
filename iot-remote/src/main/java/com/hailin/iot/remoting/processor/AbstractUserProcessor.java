@@ -19,7 +19,6 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUserProcessor.class);
 
-    protected ExecutorSelector executorSelector;
 
     @Override
     public BizContext preHandleRequest(RemotingContext remotingCtx, T request) {
@@ -35,27 +34,6 @@ public abstract class AbstractUserProcessor<T extends MqttMessage> implements Us
     public Executor getExecutor() {
         return null;
     }
-
-    /**
-     * @see UserProcessor#getExecutorSelector()
-     */
-    @Override
-    public ExecutorSelector getExecutorSelector() {
-        return this.executorSelector;
-    }
-
-
-    @Override
-    public void setExecutorSelector(ExecutorSelector executorSelector) {
-        this.executorSelector = executorSelector;
-    }
-
-
-    @Override
-    public boolean processInIOThread() {
-        return false;
-    }
-
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx) {

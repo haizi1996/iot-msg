@@ -1,9 +1,12 @@
 package com.hailin.iot.remoting.processor;
 
+import com.hailin.iot.remoting.InvokeContext;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.RpcAsyncContext;
 import com.hailin.iot.remoting.UserProcessor;
 import com.hailin.iot.remoting.util.RemotingUtil;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
@@ -39,49 +42,60 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
 
 
     public void doProcess(RemotingContext ctx, T msg) throws Exception{
+        long currentTimestamp = System.currentTimeMillis();
+        if (isTimeoutCmd(ctx)) {
+            timeoutLog(ctx, currentTimestamp);// do some log
+            return;// then, discard this request
+        }
 
         MqttFixedHeader fixedHeader = msg.fixedHeader();
-        long currentTimestamp = System.currentTimeMillis();
+        ctx.getInvokeContext().putIfAbsent(InvokeContext.IOT_PROCESS_WAIT_TIME,
+                currentTimestamp - ctx.getArriveTimestamp());
+
         preProcessRemotingContext(ctx, msg, currentTimestamp);
+
+
         // 是否要处理 UserProcessor
         if (Objects.isNull(ctx.getUserProcessor(msg.fixedHeader().messageType()))) {
             return;
         }
-
         UserProcessor userProcessor = ctx.getUserProcessor(fixedHeader.messageType());
-        ctx.setTimeoutDiscard(userProcessor.timeoutDiscard());
-        // to check whether to process in io thread
-        if (userProcessor.processInIOThread()) {
 
-            // process in io thread
-//            new ProcessTask(ctx, msg).run();
-            dispatchToUserProcessor(ctx , msg);
-            return;// end
-        }
-
-        Executor executor;
         // to check whether get executor using executor selector
-        if (null == userProcessor.getExecutorSelector()) {
-            executor = userProcessor.getExecutor();
-        } else {
-
-            //try get executor with strategy
-            executor = userProcessor.getExecutorSelector().select(fixedHeader.messageType(),
-                    msg);
-        }
-
-        // Till now, if executor still null, then try default
-        if (executor == null) {
+        if (Objects.isNull( userProcessor.getExecutor())) {
             dispatchToUserProcessor(ctx , msg);
-        }else {
-            // use the final executor dispatch process task
-            executor.execute(() -> dispatchToUserProcessor(ctx , msg));
+        } else {
+            //try get executor with strategy
+            userProcessor.getExecutor().execute(() -> dispatchToUserProcessor(ctx , msg));
         }
 
-//        if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
-//            timeoutLog(cmd, currentTimestamp, ctx);// do some log
-//            return;// then, discard this request
-//        }
+    }
+
+
+    /**
+     * print some log when request timeout and discarded in io thread.
+     */
+    private void timeoutLog(final RemotingContext ctx, long currentTimestamp) {
+        if (logger.isDebugEnabled()) {
+            logger
+                    .debug(
+                            "request id [{}] currenTimestamp [{}] - arriveTime [{}] = server cost [{}] >= timeout value [{}].",
+                            ctx.getId(), currentTimestamp, ctx.getArriveTimestamp(),
+                            (currentTimestamp - ctx.getArriveTimestamp()), getTimeout());
+        }
+
+        String remoteAddr = "UNKNOWN";
+        if (null != ctx) {
+            ChannelHandlerContext channelCtx = ctx.getChannelContext();
+            Channel channel = channelCtx.channel();
+            if (null != channel) {
+                remoteAddr = RemotingUtil.parseRemoteAddress(channel);
+            }
+        }
+        logger
+                .warn(
+                        "Rpc request id[{}], from remoteAddr[{}] stop process, total wait time in queue is [{}], client timeout setting is [{}].",
+                        ctx.getId(), remoteAddr, (currentTimestamp - ctx.getArriveTimestamp()), getTimeout());
     }
 
     private void dispatchToUserProcessor(RemotingContext ctx, T msg) {
@@ -151,6 +165,25 @@ public abstract class AbstractRemotingProcessor<T extends MqttMessage> implement
 
     public void sendResponseIfNecessary(RemotingContext ctx, MqttMessageType messageType, MqttMessage message) {
         throw new RuntimeException();
+    }
+
+    /**
+     * 获取超时时间
+     */
+    protected int getTimeout(){
+        return 0;
+    }
+
+    protected boolean isTimeoutDiscard() {
+        return false;
+    }
+
+    private boolean isTimeoutCmd(RemotingContext ctx) {
+        if ( isTimeoutDiscard()
+                && this.getTimeout() > 0 && (System.currentTimeMillis() - ctx.getArriveTimestamp()) > this.getTimeout()) {
+            return true;
+        }
+        return false;
     }
 
 

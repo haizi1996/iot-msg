@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 一个抽象的socker channel
@@ -52,7 +53,7 @@ public class Connection {
     public static final AttributeKey<HeartbeatTrigger>  HEARTBEAT_TRIGGER = AttributeKey.valueOf("heartbeatTrigger");
 
     //初始化的消息ID
-    public static final AttributeKey<AtomicInteger>  MESSAGE_ID = AttributeKey.valueOf("messageId");
+    public static final AttributeKey<AtomicLong>  MESSAGE_ID = AttributeKey.valueOf("messageId");
 
     //客户端标识
     public static final AttributeKey<String> CLIENT_IDENTIFIER = AttributeKey.valueOf("clientIdentifier");

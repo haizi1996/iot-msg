@@ -68,41 +68,20 @@ public class MqttMessageServerHandler implements MessageHandler {
     @Override
     public void handleMessage(RemotingContext ctx, MqttMessage msg) throws Exception {
         try {
-            if (msg instanceof List) {
-                final Runnable handleTask = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Batch message! size={}", ((List<?>) msg).size());
-                        }
-                        for (final Object m : (List<?>) msg) {
-                            MqttMessageServerHandler.this.process(ctx, m);
-                        }
-                    }
-                };
-                if (ConfigManager.dispatch_msg_list_in_default_executor()) {
-                    // If msg is list ,then the batch submission to biz threadpool can save io thread.
-                    // See com.alipay.remoting.decoder.ProtocolDecoder
-                    processorManager.getDefaultExecutor().execute(handleTask);
-                } else {
-                    handleTask.run();
-                }
-            } else {
+
                 process(ctx, msg);
-            }
         } catch (final Throwable t) {
             processException(ctx, msg, t);
         }
     }
 
-    private void process(RemotingContext ctx, Object msg) {
+    private void process(RemotingContext ctx, MqttMessage msg) {
         try {
-            final MqttMessage message = (MqttMessage)msg;
-            final RemotingProcessor processor = processorManager.getProcessor(message.fixedHeader().messageType());
+            final RemotingProcessor processor = processorManager.getProcessor(msg.fixedHeader().messageType());
             if (Objects.isNull(processor)){
                 return;
             }
-            processor.process(ctx, message, processorManager.getDefaultExecutor());
+            processor.process(ctx, msg, processorManager.getDefaultExecutor());
         }catch (final Throwable throwable){
             processException(ctx, msg, throwable);
         }

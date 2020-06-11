@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.util.AttributeKey;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,12 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 public class RemotingContext {
 
+    private final Long id;
+
     private ChannelHandlerContext channelContext;
 
     private boolean serverSide = false;
-
-    //当处理请求超时时，请求将会被抛弃
-    private boolean timeoutDiscard = true;
 
     //请求达到时的时间戳
     private long arriveTimestamp;
@@ -28,19 +28,12 @@ public class RemotingContext {
     //消息类型
     private MqttMessageType type;
 
-    //请求超时时间
-    private int timeout;
-
     private InvokeContext invokeContext;
 
     private ConnectionManager connectionManager;
 
     private ConcurrentHashMap<MqttMessageType , UserProcessor<?>> userProcessors;
 
-    public RemotingContext setTimeoutDiscard(boolean failFastEnabled) {
-        this.timeoutDiscard = failFastEnabled;
-        return this;
-    }
     public RemotingContext(ChannelHandlerContext ctx, InvokeContext invokeContext,
                            ConnectionManager connectionManager,
                            boolean serverSide,
@@ -51,6 +44,7 @@ public class RemotingContext {
         this.arriveTimestamp = System.currentTimeMillis();
         this.userProcessors = userProcessors;
         this.invokeContext = invokeContext;
+        this.id = ctx.channel().attr(Connection.MESSAGE_ID).get().incrementAndGet();
     }
     public ChannelFuture writeAndFlush(MqttMessage msg) {
         return this.channelContext.writeAndFlush(msg);
@@ -66,13 +60,7 @@ public class RemotingContext {
         return messageType == null ? null : this.userProcessors.get(messageType);
     }
 
-    public boolean isRequestTimeout() {
-        if (this.timeout > 0 && (this.type != MqttMessageType.PUBLISH)
-                && (System.currentTimeMillis() - this.arriveTimestamp) > this.timeout) {
-            return true;
-        }
-        return false;
-    }
+
 
     public Connection getConnection() {
         return ConnectionUtil.getConnectionFromChannel(channelContext.channel());

@@ -17,22 +17,11 @@ public interface UserProcessor<T extends MqttMessage> {
 
     Object handleRequest(BizContext bizContext , T request) throws Exception;
 
-
     Executor getExecutor();
 
-    boolean processInIOThread();
 
     boolean timeoutDiscard();
 
     MqttMessageType interest();
-
-    void setExecutorSelector( ExecutorSelector executorSelector);
-
-    ExecutorSelector getExecutorSelector();
-
-    interface ExecutorSelector {
-        Executor select(MqttMessageType messageType, Object requestHeader);
-    }
-
 
 }

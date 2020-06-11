@@ -2,7 +2,6 @@ package com.hailin.iot.broker.remoting.processor.user;
 
 import com.hailin.iot.broker.cache.UserCache;
 import com.hailin.iot.broker.cache.UserCacheInstance;
-import com.hailin.iot.broker.config.ConfigValue;
 import com.hailin.iot.broker.user.dao.UserMapper;
 import com.hailin.iot.broker.user.model.User;
 import com.hailin.iot.broker.user.model.UserExample;
@@ -11,7 +10,6 @@ import com.hailin.iot.common.util.BrokerUtil;
 import com.hailin.iot.common.util.IpUtils;
 import com.hailin.iot.remoting.AsyncContext;
 import com.hailin.iot.remoting.BizContext;
-import com.hailin.iot.remoting.ConnectionEventType;
 import com.hailin.iot.remoting.RemotingContext;
 import com.hailin.iot.remoting.connection.Connection;
 import com.hailin.iot.remoting.processor.AbstractUserProcessor;
@@ -22,7 +20,6 @@ import io.netty.handler.codec.mqtt.MqttConnectPayload;
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttConnectVariableHeader;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttVersion;
@@ -31,12 +28,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.ProtocolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.hailin.iot.common.contanst.Contants.USER_ONLINE;
 
@@ -81,7 +77,7 @@ public class MqttConnectUserProcessor extends AbstractUserProcessor<MqttConnectM
         }
         // 清除session
         if (mqttConnectMessage.variableHeader().isCleanSession()){
-            bizContext.getRemotingCtx().getChannelContext().channel().attr(Connection.MESSAGE_ID).set(new AtomicInteger(0));
+            bizContext.getRemotingCtx().getChannelContext().channel().attr(Connection.MESSAGE_ID).set(new AtomicLong(0));
         }
 
 //        IdleStateHandler idle = bizContext.getRemotingCtx().getChannelContext().channel().pipeline().remove(IdleStateHandler.class);
