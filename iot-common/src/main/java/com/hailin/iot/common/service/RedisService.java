@@ -32,5 +32,11 @@ public interface RedisService {
      */
     void setBrokerInfoToRedis(Broker broker);
 
+    /* 将broker信息设置进redis
+     * 删除过期
+     * @param broker broker信息
+     */
+    void setBrokersInfoToRedis(List<Broker> brokers);
+
 
 }

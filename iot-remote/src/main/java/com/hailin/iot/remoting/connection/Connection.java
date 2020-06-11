@@ -223,7 +223,17 @@ public class Connection {
 
         PC,
 
-        WEB
+        WEB,
+
+        App_test1,
+        App_test2,
+        App_test3,
+        App_test4,
+        App_test5,
+        App_test6,
+        App_test7,
+        App_test8,
+        App_test9
 
 
     }

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -26,21 +27,21 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRemotingServer.class);
     private String                ip;
-    private int                   port;
+    private List<Integer>             ports;
 
     private final IotOptions options;
     private final ConfigType configType;
     private final GlobalSwitch globalSwitch;
     private final ConfigContainer configContainer;
 
-    public AbstractRemotingServer(int port) {
+    public AbstractRemotingServer(List<Integer> port) {
 //        this(new InetSocketAddress(port).getAddress().getHostAddress(), port);
         this(IpUtils.getLocalIpAddress(), port);
     }
 
-    public AbstractRemotingServer(String ip, int port) {
+    public AbstractRemotingServer(String ip, List<Integer> ports) {
         this.ip = ip;
-        this.port = port;
+        this.ports = ports;
 
         this.options = new IotOptions();
         this.configType = ConfigType.SERVER_SIDE;
@@ -54,8 +55,8 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     }
 
     @Override
-    public int port() {
-        return port;
+    public List<Integer> ports() {
+        return ports;
     }
 
     @Override
@@ -69,12 +70,12 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
         try {
             doInit();
 
-            LOGGER.warn("Prepare to start server on port {} ", port);
+            LOGGER.warn("Prepare to start server on port {} ", ports);
             if (doStart()) {
-                LOGGER.warn("Server started on port {}", port);
+                LOGGER.warn("Server started on port {}", ports);
             } else {
-                LOGGER.warn("Failed starting server on port {}", port);
-                throw new LifeCycleException("Failed starting server on port: " + port);
+                LOGGER.warn("Failed starting server on port {}", ports);
+                throw new LifeCycleException("Failed starting server on port: " + ports);
             }
         } catch (Throwable t) {
             this.shutdown();// do stop to ensure close resources created during doInit()

@@ -1,5 +1,6 @@
 package com.hailin.iot.broker.remoting;
 
+import com.google.common.collect.Lists;
 import com.hailin.iot.common.dto.ChatMessage;
 import com.hailin.iot.common.exception.RemotingException;
 import com.hailin.iot.common.model.Message;
@@ -103,27 +104,27 @@ public class RpcServer extends AbstractRemotingServer {
     }
 
     public RpcServer(int port) {
-        this(port, true);
+        this(Lists.newArrayList(port), true);
     }
 
-    public RpcServer(String ip, int port) {
-        this(ip, port, false);
+    public RpcServer(String ip, List<Integer> ports) {
+        this(ip, ports, false);
     }
 
-    public RpcServer(int port , boolean manageConnection){
-        super(port);
+    public RpcServer(List<Integer> ports , boolean manageConnection){
+        super(ports);
         if (manageConnection){
             this.switches().turnOn(GlobalSwitch.SERVER_MANAGE_CONNECTION_SWITCH);
         }
     }
-    public RpcServer(String ip, int port, boolean manageConnection) {
-        super(ip, port);
+    public RpcServer(String ip, List<Integer> ports, boolean manageConnection) {
+        super(ip, ports);
         if (manageConnection) {
             this.switches().turnOn(GlobalSwitch.SERVER_MANAGE_CONNECTION_SWITCH);
         }
     }
-    public RpcServer(int port, boolean manageConnection, boolean syncStop) {
-        this(port, manageConnection);
+    public RpcServer(List<Integer> ports, boolean manageConnection, boolean syncStop) {
+        this(ports, manageConnection);
         if (syncStop) {
             this.switches().turnOn(GlobalSwitch.SERVER_SYNC_STOP);
         }
@@ -215,7 +216,9 @@ public class RpcServer extends AbstractRemotingServer {
 
     @Override
     protected boolean doStart() throws InterruptedException{
-        this.channelFuture = this.bootstrap.bind(new InetSocketAddress(ip() , port())).sync();
+        for (Integer port : ports()) {
+            this.channelFuture = this.bootstrap.bind(new InetSocketAddress(ip() , port)).sync();
+        }
         return this.channelFuture.isSuccess();
     }
 

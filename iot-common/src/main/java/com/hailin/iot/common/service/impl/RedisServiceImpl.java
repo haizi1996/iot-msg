@@ -50,4 +50,10 @@ public class RedisServiceImpl implements RedisService {
         redisTemplate.opsForZSet().add(Contants.REDIS_BROKER_KEY.getBytes()  , BrokerUtil.serializeToByteArray(broker) , now);
     }
 
+
+    @Override
+    public void setBrokersInfoToRedis(List<Broker> brokers) {
+        long now = System.currentTimeMillis();
+//        lettuceConnectionFactory.getConnection().zSetCommands().zAdd(Contants.REDIS_BROKER_KEY.getBytes() , now , BrokerUtil.serializeToByteArray(broker) );
+    }
 }

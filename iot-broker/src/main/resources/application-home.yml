@@ -5,7 +5,7 @@ spring:
       config:
         hbase:
           zookeeper:
-            quorum: centos1
+            quorum: centosBase
           rootdir: file:///workspace/hbase
           fs:
             default:

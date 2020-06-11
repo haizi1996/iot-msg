@@ -3,7 +3,7 @@
 
 netty:
   #netty监听链接地址
-  port: 5000
+  ports: "5000,5001,5002,5003,5004,5005,5006,5007,5008,5009,50010,5011"
 #  ip: 5000
 
 #dubbo:
@@ -36,7 +36,7 @@ spring:
     # Redis数据库索引
     database: 0
     # Redis服务器地址
-    host: centos1
+    host: centosBase
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
@@ -54,7 +54,7 @@ spring:
         min-idle: 0
 
   datasource:
-    url: jdbc:mysql://centos1:3306/iot?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    url: jdbc:mysql://centosBase:3306/iot?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -73,5 +73,5 @@ mybatis:
 
 #idgen的配置
 idgen:
-  redisUrl: redis://centos1:6379/1
+  redisUrl: redis://centosBase:6379/1
   port: 6379

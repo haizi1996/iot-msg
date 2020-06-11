@@ -2,6 +2,7 @@ package com.hailin.iot.remoting;
 
 import com.hailin.iot.remoting.config.Configurable;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -24,7 +25,7 @@ public interface RemotingServer extends LifeCycle, Configurable {
      *
      * @return listened port
      */
-    int port();
+    List<Integer> ports();
 
     /**
      * Register processor for command with the command code.
